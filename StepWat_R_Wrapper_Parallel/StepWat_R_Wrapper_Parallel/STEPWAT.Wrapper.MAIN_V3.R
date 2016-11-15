@@ -173,7 +173,7 @@ dist.freq<-c(0,2,10,50) # if not using disturbance but are using grazing set 'di
 graz.freq<-c(1)
 
 #Grazing intensity
-graz_intensity<-c("lowgraz")
+graz_intensity<-c("lowgraz","modgraz","highgraz")
 
 #Soil types are specified here, in accordance with the files added to STEPWAT_DIST
 soil.types<-c("soils.17sand.13clay","soils.32sand.34clay","soils.58sand.10clay")
