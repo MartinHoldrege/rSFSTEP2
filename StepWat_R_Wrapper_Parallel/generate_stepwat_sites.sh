@@ -5,7 +5,7 @@ siteid=(1 2 3 4 5 6 7 8 9 10) #add site ids here
 cd StepWat_R_Wrapper_Parallel
 module load git/2.9.2
 wait
-git clone https://github.com/Burke-Lauenroth-Lab/StepWat.git --branch SoilWat31_drs --single-branch StepWatv31 
+git clone https://github.com/Burke-Lauenroth-Lab/StepWat.git --branch SoilWat31_drs_annual --single-branch StepWatv31 
 wait
 cd StepWatv31
 git submodule update --init --recursive
