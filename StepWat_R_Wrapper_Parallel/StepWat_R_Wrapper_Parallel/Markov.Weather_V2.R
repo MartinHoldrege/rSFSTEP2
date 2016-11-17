@@ -82,7 +82,7 @@ registerDoParallel(proc_count)
         
           
         
-      for ( i in 366) #loop through all possible days in all years
+        for ( i in 1:366) #loop through all possible days in all years
         {
           #probability of wet|wet is the number of wet given wet years for that day divided by the number
           #of total wet days from the previous day
