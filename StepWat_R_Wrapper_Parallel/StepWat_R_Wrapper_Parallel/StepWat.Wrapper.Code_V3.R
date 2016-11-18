@@ -13,6 +13,16 @@ setwd(directory)
 s<-site[1]
 #for (g in 1:length(GCM)) { # loop through all the GCMs
   foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
+      setwd(dist.directory)
+      if(species!="species")
+      {
+          system(paste0("cp ",species," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Input"))
+          setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Input"))
+          system("rm species.in")
+          system(paste0("mv ",species," species.in"))
+      }
+      setwd(directory)      
+      
     for(soil in soil.types){
       setwd(dist.directory)
       soil.type.name<-paste0(soil,".in")

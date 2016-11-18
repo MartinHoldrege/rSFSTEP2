@@ -47,7 +47,12 @@ output.file<-paste(source.dir,"SoilWatOutput.R", sep="")
 #Start timing for timing statistics
 tick_on<-proc.time()
 
-site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10) 
+site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10)
+
+species1<-c(21,80,144,150,244,291,374,409,411,542,320,384,391,413,501,592,687,733,758,761,781,787,798,816,824,828,866,868,869,876,879)
+species2<-c(609,676,729,730,778,792,809,818,826,829,854,857,862)
+species3<-c(163,211,221,230,264,283,341,354,365,380,387,497,524,543,566,581,608,175,178,217,319,335,369,498,595,659,4,7,14,15,23,79)
+species<-"species"
 
 ################################ Weather Query Code ###################################
 
@@ -145,6 +150,14 @@ source(markov.file)
 ############### Run Wrapper Code ############################################################
 
 ########### Set parameters ###############################################
+
+
+if(is.element(sites,species1))
+{
+    species<-"species1.in"
+} else if (is.element(sites,species2)) {
+    species<-"species2.in"
+} else {	species<-"species3.in" }
 
 site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10) 
 
