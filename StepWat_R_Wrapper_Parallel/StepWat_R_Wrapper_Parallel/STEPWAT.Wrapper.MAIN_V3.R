@@ -26,7 +26,7 @@ setwd(source.dir)
 #Database location
 database<-paste(source.dir,"dbWeatherData_Sagebrush_KP.sqlite", sep="")
 
-#Database (to write to) location
+#Database (to write to) location, needs to be edited accordingly
 #output_database<-"/home/ksodhi/SoilWatOutput.sqlite" 
   
 #Query script (Loads data from the database into a list)
@@ -49,6 +49,9 @@ tick_on<-proc.time()
 
 site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10)
 
+#This code is used in the circumstance when you want to use different species.in parameters for different sites
+#In this case, we have three different species.in files which are found in the STEPWAT_DIST folder. The below strings
+#correspond to which sites we want to use each species.in file for. 
 species1<-c(21,80,144,150,244,291,374,409,411,542,320,384,391,413,501,592,687,733,758,761,781,787,798,816,824,828,866,868,869,876,879)
 species2<-c(609,676,729,730,778,792,809,818,826,829,854,857,862)
 species3<-c(163,211,221,230,264,283,341,354,365,380,387,497,524,543,566,581,608,175,178,217,319,335,369,498,595,659,4,7,14,15,23,79)
@@ -93,6 +96,8 @@ source(query.file)
 ############################### End Weather Query Code ################################
 
 ############################### Weather Assembly Code #################################
+
+#This script assembles the necessary weather data that was extracted during the weather query step
 site<-c(sitefolderid)
 # Set output directories
 weather.dir<-source.dir
@@ -134,7 +139,8 @@ source(assemble.file)
 ############################### End Weather Assembly Code ################################
 
 ############################# MARKOV Weather Generator Code ##############################
-
+#This code generates two site-specific files necessary for the Markov Weather Generator built into STEPWAT. mk_covar.in
+#and mk_prob.in. These files are based on the weather data for each site that is extracted during the previous step.
 site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10) 
 
 #Change directory to output directory of assemble script
@@ -151,7 +157,7 @@ source(markov.file)
 
 ########### Set parameters ###############################################
 
-
+#This code is utilized if you want to use different species parameters for different sites
 if(is.element(sites,species1))
 {
     species<-"species1.in"
@@ -165,8 +171,7 @@ site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10)
 directory<-source.dir
 
 #s - select which site to run either all (say 1-10 as shown below) or only a couple '<-c(1,5)'
-#Set GCM
-
+#Set GCMs
 GCM<-c("Current","CanESM2","CESM1-CAM5","CSIRO-Mk3-6-0","EC-EARTH","FGOALS-g2","FGOALS-s2","GFDL-CM3","GISS-E2-R","HadGEM2-CC","HadGEM2-ES","inmcm4", "IPSL-CM5A-MR", "MIROC5", "MIROC-ESM", "MPI-ESM-MR", "MRI-CGCM3")
 #Set RCP
 RCP<-c("RCP45","RCP85")
@@ -185,14 +190,14 @@ dist.freq<-c(0,2,10,50) # if not using disturbance but are using grazing set 'di
 #graz.freq<-c(1,0) # if only using distrubance and not grazing set 'graz.freq<-0'
 graz.freq<-c(1)
 
-#Grazing intensity
+#Grazing intensity, these correspond to the three file options in the STEPWAT_DIST folder 
 graz_intensity<-c("lowgraz","modgraz","highgraz")
 
-#Soil types are specified here, in accordance with the files added to STEPWAT_DIST
+#Soil types are specified here, in accordance with the files added to STEPWAT_DIST folder
 soil.types<-c("soils.17sand.13clay","soils.32sand.34clay","soils.58sand.10clay")
 
 
-#Source the code in wrapper script
+#Source the code in wrapper script, run the code!
 source(wrapper.file)
 
 ################ End Wrapper Code ########################################################
