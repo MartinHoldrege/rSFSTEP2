@@ -8,7 +8,7 @@
 
 #Set Max Wall Time
 #days-hours:minutes:seconds
-#SBATCH --time=100:00:00
+#SBATCH --time=168:00:00
 
 #Specify Resources Needed
 #SBATCH --nodes=1
