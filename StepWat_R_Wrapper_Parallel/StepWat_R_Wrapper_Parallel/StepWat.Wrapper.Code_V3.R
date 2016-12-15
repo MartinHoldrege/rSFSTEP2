@@ -193,8 +193,8 @@ s<-site[1]
                     setwd("Output")
                     
                     # identify the name of the biomass output file
-                    name.bmass.csv<-paste("bmassavg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
-                    name.mort.csv<-paste("mortavg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                    name.bmass.csv<-paste("bmassavg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                    name.mort.csv<-paste("mortavg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
                     name.stdebug.sqlite<-paste("stdebug.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"sqlite3",sep=".")
                     
                     # rename the bmassavg.csv
