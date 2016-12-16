@@ -40,18 +40,40 @@ total<-total[order(total$YEAR),]
 
 total$site<-sites[1]
 total$GCM<-GCM[g]
+
+if(GCM[g]=="Current")
+{
 total$soilType<-soil
 total$dist_flag<-dist.graz.flag
-if(dist.graz.flag==T)
-{
-total$dist_freq<-dst
-total$graz_freq<-graz.freq
-total$intensity<-intensity
+    if(dist.graz.flag==T)
+    {
+        total$dist_freq<-dst
+        total$graz_freq<-graz.freq
+        total$intensity<-intensity
+    }else
+    {
+        total$dist_freq<-NA
+        total$graz_freq<-NA
+        total$intensity<-NA
+    }
 }else
 {
+total$soilType<-soil
+total$RCP<-r
+total$YEARS<-y
+total$dist_flag<-dist.graz.flag
+
+    if(dist.graz.flag==T)
+    {
+        total$dist_freq<-dst
+        total$graz_freq<-graz.freq
+        total$intensity<-intensity
+    }else
+    {
     total$dist_freq<-NA
     total$graz_freq<-NA
     total$intensity<-NA
+    }
 }
 
 #dbWriteTable(db, "total_dy", total, append=T)
@@ -88,18 +110,40 @@ total<-total[order(total$YEAR),]
 
 total$site<-sites[1]
 total$GCM<-GCM[g]
+
+if(GCM[g]=="Current")
+{
 total$soilType<-soil
 total$dist_flag<-dist.graz.flag
-if(dist.graz.flag==T)
-{
-  total$dist_freq<-dst
-  total$graz_freq<-graz.freq
-  total$intensity<-intensity
+    if(dist.graz.flag==T)
+    {
+        total$dist_freq<-dst
+        total$graz_freq<-graz.freq
+        total$intensity<-intensity
+    }else
+    {
+        total$dist_freq<-NA
+        total$graz_freq<-NA
+        total$intensity<-NA
+    }
 }else
 {
-  total$dist_freq<-NA
-  total$graz_freq<-NA
-  total$intensity<-NA
+total$soilType<-soil
+total$RCP<-r
+total$YEARS<-y
+total$dist_flag<-dist.graz.flag
+
+    if(dist.graz.flag==T)
+    {
+        total$dist_freq<-dst
+        total$graz_freq<-graz.freq
+        total$intensity<-intensity
+    }else
+    {
+    total$dist_freq<-NA
+    total$graz_freq<-NA
+    total$intensity<-NA
+    }
 }
 
 #dbWriteTable(db, "total_wk", total, append=T)
@@ -134,20 +178,41 @@ total<-total[order(total$YEAR),]
 
 total$site<-sites[1]
 total$GCM<-GCM[g]
+
+if(GCM[g]=="Current")
+{
 total$soilType<-soil
 total$dist_flag<-dist.graz.flag
-if(dist.graz.flag==T)
-{
-  total$dist_freq<-dst
-  total$graz_freq<-graz.freq
-  total$intensity<-intensity
+    if(dist.graz.flag==T)
+    {
+        total$dist_freq<-dst
+        total$graz_freq<-graz.freq
+        total$intensity<-intensity
+    }else
+    {
+        total$dist_freq<-NA
+        total$graz_freq<-NA
+        total$intensity<-NA
+    }
 }else
 {
-  total$dist_freq<-NA
-  total$graz_freq<-NA
-  total$intensity<-NA
-}
+total$soilType<-soil
+total$RCP<-r
+total$YEARS<-y
+total$dist_flag<-dist.graz.flag
 
+    if(dist.graz.flag==T)
+    {
+        total$dist_freq<-dst
+        total$graz_freq<-graz.freq
+        total$intensity<-intensity
+    }else
+    {
+    total$dist_freq<-NA
+    total$graz_freq<-NA
+    total$intensity<-NA
+    }
+}
 #dbWriteTable(db, "total_mo", total, append=T)
 
 write.table(total, "total_mo.csv",sep=",",row.names=F,quote = F,append = T)
@@ -178,18 +243,40 @@ total<-total[order(total$YEAR),]
 
 total$site<-sites[1]
 total$GCM<-GCM[g]
+
+if(GCM[g]=="Current")
+{
 total$soilType<-soil
 total$dist_flag<-dist.graz.flag
-if(dist.graz.flag==T)
-{
-  total$dist_freq<-dst
-  total$graz_freq<-graz.freq
-  total$intensity<-intensity
+    if(dist.graz.flag==T)
+    {
+        total$dist_freq<-dst
+        total$graz_freq<-graz.freq
+        total$intensity<-intensity
+    }else
+    {
+        total$dist_freq<-NA
+        total$graz_freq<-NA
+        total$intensity<-NA
+    }
 }else
 {
-  total$dist_freq<-NA
-  total$graz_freq<-NA
-  total$intensity<-NA
+total$soilType<-soil
+total$RCP<-r
+total$YEARS<-y
+total$dist_flag<-dist.graz.flag
+
+    if(dist.graz.flag==T)
+    {
+        total$dist_freq<-dst
+        total$graz_freq<-graz.freq
+        total$intensity<-intensity
+    }else
+    {
+    total$dist_freq<-NA
+    total$graz_freq<-NA
+    total$intensity<-NA
+    }
 }
 
 #dbWriteTable(db, "total_yr", total, append=T)
@@ -202,34 +289,78 @@ tempmort<-data.frame(read.csv(name.mort.csv))
 
 tempbmass$site<-sites[1]
 tempbmass$GCM<-GCM[g]
-tempbmass$soilType<-soil
-tempbmass$dist_flag<-dist.graz.flag
-if(dist.graz.flag==T)
+
+if(GCM[g]=="Current")
 {
-  tempbmass$dist_freq<-dst
-  tempbmass$graz_freq<-graz.freq
-  tempbmass$intensity<-intensity
+   tempbmass$soilType<-soil
+    tempbmass$dist_flag<-dist.graz.flag
+    if(dist.graz.flag==T)
+    {
+        tempbmass$dist_freq<-dst
+        tempbmass$graz_freq<-graz.freq
+        tempbmass$intensity<-intensity
+    }else
+    {
+        tempbmass$dist_freq<-NA
+        tempbmass$graz_freq<-NA
+        tempbmass$intensity<-NA
+    }
 }else
 {
-  tempbmass$dist_freq<-NA
-  tempbmass$graz_freq<-NA
-  tempbmass$intensity<-NA
+   tempbmass$soilType<-soil
+    tempbmass$RCP<-r
+    tempbmass$YEARS<-y
+    tempbmass$dist_flag<-dist.graz.flag
+    
+    if(dist.graz.flag==T)
+    {
+        tempbmass$dist_freq<-dst
+        tempbmass$graz_freq<-graz.freq
+        tempbmass$intensity<-intensity
+    }else
+    {
+        tempbmass$dist_freq<-NA
+        tempbmass$graz_freq<-NA
+        tempbmass$intensity<-NA
+    }
 }
 
 tempmort$site<-sites[1]
 tempmort$GCM<-GCM[g]
-tempmort$soilType<-soil
-tempmort$dist_flag<-dist.graz.flag
-if(dist.graz.flag==T)
+
+if(GCM[g]=="Current")
 {
-  tempmort$dist_freq<-dst
-  tempmort$graz_freq<-graz.freq
-  tempmort$intensity<-intensity
+    tempmort$soilType<-soil
+    tempmort$dist_flag<-dist.graz.flag
+    if(dist.graz.flag==T)
+    {
+        tempmort$dist_freq<-dst
+        tempmort$graz_freq<-graz.freq
+        tempmort$intensity<-intensity
+    }else
+    {
+        tempmort$dist_freq<-NA
+        tempmort$graz_freq<-NA
+        tempmort$intensity<-NA
+    }
 }else
 {
-  tempmort$dist_freq<-NA
-  tempmort$graz_freq<-NA
-  tempmort$intensity<-NA
+    tempmort$soilType<-soil
+    tempmort$RCP<-r
+    tempmort$YEARS<-y
+    tempmort$dist_flag<-dist.graz.flag
+    
+    if(dist.graz.flag==T)
+    {
+        tempmort$dist_freq<-dst
+        tempmort$graz_freq<-graz.freq
+        tempmort$intensity<-intensity
+    }else
+    {
+        tempmort$dist_freq<-NA
+        tempmort$graz_freq<-NA
+        tempmort$intensity<-NA
+    }
 }
 
 write.table(tempbmass, "total_bmass.csv",sep=",",row.names=F,quote = F,append=T)
