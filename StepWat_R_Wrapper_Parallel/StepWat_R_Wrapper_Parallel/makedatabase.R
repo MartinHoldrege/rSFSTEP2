@@ -37,15 +37,66 @@ setwd(source.dir)
     temp<-data.frame(read.csv("total_mo.csv",header=TRUE, sep=","))
     dbWriteTable(db, "total_mo", temp, append=T)
     
-    setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
-    temp<-data.frame(read.csv("total_yr.csv",header=TRUE, sep=","))
-    dbWriteTable(db, "total_yr", temp, append=T)
-    
     setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Output",sep=""))
-    temp<-data.frame(read.csv("total_bmass.csv",header=TRUE, sep=","))
-    dbWriteTable(db, "total_bmass", temp, append=T)
-    temp<-data.frame(read.csv("total_mort.csv",header=TRUE, sep=","))
-    dbWriteTable(db, "total_mort", temp, append=T)
+    
+    #read in csv file, and rename headers so they are correct
+    total_bmass=read.csv('total_bmass.csv',header=T)
+    new.names=colnames(total_bmass[1:83])[-1]
+    names(total_bmass)[1:82]=new.names
+    
+    #write grep function to remove extra column headers that appear throughout spreadsheet
+    total_bmass=total_bmass[grep("Year",total_bmass$Disturbs,invert=T),]
+    
+    #read in mort file and also remove extra column headers
+    total_mort=read.csv('total_mort.csv',header=T)
+    total_mort=total_mort[grep("Age",total_mort$Age,invert=T),]
+    
+    setwd(directory)
+    
+    #change working directory to where SOILWAT output files are
+    setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
+    total_yr=read.csv('total_yr.csv',header=T)
+    total_yr=total_yr[grep("YEAR",total_yr$YEAR,invert=T),]
+    
+    if(g==1)
+    {
+        
+        total_bmass=total_bmass[,c(1:82,84:90)]
+        
+        soils.unique=length(unique(total_bmass$soilType))
+        dist.unique=length(unique(total_bmass$dist_freq))
+        graz.unique=length(unique(total_bmass$intensity))
+        
+        total_bmass$Year=rep(c(1:300),(soils.unique*dist.unique*graz.unique))
+        
+        total_bmass$RCP=rep(NA,length(total_bmass$site))
+        total_bmass$YEARS=rep(NA, length(total_bmass$site))
+        
+        total_mort$RCP=rep(NA,length(total_mort$site))
+        total_mort$YEARS=rep(NA, length(total_mort$site))
+        
+        total_yr$RCP=rep(NA,length(total_yr$site))
+        total_yr$YEARS=rep(NA, length(total_yr$site))
+        
+    }
+    
+    else{
+        
+        total_bmass=total_bmass[,c(1:82,84:92)]
+        
+        soils.unique=length(unique(total_bmass$soilType))
+        dist.unique=length(unique(total_bmass$dist_freq))
+        graz.unique=length(unique(total_bmass$intensity))
+        RCP.unique=length(unique(total_bmass$RCP))
+        Years.unique=length(unique(total_bmass$YEARS))
+        
+        total_bmass$Year=rep(c(1:300),(soils.unique*dist.unique*graz.unique*RCP.unique*Years.unique))
+    }
+    
+    dbWriteTable(db, "total_yr",total_yr, append=T)
+    dbWriteTable(db, "total_bmass", total_bmass, append=T)
+    dbWriteTable(db, "total_mort", total_mort, append=T)
+    
   }
   setwd(source.dir)
 
