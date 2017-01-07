@@ -69,14 +69,14 @@ setwd(source.dir)
         
         total_bmass$Year=rep(c(1:300),(soils.unique*dist.unique*graz.unique))
         
-        total_bmass$RCP=rep(NA,length(total_bmass$site))
-        total_bmass$YEARS=rep(NA, length(total_bmass$site))
+        total_bmass$RCP=rep("NONE",length(total_bmass$site))
+        total_bmass$YEARS=rep("NONE", length(total_bmass$site))
         
-        total_mort$RCP=rep(NA,length(total_mort$site))
-        total_mort$YEARS=rep(NA, length(total_mort$site))
+        total_mort$RCP=rep("NONE",length(total_mort$site))
+        total_mort$YEARS=rep("NONE", length(total_mort$site))
         
-        total_yr$RCP=rep(NA,length(total_yr$site))
-        total_yr$YEARS=rep(NA, length(total_yr$site))
+        total_yr$RCP=rep("NONE",length(total_yr$site))
+        total_yr$YEARS=rep("NONE", length(total_yr$site))
         
     }
     
