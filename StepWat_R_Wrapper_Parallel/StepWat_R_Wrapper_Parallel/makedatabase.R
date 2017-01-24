@@ -91,6 +91,10 @@ setwd(source.dir)
         Years.unique=length(unique(total_bmass$YEARS))
         
         total_bmass$Year=rep(c(1:300),(soils.unique*dist.unique*graz.unique*RCP.unique*Years.unique))
+   		total_bmass=total_bmass[,c(1:85,88:92,86:87)]
+    
+    	total_yr=total_yr[,c(1:190,193:196,191:192)]
+		total_mort=total_mort[,c(1:32,35:38,33:34)]
     }
     
     dbWriteTable(db, "total_yr",total_yr, append=T)
