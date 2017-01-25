@@ -10,7 +10,7 @@ tickon<-proc.time()
 
 #Add number of sites and GCMs
 s<-sitefolderid
-GCM<-17
+GCM<-14
 
 source.dir<-"nopath/"
 
