@@ -4,7 +4,7 @@
 #SBATCH --job-name=stepwatwrapper
 
 #Assign Account Name
-#SBATCH --account=arccinterns
+#SBATCH --account=sagebrush-steppehab
 
 #Set Max Wall Time
 #days-hours:minutes:seconds
