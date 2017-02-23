@@ -11,3 +11,5 @@ git remote set-url origin https://github.com/Burke-Lauenroth-Lab/rSFSTEP2.git
 
 If using GitHub Desktop you may want to remove existing clones, update the local clones via command line, re-start GitHub Desktop and add
 a new clone of the updated repository.
+
+__Question (drs)__: I don't know the code enough, but it appears that some of the path names in the shell scripts ought to be updated as well to reflect the renamed repository?
