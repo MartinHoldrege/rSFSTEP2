@@ -14,7 +14,7 @@ GCM<-14
 
 source.dir<-"nopath/"
 
-#Add output databse
+#Add output database
 output_database<-paste(source.dir,"Output_site_",notassigned,".sqlite",sep="")
 db <- dbConnect(SQLite(), output_database)
 
@@ -39,10 +39,9 @@ setwd(source.dir)
     
     setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Output",sep=""))
     
-    #read in csv file, and rename headers so they are correct
+    #read in csv file and remove empty column at the end
     total_bmass=read.csv('total_bmass.csv',header=T)
-    new.names=colnames(total_bmass[1:83])[-1]
-    names(total_bmass)[1:82]=new.names
+	total_bmass$X=NULL
     
     #write grep function to remove extra column headers that appear throughout spreadsheet
     total_bmass=total_bmass[grep("Year",total_bmass$Disturbs,invert=T),]
@@ -59,16 +58,11 @@ setwd(source.dir)
     total_yr=total_yr[grep("YEAR",total_yr$YEAR,invert=T),]
     
     if(g==1)
-    {
-        
-        total_bmass=total_bmass[,c(1:82,84:90)]
-        
+    {     
         soils.unique=length(unique(total_bmass$soilType))
         dist.unique=length(unique(total_bmass$dist_freq))
         graz.unique=length(unique(total_bmass$intensity))
-        
-        total_bmass$Year=rep(c(1:300),(soils.unique*dist.unique*graz.unique))
-        
+               
         total_bmass$RCP=rep("NONE",length(total_bmass$site))
         total_bmass$YEARS=rep("NONE", length(total_bmass$site))
         
@@ -81,17 +75,14 @@ setwd(source.dir)
     }
     
     else{
-        
-        total_bmass=total_bmass[,c(1:82,84:92)]
-        
+                
         soils.unique=length(unique(total_bmass$soilType))
         dist.unique=length(unique(total_bmass$dist_freq))
         graz.unique=length(unique(total_bmass$intensity))
         RCP.unique=length(unique(total_bmass$RCP))
         Years.unique=length(unique(total_bmass$YEARS))
         
-        total_bmass$Year=rep(c(1:300),(soils.unique*dist.unique*graz.unique*RCP.unique*Years.unique))
-   		total_bmass=total_bmass[,c(1:85,88:92,86:87)]
+   		total_bmass=total_bmass[,c(1:86,89:92,87:88)]
     
     	total_yr=total_yr[,c(1:190,193:196,191:192)]
 		total_mort=total_mort[,c(1:32,35:38,33:34)]
