@@ -2,7 +2,7 @@ Following are the steps to run the wrapper on MT Moran, and get the results in a
 
 Note: The method to run a shell script, is present as a comment in the respective script. 
 
-Note: Make sure all the scripts are executable (i.e. given executable permissions) prior to following the steps below.
+Note: Make sure all the scripts are executable (i.e. given executable permissions) prior to following the steps below: chmod +x nameoffile
 
 1. Copy the input database to the StepWat_R_Wrapper_Parallel folder.
 2. Add site ids, you wish to run the wrapper on, to the siteid variable (third line from top) in the generate_stepwat_sites.sh script. Site ids 1-10 are already present, as examples.
