@@ -25,18 +25,23 @@ setwd(source.dir)
   setwd(directory)
   for (g in 1:GCM)
   {
-    setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
-    temp<-data.frame(read.csv("total_dy.csv",header=TRUE, sep=","))
-    dbWriteTable(db, "total_dy", temp, append=T)
+    #default is to not put daily, monthly, and weekly output into SQLite database. In most cases, we will not save weekly
+    #and monthly output. Daily output is currently too large to drop into SQLite database. Once we have added aggregation
+    #of the daily output to rSFSTEP2, we will want daily output in the SQLite database as well.
     
-    setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
-    temp<-data.frame(read.csv("total_wk.csv",header=TRUE, sep=","))
-    dbWriteTable(db, "total_wk", temp, append=T)
+    #setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
+    #temp<-data.frame(read.csv("total_dy.csv",header=TRUE, sep=","))
+    #dbWriteTable(db, "total_dy", temp, append=T)
     
-    setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
-    temp<-data.frame(read.csv("total_mo.csv",header=TRUE, sep=","))
-    dbWriteTable(db, "total_mo", temp, append=T)
+    #setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
+    #temp<-data.frame(read.csv("total_wk.csv",header=TRUE, sep=","))
+    #dbWriteTable(db, "total_wk", temp, append=T)
     
+    #setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
+    #temp<-data.frame(read.csv("total_mo.csv",header=TRUE, sep=","))
+    #dbWriteTable(db, "total_mo", temp, append=T)
+    
+    #set working directory to where the biomass and mortality output files are
     setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Output",sep=""))
     
     #read in csv file and remove empty column at the end
@@ -57,12 +62,9 @@ setwd(source.dir)
     total_yr=read.csv('total_yr.csv',header=T)
     total_yr=total_yr[grep("YEAR",total_yr$YEAR,invert=T),]
     
+    #adding RCP and YEARS columns to current total_bmass file
     if(g==1)
     {     
-        soils.unique=length(unique(total_bmass$soilType))
-        dist.unique=length(unique(total_bmass$dist_freq))
-        graz.unique=length(unique(total_bmass$intensity))
-               
         total_bmass$RCP=rep("NONE",length(total_bmass$site))
         total_bmass$YEARS=rep("NONE", length(total_bmass$site))
         
@@ -75,19 +77,15 @@ setwd(source.dir)
     }
     
     else{
-                
-        soils.unique=length(unique(total_bmass$soilType))
-        dist.unique=length(unique(total_bmass$dist_freq))
-        graz.unique=length(unique(total_bmass$intensity))
-        RCP.unique=length(unique(total_bmass$RCP))
-        Years.unique=length(unique(total_bmass$YEARS))
-        
+               
+        #if GCM is not current, then reorder the columns so it matches current total files
    		total_bmass=total_bmass[,c(1:86,89:92,87:88)]
     
     	total_yr=total_yr[,c(1:190,193:196,191:192)]
 		total_mort=total_mort[,c(1:32,35:38,33:34)]
     }
     
+    #write all tables to the SQLite database
     dbWriteTable(db, "total_yr",total_yr, append=T)
     dbWriteTable(db, "total_bmass", total_bmass, append=T)
     dbWriteTable(db, "total_mort", total_mort, append=T)
