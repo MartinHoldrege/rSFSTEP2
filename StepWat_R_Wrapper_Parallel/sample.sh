@@ -21,5 +21,5 @@ module load intel/16.3
 module load R/3.2.5
 
 srun Rscript notassigned
-echo "Site noid done!" >> /project/sagebrush-steppehab/ksodhi/jobs.txt
+echo "Site noid done!" >> /project/sagebrush-steppehab/kpalmqu1/jobs.txt
 

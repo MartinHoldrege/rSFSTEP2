@@ -16,8 +16,8 @@ s<-site[1]
       setwd(dist.directory)
       if(species!="species")
       {
-          system(paste0("cp ",species," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Input"))
-          setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Input"))
+          system(paste0("cp ",species," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input"))
+          setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input"))
           system("rm species.in")
           system(paste0("mv ",species," species.in"))
       }
@@ -26,12 +26,12 @@ s<-site[1]
     for(soil in soil.types){
       setwd(dist.directory)
       soil.type.name<-paste0(soil,".in")
-      system(paste0("cp ",soil.type.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Input/sxw/Input"))
+      system(paste0("cp ",soil.type.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input"))
       system(paste0("cp ",soil.type.name," ",directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Input"))
       setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Input"))
       system("rm soils_v30.in")
       system(paste0("mv ",soil.type.name," soils_v30.in"))
-      setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Input/sxw/Input"))
+      setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input"))
       system("rm soils_v30.in")
       system(paste0("mv ",soil.type.name," soils_v30.in"))
       
@@ -44,7 +44,7 @@ s<-site[1]
         weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_",GCM[g],sep="")
         
         # identify the directory the weather will be pasted into        
-        weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
+        weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
         weather.dir3<-paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Input/data_39.0625_-119.4375/",sep="")
         
         # copy the weather data into the randomdata folder
@@ -73,15 +73,15 @@ s<-site[1]
               for(intensity in graz_intensity ){
                 setwd(paste0(dist.directory))
                 dist.graz.name<-paste0("rgroup.freq",dst,".graz",grz,".",intensity,".in")
-                system(paste0("cp ",dist.graz.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Input/"))
+                system(paste0("cp ",dist.graz.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))
                 
-                setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Input/"))
+                setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))
                 system("rm rgroup.in")
                 system(paste0("mv ",dist.graz.name," rgroup.in"))
                 
                 
                 # change directory to the executable directory
-                setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs",sep=""))
+                setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
                 # run stepwat
                 system("./stepwat -f  files.in -s -o ../../sw_src/testing/files_step_soilwat.in")
                 
@@ -100,7 +100,7 @@ s<-site[1]
                 
                 setwd(paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
                 source(output.file,local = TRUE)
-                setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Output",sep=""))
+                setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
               }}
             
             
@@ -112,7 +112,7 @@ s<-site[1]
         else if (dist.graz.flag ==F) {
           
           # change directory to the executable directory
-          setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs",sep=""))
+          setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
           # run stepwat
           system("./stepwat    -f  files.in -s -o ../../sw_src/testing/files_step_soilwat.in")
           #system("./stepwat    -f  files.in -s -o /home/ksodhi/KyleProject/Stepwat.Site.1/sw_src/testing/files_step_soilwat.in")
@@ -132,7 +132,7 @@ s<-site[1]
           system(paste("mv stdebug.sqlite3 ",name.stdebug.sqlite,sep=""))
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
           source(output.file,local = TRUE)
-          setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Output",sep=""))
+          setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
         }
         # for all other GMC/year/RCP read the weather data into randomdata    
       } else if (GCM[g]!="Current"){
@@ -149,7 +149,7 @@ s<-site[1]
             
             
             # identify the directory the weather will be pasted into        
-            weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
+            weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
             weather.dir3<-paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Input/data_39.0625_-119.4375/",sep="")
             
             # copy the weather data into the randomdata folder
@@ -177,15 +177,15 @@ s<-site[1]
                   for(intensity in graz_intensity ){
                     setwd(paste0(dist.directory))
                     dist.graz.name<-paste0("rgroup.freq",dst,".graz",grz,".",intensity,".in")
-                    system(paste0("cp ",dist.graz.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Input/"))
+                    system(paste0("cp ",dist.graz.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))
                     
-                    setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Input/"))
+                    setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))
                     system("rm rgroup.in")
                     system(paste0("mv ",dist.graz.name," rgroup.in"))
                     
                     
                     # change directory to the executable directory
-                    setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs",sep=""))
+                    setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
                     # run stepwat
                     system("./stepwat    -f  files.in -s -o ../../sw_src/testing/files_step_soilwat.in")
                     
@@ -204,7 +204,7 @@ s<-site[1]
                     
                     setwd(paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
                     source(output.file,local = TRUE)
-                    setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Output",sep=""))
+                    setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
                   }}
                 
                 
@@ -216,7 +216,7 @@ s<-site[1]
             else if (dist.graz.flag ==F) {
               
               # change directory to the executable directory
-              setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs",sep=""))
+              setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
               # run stepwat
               system("./stepwat    -f  files.in -s -o ../../sw_src/testing/files_step_soilwat.in")
               
@@ -236,7 +236,7 @@ s<-site[1]
               
               setwd(paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
               source(output.file,local = TRUE)
-              setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Output",sep=""))
+              setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
             }
             
             print(paste("RCP ",r," DONE",sep=""))

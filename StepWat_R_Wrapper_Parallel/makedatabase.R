@@ -42,7 +42,7 @@ setwd(source.dir)
     #dbWriteTable(db, "total_mo", temp, append=T)
     
     #set working directory to where the biomass and mortality output files are
-    setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/testing.sagebrush.MT_drs/Stepwat_Inputs/Output",sep=""))
+    setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
     
     #read in csv file and remove empty column at the end
     total_bmass=read.csv('total_bmass.csv',header=T)
