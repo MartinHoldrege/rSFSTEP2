@@ -93,7 +93,7 @@ write.table(total, "total_dy.csv",sep=",",row.names=F,quote = F,append = T)
 
 #total<-LL[[1]]
 
-#for(j in 2:length(dy_files))
+#for(j in 2:length(wk_files))
 #{
 #  total<-merge(total,LL[[j]],by=c("YEAR","WEEK"))
 #}
@@ -157,7 +157,7 @@ write.table(total, "total_dy.csv",sep=",",row.names=F,quote = F,append = T)
 
 #total<-LL[[1]]
 
-#for(j in 2:length(dy_files))
+#for(j in 2:length(mo_files))
 #{
 #  total<-merge(total,LL[[j]],by=c("YEAR","MONTH"))
 #}
@@ -219,7 +219,7 @@ for(j in 1:length(yr_files))
 
 total<-LL[[1]]
 
-for(j in 2:length(dy_files))
+for(j in 2:length(yr_files))
 {
   total<-merge(total,LL[[j]],by=c("YEAR"))
 }
