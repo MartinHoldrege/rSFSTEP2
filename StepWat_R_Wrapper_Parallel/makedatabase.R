@@ -79,7 +79,7 @@ setwd(source.dir)
     else{
                
         #if GCM is not current, then reorder the columns so it matches current total files
-   		total_bmass=total_bmass[,c(1:86,89:92,87:88)]
+   		total_bmass=total_bmass[,c(1:96,99:102,97:98)]
     
     	total_yr=total_yr[,c(1:190,193:196,191:192)]
 		total_mort=total_mort[,c(1:32,35:38,33:34)]

@@ -1,8 +1,8 @@
 #The Burke-Lauenroth Laboratory 
 #STEPWAT R Wrapper
-#Wrapper script for STEPWAT Wrapper
-#Script to to loop through all of the sites and GCM/PERIOD/RCP combinations
+#Wrapper script to to loop through and run STEPWAT2 for all of the sites and GCM/PERIOD/RCP combinations
 
+#Load libraries
 library(doParallel)
 registerDoParallel(proc_count)
 library(plyr)
@@ -11,9 +11,11 @@ library(RSQLite)
 setwd(directory)
 
 s<-site[1]
-#for (g in 1:length(GCM)) { # loop through all the GCMs
   foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
+      
       setwd(dist.directory)
+      
+      #Copy in the relevant species.in file for each site, as specified in the STEPWAT.Wrapper.MAIN_V3.R
       if(species!="species")
       {
           system(paste0("cp ",species," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input"))
@@ -22,8 +24,9 @@ s<-site[1]
           system(paste0("mv ",species," species.in"))
       }
       setwd(directory)      
-      
-    for(soil in soil.types){
+    
+   	 #Copy in the soils.in file that is specified by the user in STEPWAT_DIST
+     for(soil in soil.types){
       setwd(dist.directory)
       soil.type.name<-paste0(soil,".in")
       system(paste0("cp ",soil.type.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input"))
@@ -35,38 +38,47 @@ s<-site[1]
       system("rm soils_v30.in")
       system(paste0("mv ",soil.type.name," soils_v30.in"))
       
-      # Go to the weather directory
+      #Go to the weather directory
       setwd(paste(assembly_output,"Site_",s,sep=""))
       
-      # if on the "Current" GCM read the weather data into randomdata
+      #If climate conditions = "Current", copy the current weather data files into the randomdata folder
       if (GCM[g]=="Current") {
         setwd(paste("Site_",s,"_",GCM[g],sep=""))
         weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_",GCM[g],sep="")
         
-        # identify the directory the weather will be pasted into        
+        #Identify the directory the weather will be pasted into        
         weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
         weather.dir3<-paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Input/data_39.0625_-119.4375/",sep="")
         
-        # copy the weather data into the randomdata folder
-        if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
-          # copy the weather data into the randomdata folder
-          system(paste("cp -a ",weath.read,"/. ",weather.dir2,sep=""))
-        } 
+        #Copy the weather data into the randomdata folder, commenting out creation of weather.in files as default so rSFSTEP2
+        #uses only weather data generated from the markov weather generator but retain this code if one wants to create and copy 30 years of 
+        #weather.in files into the weather folder
+        #if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
+          #Copy the weather data into the randomdata folder
+          #system(paste("cp -a ",weath.read,"/. ",weather.dir2,sep=""))
+        #} 
+        
+        #Paste in the site-specific markov weather generator files into the appropriate folder
         if (TYPE2=="markov") {
           system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir2,sep=""))
           system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir2,sep=""))
         }
         
-        # copy the weather data into the data_39.0625_-199.4375 folder
-        if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
-          # copy the weather data into the data_39.0625_-199.4375 folder
-          system(paste("cp -a ",weath.read,"/. ",weather.dir3,sep=""))
-        } 
+        #Copy the weather data into the data_39.0625_-199.4375 folder, commenting out creation of weather.in files as default so rSFSTEP2
+        #uses only weather data generated from the markov weather generator but retain this code if one wants to create and copy 30 years of 
+        #weather.in files into the weather folder
+        #if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
+        #Copy the weather data into the data_39.0625_-199.4375 folder
+        #system(paste("cp -a ",weath.read,"/. ",weather.dir3,sep=""))
+        #} 
+        
+        #Paste in the site-specific markov weather generator files into the appropriate folder
         if (TYPE2=="markov") {
           system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir3,sep=""))
           system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir3,sep=""))
         }
         
+        #If disturbances are turned on, loop through and run STEPWAT2 for all disturbance combinations (grazing X fire) for current conditions
         if (dist.graz.flag == T) {
           for (dst in dist.freq) {
             for (grz in graz.freq) {
@@ -78,22 +90,21 @@ s<-site[1]
                 setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))
                 system("rm rgroup.in")
                 system(paste0("mv ",dist.graz.name," rgroup.in"))
-                
-                
-                # change directory to the executable directory
+                                
+                #Change directory to the executable directory
                 setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
-                # run stepwat
+                #Run stepwat2
                 system("./stepwat -f  files.in -s -o ../../sw_src/testing/files_step_soilwat.in")
                 
-                # change directory to "Output" folder
+                #Change directory to "Output" folder
                 setwd("Output")
                 
-                # identify the name of the biomass output file
+                #Identify the name of the biomass output file
                 name.bmass.csv<-paste("bmassavg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
                 name.mort.csv<-paste("mortavg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
                 name.stdebug.sqlite<-paste("stdebug.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"sqlite3",sep=".")
                 
-                # rename the bmassavg.csv
+                #Rename the bmassavg.csv
                 system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
                 system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
                 system(paste("mv stdebug.sqlite3 ",name.stdebug.sqlite,sep=""))
@@ -103,30 +114,28 @@ s<-site[1]
                 setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
               }}
             
-            
             print(paste0("DIST.GRAZ D",dst,".G",grz," DONE"))
           }
           
         }
         
+        #If disturbances are turned off, run STEPWAT2 for no fire, no grazing for current conditions
         else if (dist.graz.flag ==F) {
           
-          # change directory to the executable directory
+          #Change directory to the executable directory
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
-          # run stepwat
+          #Run stepwat2
           system("./stepwat    -f  files.in -s -o ../../sw_src/testing/files_step_soilwat.in")
-          #system("./stepwat    -f  files.in -s -o /home/ksodhi/KyleProject/Stepwat.Site.1/sw_src/testing/files_step_soilwat.in")
           
-          # change directory to "Output" folder
+          #Change directory to "Output" folder
           setwd("Output")
-          
-          
-          # identify the name of the biomass output file
+                    
+          #Identify the name of the biomass output file
           name.bmass.csv<-paste("bmassavg.Site",s,GCM[g],soil,"csv",sep=".")
           name.mort.csv<-paste("mortavg.Site",s,GCM[g],soil,"csv",sep=".")
           name.stdebug.sqlite<-paste("stdebug.Site",s,GCM[g],soil,"sqlite3",sep=".")
           
-          # rename the bmassavg.csv
+          #Rename the bmassavg.csv
           system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
           system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
           system(paste("mv stdebug.sqlite3 ",name.stdebug.sqlite,sep=""))
@@ -134,43 +143,45 @@ s<-site[1]
           source(output.file,local = TRUE)
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
         }
-        # for all other GMC/year/RCP read the weather data into randomdata    
-      } else if (GCM[g]!="Current"){
         
-        for (y in YEARS) { # loop through all the time periods 50 or 90
+        #If GCM is not current, then repeat the above steps for all GCMs, RCPs and time periods as specified in STEPWAT.Wrapper.MAIN_V3.R 
+           } else if (GCM[g]!="Current"){
+        
+          for (y in YEARS) { # loop through all the time periods 50 or 90
           for (r in RCP) { # loop through all the RCP
             
-            # Go to the weather directory
+            #Go to the weather directory
             setwd(paste(assembly_output,"Site_",s,sep=""))
             
             setwd(paste("Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep=""))
             weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
             
-            
-            
-            # identify the directory the weather will be pasted into        
+           #Identify the directory the weather will be pasted into        
             weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
             weather.dir3<-paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Input/data_39.0625_-119.4375/",sep="")
             
-            # copy the weather data into the randomdata folder
-            if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
-              # copy the weather data into the randomdata folder
-              system(paste("cp -a ",weath.read,"/. ",weather.dir2,sep=""))
-            } 
+            #Copy the weather data into the randomdata folder,commenting out creation of weather.in files as default
+            #if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
+            #Copy the weather data into the randomdata folder
+            #system(paste("cp -a ",weath.read,"/. ",weather.dir2,sep=""))
+            #} 
+            
             if (TYPE2=="markov") {
               system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir2,sep=""))
               system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir2,sep=""))
             }
             
-            # copy the weather data into the data_39.0625_-199.4375 folder
-            if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
-              # copy the weather data into the data_39.0625_-199.4375 folder
-              system(paste("cp -a ",weath.read,"/. ",weather.dir3,sep=""))
-            } 
+            #Copy the weather data into the data_39.0625_-199.4375 folder,commenting out creation of weather.in files as default
+            #if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
+            #Copy the weather data into the data_39.0625_-199.4375 folder
+            #system(paste("cp -a ",weath.read,"/. ",weather.dir3,sep=""))
+            #} 
+            
             if (TYPE2=="markov") {
               system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir3,sep=""))
               system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir3,sep=""))
             }
+            
             if (dist.graz.flag == T) {
               for (dst in dist.freq) {
                 for (grz in graz.freq) {
@@ -183,21 +194,20 @@ s<-site[1]
                     system("rm rgroup.in")
                     system(paste0("mv ",dist.graz.name," rgroup.in"))
                     
-                    
-                    # change directory to the executable directory
+                    #Change directory to the executable directory
                     setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
-                    # run stepwat
+                    #Run stepwat2
                     system("./stepwat    -f  files.in -s -o ../../sw_src/testing/files_step_soilwat.in")
                     
-                    # change directory to "Output" folder
+                    #Change directory to "Output" folder
                     setwd("Output")
                     
-                    # identify the name of the biomass output file
+                    #Identify the name of the biomass output file
                     name.bmass.csv<-paste("bmassavg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
                     name.mort.csv<-paste("mortavg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
                     name.stdebug.sqlite<-paste("stdebug.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"sqlite3",sep=".")
                     
-                    # rename the bmassavg.csv
+                    #Rename the bmassavg.csv
                     system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
                     system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
                     system(paste("mv stdebug.sqlite3 ",name.stdebug.sqlite,sep=""))
@@ -207,7 +217,6 @@ s<-site[1]
                     setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
                   }}
                 
-                
                 print(paste0("DIST.GRAZ D",dst,".G",grz," DONE"))
               }
               
@@ -215,21 +224,20 @@ s<-site[1]
             
             else if (dist.graz.flag ==F) {
               
-              # change directory to the executable directory
+              #Change directory to the executable directory
               setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
-              # run stepwat
+              #Run stepwat2
               system("./stepwat    -f  files.in -s -o ../../sw_src/testing/files_step_soilwat.in")
               
-              # change directory to "Output" folder
+              #Change directory to "Output" folder
               setwd("Output")
-              
-              
-              # identify the name of the biomass output file
+                            
+              #Identify the name of the biomass output file
               name.bmass.csv<-paste("bmassavg.Site",s,GCM[g],y,r,soil,"csv",sep=".")
               name.mort.csv<-paste("mortavg.Site",s,GCM[g],y,r,soil,"csv",sep=".")
               name.stdebug.sqlite<-paste("stdebug.Site",s,GCM[g],y,r,soil,"sqlite3",sep=".")
               
-              # rename the bmassavg.csv
+              #Rename the bmassavg.csv
               system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
               system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
               system(paste("mv stdebug.sqlite3 ",name.stdebug.sqlite,sep=""))
@@ -241,7 +249,7 @@ s<-site[1]
             
             print(paste("RCP ",r," DONE",sep=""))
           }
-          #print statement for when model done with that GCM
+          #Print statement for when model done with that GCM
           print(paste("YEAR ",y," DONE",sep=""))
         }
         
@@ -251,6 +259,6 @@ s<-site[1]
   
   stopImplicitCluster()
   
-  # print statement for when model done with Site
+  #Print statement for when model done with Site
   print(paste("Site ",s," Done",sep=""))
   

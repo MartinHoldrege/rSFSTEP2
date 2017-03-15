@@ -23,9 +23,9 @@ if (INT==30 & TYPE=="basic")
     
     temp_assembly_dataframe<-data.frame(sw_weatherList[[i]][[h]])
 
-    #Assemble data for every year
-    for(year in AssemblyStartYear: (AssemblyStartYear+30))
-    {
+    #Assemble data for every year, commenting out below as default
+    #for(year in AssemblyStartYear: (AssemblyStartYear+30))
+    #{
       #x<-data.frame()
       #if (year==1980){j<-1;z<-1}
       #z<-j
@@ -38,13 +38,13 @@ if (INT==30 & TYPE=="basic")
         #}
       #}
       #a<- as.data.frame(head(sw_weatherList[[2]][[h]],n=j-1))
-      x<-temp_assembly_dataframe[temp_assembly_dataframe$year==year,1:4];
-      colnames(x)<-c("#DOY","Tmax_C", "Tmin_C","PPT_cm")# relabel the columns names 
-      rownames(x)<- NULL #make rownames null (need this or else will have an extra column)
-      write.table(x, file=paste("weath.",year,sep=""), sep="\t", row.names=F,quote=F) #write your year file in your directory
-      year<-year+1
+      #x<-temp_assembly_dataframe[temp_assembly_dataframe$year==year,1:4];
+      #colnames(x)<-c("#DOY","Tmax_C", "Tmin_C","PPT_cm")# relabel the columns names 
+      #rownames(x)<- NULL #make rownames null (need this or else will have an extra column)
+      #write.table(x, file=paste("weath.",year,sep=""), sep="\t", row.names=F,quote=F) #write your year file in your directory
+      #year<-year+1
       
-    }
+    #}
   setwd(paste(assembly_output,"/Site","_",site,sep=""))
   }
   setwd(assembly_output)
