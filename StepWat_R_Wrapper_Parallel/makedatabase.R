@@ -46,7 +46,6 @@ setwd(source.dir)
     
     #read in csv file and remove empty column at the end
     total_bmass=read.csv('total_bmass.csv',header=T)
-	total_bmass$X=NULL
     
     #write grep function to remove extra column headers that appear throughout spreadsheet
     total_bmass=total_bmass[grep("Year",total_bmass$Disturbs,invert=T),]
