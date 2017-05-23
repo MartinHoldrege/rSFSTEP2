@@ -82,7 +82,7 @@ registerDoParallel(proc_count)
         
           
         
-        for ( i in 1:366) #loop through all possible days in all years
+      for ( i in 1:366) #loop through all possible days in all years
         {
           #probability of wet|wet is the number of wet given wet years for that day divided by the number
           #of total wet days from the previous day
@@ -102,10 +102,7 @@ registerDoParallel(proc_count)
           {
             p_W_W<-sum(DGF[(DGF$WW==1)&(DGF$DOY==i),7])
             p_W_D<-sum(DGF[(DGF$WD==1)&(DGF$DOY==i),8])
-            
-            #p_W_W<-p_W_W/(DF$p_W_W[i-1]+DF$p_W_D[i-1])
-            #p_W_D<-p_W_D/(yr-(DF$p_W_W[i-1]+DF$p_W_D[i-1]))
-            
+
             p_W_W<-sum(DGF[(DGF$WW==1)&(DGF$DOY==i),7])
             p_W_D<-sum(DGF[(DGF$WD==1)&(DGF$DOY==i),8])
             
@@ -115,19 +112,20 @@ registerDoParallel(proc_count)
          
           
           CF.max.w<-(abs(mean(DGF[(DGF$WET=="TRUE"),2])/mean(DGF[(DGF$DOY==i),2]))) + (mean(DGF[(DGF$WET=="TRUE"),2])-mean(DGF[(DGF$DOY==i),2]))/mean(DGF[(DGF$DOY==i),2])
+          if (CF.max.w=='NaN'){CF.max.w<-1}
           if (CF.max.w > 1.0) {CF.max.w<-1}
           CF.max.d<-(abs(mean(DGF[(DGF$WET=="FALSE"),2])/mean(DGF[(DGF$DOY==i),2]))) + (mean(DGF[(DGF$WET=="FALSE"),2])-mean(DGF[(DGF$DOY==i),2]))/mean(DGF[(DGF$DOY==i),2])
+          if (CF.max.d=='NaN'){CF.max.d<-1}
           if (CF.max.d < 1.0) {CF.max.d<-1}
           CF.min.w<-(abs(mean(DGF[(DGF$WET=="TRUE"),3])/mean(DGF[(DGF$DOY==i),3]))) + (mean(DGF[(DGF$WET=="TRUE"),3])-mean(DGF[(DGF$DOY==i),3]))/mean(DGF[(DGF$DOY==i),3])
+          if (CF.min.w=='NaN'){CF.min.w<-1}
           if (CF.min.w > 1.0) {CF.min.w<-1}
           CF.min.d<-(abs(mean(DGF[(DGF$WET=="FALSE"),3])/mean(DGF[(DGF$DOY==i),3]))) + (mean(DGF[(DGF$WET=="FALSE"),3])-mean(DGF[(DGF$DOY==i),3]))/mean(DGF[(DGF$DOY==i),3])
-          if (CF.min.d < 1.0) {CF.min.d<-1}
-
-          #DF.DAY$W_W[i]<-sum(prob.wet_wet) #sum all of the wet given wet days for the day across all the years
-          #DF.DAY$W_D[i]<-sum(prob.wet_dry) #sum all of the wet given dry days for the day across all the years
-    
-          PPT_avg<-mean(DGF[(DGF$DOY==i),4]) #average the ppt across all the years for that day
-          PPT_sd<-(sd((DGF[(DGF$DOY==i),4])))*2 #standard deviation the ppt across all the years for that day
+          if (CF.min.d=='NaN'){CF.min.d<-1}
+          if (CF.min.d < 1.0) {CF.min.d<-1}   
+          PPT_avg<-mean(DGF[(DGF$DOY==i)&(DGF$PPT_cm>0),4]) #average the ppt across all the years for that day
+          PPT_sd<-(sd((DGF[(DGF$DOY==i),4]))) #standard deviation the ppt across all the years for that day
+	  if(is.na(PPT_sd)==TRUE){PPT_sd<-0}
           CF.max.w<-CF.max.w
           CF.max.d<-CF.max.d
           CF.min.w<-CF.min.w
