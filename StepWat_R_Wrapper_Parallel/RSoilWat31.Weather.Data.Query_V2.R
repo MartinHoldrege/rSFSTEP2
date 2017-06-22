@@ -3,7 +3,6 @@
 #Query script for STEPWAT Wrapper
 #Script to extract respective data from the database into a list
 
-
 #Load required libraries
 library(plyr)
 
@@ -13,9 +12,7 @@ db<-dbConnect(db,database)
 con.env <- NULL
 con.env$con<-db
 
-
 #########################################################################
-
 #Functions to access respective data
 
 #Function to query data from the database
@@ -102,10 +99,7 @@ dbW_blob_to_weatherData <- function(StartYear, EndYear, data_blob) {
 		
 	}
 
-
 #Function to extract respective data for all sites and save it as a list
-
-
 extract_data<-function(site_to_extract=NULL)
 {
   sw_weatherList <- NULL

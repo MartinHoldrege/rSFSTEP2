@@ -7,19 +7,17 @@
 library(doParallel)
 registerDoParallel(proc_count)
 
-
 #Loop through all sites
   #load a particular site
   site<-site[1] 
   s<-1
-  #create directory for the particular site
-  #dir.create(paste0("Site","_",site), showWarnings = FALSE) 
-  #move to directory just created
+  
+  #move to directory
   setwd(paste("Site","_",site,sep=""))
   foreach (h = 1:H) %dopar%
     { #h = number of GCM X RCP X Times (scenarios)
     scen<-temp[h] #load a particular scenario
-    #dir.create(paste0("Site","_",site,"_",scen), showWarnings = FALSE) #create a new directory with the site number and scenario name 
+
     setwd(paste("Site","_",site,"_",scen,sep="")) #reset the working directory into that new directory
   
     ############ make mkv_prob.in file #############   
@@ -30,7 +28,6 @@ registerDoParallel(proc_count)
     DGF[(DGF$PPT_cm>0),"WET"]<-TRUE
     
     #add WET given WET or WET given DRY column
-    
     for (i in 1:nrow(DGF))
     {
       if(i==1)
@@ -79,10 +76,8 @@ registerDoParallel(proc_count)
         #celcius to kelvin conversion
         DGF$Tmax_C<-DGF$Tmax_C+273.15
         DGF$Tmin_C<-DGF$Tmin_C+273.15
-        
-          
-        
-      for ( i in 1:366) #loop through all possible days in all years
+       
+      for (i in 1:366) #loop through all possible days in all years
         {
           #probability of wet|wet is the number of wet given wet years for that day divided by the number
           #of total wet days from the previous day
@@ -90,7 +85,6 @@ registerDoParallel(proc_count)
           #prbability of wet|dry is the number of wet given dry years for that day divdied by the number of
           #total years (yrs identified by user) minus the total number of wet days from the previous day
           #or the number of dry days
-        
           if(i==1)
           {
             p_W_W<-sum(DGF[(DGF$WW==1)&(DGF$DOY==i),7])
@@ -98,6 +92,7 @@ registerDoParallel(proc_count)
             
             p_W_W<-p_W_W/(sum(DGF[(DGF$WW==1)&(DGF$DOY==i+364),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i+364),8]))
             p_W_D<-p_W_D/(yr-(sum(DGF[(DGF$WW==1)&(DGF$DOY==i+364),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i+364),8])))
+          
           }else
           {
             p_W_W<-sum(DGF[(DGF$WW==1)&(DGF$DOY==i),7])
@@ -109,8 +104,7 @@ registerDoParallel(proc_count)
             p_W_W<-p_W_W/(sum(DGF[(DGF$WW==1)&(DGF$DOY==i-1),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i-1),8]))
             p_W_D<-p_W_D/(yr-(sum(DGF[(DGF$WW==1)&(DGF$DOY==i-1),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i-1),8])))
           }
-         
-          
+                   
           CF.max.w<-(abs(mean(DGF[(DGF$WET=="TRUE"),2])/mean(DGF[(DGF$DOY==i),2]))) + (mean(DGF[(DGF$WET=="TRUE"),2])-mean(DGF[(DGF$DOY==i),2]))/mean(DGF[(DGF$DOY==i),2])
           if (CF.max.w=='NaN'){CF.max.w<-1}
           if (CF.max.w > 1.0) {CF.max.w<-1}
@@ -125,7 +119,8 @@ registerDoParallel(proc_count)
           if (CF.min.d < 1.0) {CF.min.d<-1}   
           PPT_avg<-mean(DGF[(DGF$DOY==i)&(DGF$PPT_cm>0),4]) #average the ppt across all the years for that day
           PPT_sd<-(sd((DGF[(DGF$DOY==i),4]))) #standard deviation the ppt across all the years for that day
-	  if(is.na(PPT_sd)==TRUE){PPT_sd<-0}
+	 	
+	 	  if(is.na(PPT_sd)==TRUE){PPT_sd<-0}
           CF.max.w<-CF.max.w
           CF.max.d<-CF.max.d
           CF.min.w<-CF.min.w
@@ -133,19 +128,16 @@ registerDoParallel(proc_count)
           
           newrow<-data.frame(DOY=i,p_W_W=p_W_W,p_W_D=p_W_D,PPT_avg=PPT_avg,PPT_sd=PPT_sd,CF.max.w=CF.max.w,CF.max.d=CF.max.d,CF.min.w=CF.min.w,CF.min.d=CF.min.d)
           DF<-rbind(DF,newrow)
-          
           } 
 
     # print out the probability file
     colnames(DF)<-c("#DOY","p[W|W]","p[W|D]","PPT_avg","PPT_sd","CF.max.w","CF.max.d","CF.min.w","CF.min.d")# relabel the columns names 
-    #DF<-DF[,c("#DOY","p[W|W]","p[W|D]","PPT_avg","PPT_sd","CF.max.w","CF.max.d","CF.min.w","CF.min.d")] #put columns in correct order for output
     rownames(DF)<- NULL      
     write.table(format(DF, digits=5), file=paste("mkv_prob.in"), sep="\t", row.names=F,quote=F) #write your year file
 
 ###########################################################################
 
     ################## Write mkv_covar.in FILE  ##############################
-    
     DGF_covar<-data.frame(sw_weatherList[[s]][[h]])
     for (k in 1:nrow(DGF_covar))
     {
@@ -189,12 +181,4 @@ setwd(paste(assembly_output,"Site","_",site,sep=""))
 #reset directory to project level
 setwd(assembly_output)
 
-
 stopImplicitCluster()
-
-
-
-
-
-
-

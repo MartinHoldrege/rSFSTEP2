@@ -261,4 +261,3 @@ s<-site[1]
   
   #Print statement for when model done with Site
   print(paste("Site ",s," Done",sep=""))
-  

@@ -87,7 +87,6 @@ sites<-c(notassigned)
 #Source the code in query script
 source(query.file)
 
-
 ############################### End Weather Query Code ################################
 
 ############################### Weather Assembly Code #################################
@@ -101,9 +100,6 @@ setwd(weather.dir)
 dir.create("StepWat.Weather.Markov.Test", showWarnings = FALSE)
 assembly_output<-paste(source.dir,"StepWat.Weather.Markov.Test/",sep="")
 setwd(assembly_output)
-
-#Number of sites
-#S<-length(sites)
 
 #Number of scenarios (GCM X RCP X Periods run)
 H<-length(temp)

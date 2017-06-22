@@ -4,7 +4,6 @@
 
 library(plyr)
 library(RSQLite)
-
 tickon<-proc.time()
 
 
@@ -20,9 +19,8 @@ db <- dbConnect(SQLite(), output_database)
 
 setwd(source.dir)
 
-
-  directory<-source.dir
-  setwd(directory)
+directory<-source.dir
+setwd(directory)
   for (g in 1:GCM)
   {
     #default is to not put daily, monthly, and weekly output into SQLite database. In most cases, we will not save weekly
@@ -91,7 +89,6 @@ setwd(source.dir)
     
   }
   setwd(source.dir)
-
 
 tickoff<-proc.time()-tickon
 print(tickoff)

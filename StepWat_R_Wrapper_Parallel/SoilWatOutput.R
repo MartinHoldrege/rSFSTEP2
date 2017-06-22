@@ -3,9 +3,6 @@
 #Script to combine all outputs of SoilWat in terms of days,weeks,months and years
 
 library(plyr)
-#library(RSQLite)
-
-#db <- dbConnect(SQLite(), output_database)
 
 #Input files with respective extensions, weekly and monthly are commented out as default
 dy_files<-system("ls *.dy",intern = TRUE)
@@ -348,7 +345,3 @@ if(GCM[g]=="Current")
 
 write.table(tempbmass, "total_bmass.csv",sep=",",row.names=F,quote = F,append=T)
 write.table(tempmort, "total_mort.csv",sep=",",row.names=F,quote = F,append=T)
-
-
-#dbWriteTable(db, "bmassavg", tempbmass, append=T)
-#dbWriteTable(db, "mortavg", tempmort, append=T)
