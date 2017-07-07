@@ -8,7 +8,7 @@ library(plyr)
 
 #Connecting to the database
 db<-dbDriver("SQLite")
-db<-dbConnect(db,database)
+db<-dbConnect(db,database,flags = SQLITE_RO)
 con.env <- NULL
 con.env$con<-db
 

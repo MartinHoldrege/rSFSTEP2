@@ -4,7 +4,7 @@ Note: The method to run a shell script, is present as a comment in the respectiv
 
 Note: Make sure all the scripts are executable (i.e. given executable permissions) prior to following the steps below: chmod +x nameoffile
 
-1. Copy the input database to the StepWat_R_Wrapper_Parallel folder.
+1. Change working directory to the StepWat_R_Wrapper_Parallel folder. Make sure to set the location of the database in the main script of this folder.
 2. Add site ids, you wish to run the wrapper on, to the siteid variable (third line from top) in the generate_stepwat_sites.sh script. Site ids 1-10 are already present, as examples.
 3. Edit jobname, accountname and the location of results.txt (last line) in the sample.sh script, located in StepWat_R_Wrapper_Parallel.
 4. Edit jobname and accountname in the makedatabase.sh script, located in StepWat_R_Wrapper_Parallel folder.
