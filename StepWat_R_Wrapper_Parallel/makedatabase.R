@@ -82,10 +82,14 @@ setwd(directory)
 		total_mort=total_mort[,c(1:32,35:38,33:34)]
     }
     
+    opt_yr<-dbExistsTable(db,"total_yr")
+    opt_bmass<-dbExistsTable(db,"total_bmass")
+    opt_mort<-dbExistsTable(db,"total_mort")
+    
     #write all tables to the SQLite database
-    dbWriteTable(db, "total_yr",total_yr, append=T)
-    dbWriteTable(db, "total_bmass", total_bmass, append=T)
-    dbWriteTable(db, "total_mort", total_mort, append=T)
+    dbWriteTable(db, "total_yr",total_yr, header=!opt_yr, append=T)
+    dbWriteTable(db, "total_bmass", total_bmass, header=!opt_bmass, append=T)
+    dbWriteTable(db, "total_mort", total_mort,header=!opt_mort, append=T)
     
   }
   setwd(source.dir)
