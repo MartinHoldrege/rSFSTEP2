@@ -46,18 +46,18 @@ setwd(directory)
     total_bmass=read.csv('total_bmass.csv',header=T)
     
     #write grep function to remove extra column headers that appear throughout spreadsheet
-    total_bmass=total_bmass[grep("Year",total_bmass$Disturbs,invert=T),]
+    #total_bmass=total_bmass[grep("Year",total_bmass$Disturbs,invert=T),]
     
     #read in mort file and also remove extra column headers
     total_mort=read.csv('total_mort.csv',header=T)
-    total_mort=total_mort[grep("Age",total_mort$Age,invert=T),]
+    #total_mort=total_mort[grep("Age",total_mort$Age,invert=T),]
     
     setwd(directory)
     
     #change working directory to where SOILWAT output files are
     setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
     total_yr=read.csv('total_yr.csv',header=T)
-    total_yr=total_yr[grep("YEAR",total_yr$YEAR,invert=T),]
+    #total_yr=total_yr[grep("YEAR",total_yr$YEAR,invert=T),]
     
     #adding RCP and YEARS columns to current total_bmass file
     if(g==1)
