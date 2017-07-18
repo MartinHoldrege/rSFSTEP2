@@ -3,12 +3,11 @@
 siteid=(1 2 3 4 5 6 7 8 9 10) #add site ids here
 
 cd StepWat_R_Wrapper_Parallel
-module load git/2.9.2
+#module load git/2.9.2
 wait
-git clone https://github.com/Burke-Lauenroth-Lab/STEPWAT2.git --branch master --single-branch StepWatv31 
+git clone --single-branch --recursive https://github.com/Burke-Lauenroth-Lab/STEPWAT2.git
 wait
-cd StepWatv31
-git submodule update --init --recursive
+cd STEPWAT2
 make
 wait
 rm -rf .git*
@@ -20,9 +19,14 @@ for ((i=1;i<=$2;i++));do (
 	cd StepWat_R_Wrapper_$i
 	python assignsiteid.py $(pwd) ${siteid[$(($i-1))]} $i
 	for((j=1;j<=$3;j++));do
-		cp -r StepWatv31 Stepwat.Site.$i.$j
+		cp -r STEPWAT2 Stepwat.Site.$i.$j
 	done
+	rm -rf STEPWAT2
 	cd .. ) &
 done
 wait
 touch jobs.txt
+
+rm -rf StepWat_R_Wrapper_Parallel
+wait
+
