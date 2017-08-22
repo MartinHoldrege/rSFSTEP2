@@ -3,7 +3,7 @@
 #Assembly script for STEPWAT Wrapper
 #Script to assemble data from the list (produced by the query script),according to interval and type
 
-if (INT==30 & TYPE=="basic")
+if (INT==30)
 {
 
 #Iterate through each site
@@ -22,29 +22,20 @@ if (INT==30 & TYPE=="basic")
     setwd(paste("Site","_",site,"_",scen,sep="")) #reset the working directory into that new directory
     
     temp_assembly_dataframe<-data.frame(sw_weatherList[[i]][[h]])
+    if (TYPE=="basic")
+    {
 
     #Assemble data for every year, commenting out below as default
-    #for(year in AssemblyStartYear: (AssemblyStartYear+30))
-    #{
-      #x<-data.frame()
-      #if (year==1980){j<-1;z<-1}
-      #z<-j
-      #while(sw_weatherList[[i]][[h]][[5]][[j]]==year)
-      #{
-       # j<-j+1;
-        #if(j==11324)
-        #{
-         # break;
-        #}
-      #}
-      #a<- as.data.frame(head(sw_weatherList[[2]][[h]],n=j-1))
-      #x<-temp_assembly_dataframe[temp_assembly_dataframe$year==year,1:4];
-      #colnames(x)<-c("#DOY","Tmax_C", "Tmin_C","PPT_cm")# relabel the columns names 
-      #rownames(x)<- NULL #make rownames null (need this or else will have an extra column)
-      #write.table(x, file=paste("weath.",year,sep=""), sep="\t", row.names=F,quote=F) #write your year file in your directory
-      #year<-year+1
-      
-    #}
+    for(year in AssemblyStartYear: (AssemblyStartYear+30))
+    {
+      x<-data.frame()
+      x<-temp_assembly_dataframe[temp_assembly_dataframe$year==year,1:4];
+      colnames(x)<-c("#DOY","Tmax_C", "Tmin_C","PPT_cm")# relabel the columns names 
+      rownames(x)<- NULL #make rownames null (need this or else will have an extra column)
+      write.table(x, file=paste("weath.",year,sep=""), sep="\t", row.names=F,quote=F) #write your year file in your directory
+      year<-year+1
+    }
+    }
   setwd(paste(assembly_output,"/Site","_",site,sep=""))
   }
   setwd(assembly_output)

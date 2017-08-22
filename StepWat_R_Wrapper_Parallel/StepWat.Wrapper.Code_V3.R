@@ -53,30 +53,26 @@ s<-site[1]
         #Copy the weather data into the randomdata folder, commenting out creation of weather.in files as default so rSFSTEP2
         #uses only weather data generated from the markov weather generator but retain this code if one wants to create and copy 30 years of 
         #weather.in files into the weather folder
-        #if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
+        if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
           #Copy the weather data into the randomdata folder
-          #system(paste("cp -a ",weath.read,"/. ",weather.dir2,sep=""))
-        #} 
+          system(paste("cp -a ",weath.read,"/. ",weather.dir2,sep=""))
+        } 
         
         #Paste in the site-specific markov weather generator files into the appropriate folder
-        if (TYPE2=="markov") {
           system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir2,sep=""))
           system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir2,sep=""))
-        }
         
         #Copy the weather data into the data_39.0625_-199.4375 folder, commenting out creation of weather.in files as default so rSFSTEP2
         #uses only weather data generated from the markov weather generator but retain this code if one wants to create and copy 30 years of 
         #weather.in files into the weather folder
-        #if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
+        if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
         #Copy the weather data into the data_39.0625_-199.4375 folder
-        #system(paste("cp -a ",weath.read,"/. ",weather.dir3,sep=""))
-        #} 
+        system(paste("cp -a ",weath.read,"/. ",weather.dir3,sep=""))
+        } 
         
         #Paste in the site-specific markov weather generator files into the appropriate folder
-        if (TYPE2=="markov") {
           system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir3,sep=""))
           system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir3,sep=""))
-        }
         
         #If disturbances are turned on, loop through and run STEPWAT2 for all disturbance combinations (grazing X fire) for current conditions
         if (dist.graz.flag == T) {
@@ -161,26 +157,22 @@ s<-site[1]
             weather.dir3<-paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Input/data_39.0625_-119.4375/",sep="")
             
             #Copy the weather data into the randomdata folder,commenting out creation of weather.in files as default
-            #if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
+            if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
             #Copy the weather data into the randomdata folder
-            #system(paste("cp -a ",weath.read,"/. ",weather.dir2,sep=""))
-            #} 
+            system(paste("cp -a ",weath.read,"/. ",weather.dir2,sep=""))
+            } 
             
-            if (TYPE2=="markov") {
               system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir2,sep=""))
               system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir2,sep=""))
-            }
             
             #Copy the weather data into the data_39.0625_-199.4375 folder,commenting out creation of weather.in files as default
-            #if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
+            if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
             #Copy the weather data into the data_39.0625_-199.4375 folder
-            #system(paste("cp -a ",weath.read,"/. ",weather.dir3,sep=""))
-            #} 
+            system(paste("cp -a ",weath.read,"/. ",weather.dir3,sep=""))
+            } 
             
-            if (TYPE2=="markov") {
               system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir3,sep=""))
               system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir3,sep=""))
-            }
             
             if (dist.graz.flag == T) {
               for (dst in dist.freq) {

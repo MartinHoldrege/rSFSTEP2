@@ -135,8 +135,7 @@ site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10)
 setwd(assembly_output)
 # number of years 
 yr<-30 
-#Set Type
-TYPE2<-"markov"
+
 #Source the code in markov script
 source(markov.file)
 
