@@ -27,5 +27,6 @@ done
 wait
 touch jobs.txt
 
+rm -rf StepWat_R_Wrapper_Parallel
 wait
 
