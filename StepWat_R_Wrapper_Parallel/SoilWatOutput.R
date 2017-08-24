@@ -73,7 +73,7 @@ total$dist_flag<-dist.graz.flag
 }
 
 #dbWriteTable(db, "total_dy", total, append=T)
-write.table(total, "total_dy.csv",sep=",",row.names=F,quote = F,append = T)
+write.table(total, "total_dy.csv",sep=",",col.names=!file.exists("total_dy.csv"),row.names=F,quote = F,append = T)
 
 #Write master file for all .wk files
 #LL<-list()
@@ -261,7 +261,8 @@ total$dist_flag<-dist.graz.flag
 }
 
 #dbWriteTable(db, "total_yr", total, append=T)
-write.table(total, "total_yr.csv",sep=",",row.names=F,quote = F,append=T)
+write.table(total, "total_yr.csv",sep=",",col.names=!file.exists("total_yr.csv"),row.names=F,quote = F,append = T)
+#write.table(total, "total_yr.csv",sep=",",row.names=F,quote = F,append=T)
 
 setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
 tempbmass<-data.frame(read.csv(name.bmass.csv))
@@ -343,5 +344,5 @@ if(GCM[g]=="Current")
     }
 }
 
-write.table(tempbmass, "total_bmass.csv",sep=",",row.names=F,quote = F,append=T)
-write.table(tempmort, "total_mort.csv",sep=",",row.names=F,quote = F,append=T)
+write.table(tempbmass, "total_bmass.csv",sep=",",col.names=!file.exists("total_bmass.csv"),row.names=F,quote = F,append=T)
+write.table(tempmort, "total_mort.csv",sep=",",col.names=!file.exists("total_mort.csv"),row.names=F,quote = F,append=T)

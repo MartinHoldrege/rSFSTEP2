@@ -22,8 +22,11 @@ source.dir<-"nopath"
 source.dir<-paste(source.dir,"/", sep="")
 setwd(source.dir)
 
+#Set database location
+db_loc<-"/"
+
 #Database location, edit the name of the weather database accordingly
-database<-paste(source.dir,"dbWeatherData_Sagebrush_KP.sqlite", sep="")
+database<-paste(db_loc,"dbWeatherData_Sagebrush_KP.sqlite", sep="")
  
 #Query script (Loads data from the database into a list)
 query.file<-paste(source.dir,"RSoilWat31.Weather.Data.Query_V2.R", sep="")

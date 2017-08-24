@@ -22,6 +22,7 @@ for ((i=1;i<=$2;i++));do (
 	for((j=1;j<=$3;j++));do
 		cp -r STEPWAT2 Stepwat.Site.$i.$j
 	done
+	rm -rf STEPWAT2
 	cd .. ) &
 done
 wait
