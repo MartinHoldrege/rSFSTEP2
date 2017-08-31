@@ -148,8 +148,11 @@ s<-site[1]
             
             #Go to the weather directory
             setwd(paste(assembly_output,"Site_",s,sep=""))
-            
+
+            #setwd(paste("Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep=""))
             setwd(paste("Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep=""))
+            
+            #weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
             weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
             
            #Identify the directory the weather will be pasted into        

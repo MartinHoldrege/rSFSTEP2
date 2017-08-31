@@ -21,7 +21,7 @@ if (INT==30)
     dir.create(paste0("Site","_",site,"_",scen), showWarnings = FALSE) #create a new directory with the site number and scenario name 
     setwd(paste("Site","_",site,"_",scen,sep="")) #reset the working directory into that new directory
     
-    temp_assembly_dataframe<-data.frame(sw_weatherList[[i]][[h]])
+  temp_assembly_dataframe<-rSOILWAT2::dbW_weatherData_to_dataframe(sw_weatherList[[i]][[h]])
     if (TYPE=="basic")
     {
 

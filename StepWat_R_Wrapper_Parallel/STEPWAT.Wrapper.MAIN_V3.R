@@ -7,6 +7,7 @@ library(DBI)
 library(RSQLite)
 library(mail)
 library(sendmailR)
+library(rSOILWAT2)
 
 #Load source files and directories in the environment
 #Note: Change number of processors and output database location according to your system
@@ -26,7 +27,7 @@ setwd(source.dir)
 db_loc<-"/"
 
 #Database location, edit the name of the weather database accordingly
-database<-paste(db_loc,"dbWeatherData_Sagebrush_KP.sqlite", sep="")
+database<-file.path(db_loc,"dbWeatherData_Sagebrush_KP.sqlite", sep="")
  
 #Query script (Loads data from the database into a list)
 query.file<-paste(source.dir,"RSoilWat31.Weather.Data.Query_V2.R", sep="")
@@ -69,14 +70,18 @@ climate.conditions <- c(climate.ambient,  "RCP45.CanESM2", "RCP45.CESM1-CAM5", "
                         "RCP45.inmcm4", "RCP45.IPSL-CM5A-MR", "RCP45.MIROC5", "RCP45.MIROC-ESM","RCP45.MRI-CGCM3", "RCP85.CanESM2", "RCP85.CESM1-CAM5", "RCP85.CSIRO-Mk3-6-0", "RCP85.FGOALS-g2","RCP85.FGOALS-s2","RCP85.GISS-E2-R","RCP85.HadGEM2-CC","RCP85.HadGEM2-ES","RCP85.inmcm4","RCP85.IPSL-CM5A-MR","RCP85.MIROC5","RCP85.MIROC-ESM","RCP85.MRI-CGCM3")
 
 #Difference between start and end year(if you want 2030-2060 use 50; if you want 2070-2100 use 90 below)
+#deltaFutureToSimStart_yr <- c("d50","d90")
 deltaFutureToSimStart_yr <- c(50,90)
+
 #Downscaling method
+#downscaling.method <- c("hybrid-delta-3mod")
 downscaling.method <- c("hybrid-delta")
 
 #Store climate conditons
 #List of all future and current scenarios putting "Current" first	
 temp <- climate.conditions[!grepl(climate.ambient, climate.conditions)] #make sure 'climate.ambient' is first entry
 if(length(temp) > 0){
+#temp <- paste0(deltaFutureToSimStart_yr, "yrs.", rep(temp, each=length(deltaFutureToSimStart_yr)))	#add (multiple) deltaFutureToSimStart_yr
   temp <- paste0(deltaFutureToSimStart_yr, "years.", rep(temp, each=length(deltaFutureToSimStart_yr)))	#add (multiple) deltaFutureToSimStart_yr
   temp <- paste0(downscaling.method, ".", rep(temp, each=length(downscaling.method))) #add (multiple) downscaling.method
 }
@@ -169,6 +174,7 @@ GCM<-c("Current","CanESM2","CESM1-CAM5","CSIRO-Mk3-6-0","FGOALS-g2","FGOALS-s2",
 #Set RCPs
 RCP<-c("RCP45","RCP85")
 #Set Years
+#YEARS<-c("50yrs","90yrs")
 YEARS<-c("50years","90years")
 
 #Disturbance Flag, turn to "F" if not using disturbances (grazing,fire)
