@@ -141,8 +141,8 @@ registerDoParallel(proc_count)
     DGF_covar<-data.frame(rSOILWAT2::dbW_weatherData_to_dataframe(sw_weatherList[[s]][[h]]))
     for (k in 1:nrow(DGF_covar))
     {
-    #tempdate<-strptime(paste(DGF_covar$Year[k],DGF_covar$DOY[k]),format="%Y %j")
-      tempdate<-strptime(paste(DGF_covar$year[k],DGF_covar$DOY[k]),format="%Y %j")
+      tempdate<-strptime(paste(DGF_covar$Year[k],DGF_covar$DOY[k]),format="%Y %j")
+      #tempdate<-strptime(paste(DGF_covar$year[k],DGF_covar$DOY[k]),format="%Y %j")
       DGF_covar$WEEK[k]<-as.numeric(strftime(tempdate,format="%W")) # if PPT >0 the day is labeled wet
       DGF_covar$WEEK[k]<-DGF_covar$WEEK[k]+1
     }
