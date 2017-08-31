@@ -174,7 +174,7 @@ GCM<-c("Current","CanESM2","CESM1-CAM5","CSIRO-Mk3-6-0","FGOALS-g2","FGOALS-s2",
 #Set RCPs
 RCP<-c("RCP45","RCP85")
 #Set Years
-#YEARS<-c("50yrs","90yrs")
+#YEARS<-c("d50yrs","d90yrs")
 YEARS<-c("50years","90years")
 
 #Disturbance Flag, turn to "F" if not using disturbances (grazing,fire)
