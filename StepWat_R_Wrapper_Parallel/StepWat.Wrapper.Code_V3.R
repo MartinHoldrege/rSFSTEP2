@@ -90,7 +90,7 @@ s<-site[1]
                 #Change directory to the executable directory
                 setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
                 #Run stepwat2
-                system("./stepwat -f  files.in -s -o ../../sw_src/testing/files_step_soilwat.in")
+                system("./stepwat -f  files.in -s")
                 
                 #Change directory to "Output" folder
                 setwd("Output")
@@ -98,12 +98,10 @@ s<-site[1]
                 #Identify the name of the biomass output file
                 name.bmass.csv<-paste("bmassavg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
                 name.mort.csv<-paste("mortavg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
-                name.stdebug.sqlite<-paste("stdebug.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"sqlite3",sep=".")
                 
                 #Rename the bmassavg.csv
                 system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
                 system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
-                system(paste("mv stdebug.sqlite3 ",name.stdebug.sqlite,sep=""))
                 
                 setwd(paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
                 source(output.file,local = TRUE)
@@ -121,7 +119,7 @@ s<-site[1]
           #Change directory to the executable directory
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
           #Run stepwat2
-          system("./stepwat    -f  files.in -s -o ../../sw_src/testing/files_step_soilwat.in")
+          system("./stepwat -f  files.in -s")
           
           #Change directory to "Output" folder
           setwd("Output")
@@ -129,12 +127,10 @@ s<-site[1]
           #Identify the name of the biomass output file
           name.bmass.csv<-paste("bmassavg.Site",s,GCM[g],soil,"csv",sep=".")
           name.mort.csv<-paste("mortavg.Site",s,GCM[g],soil,"csv",sep=".")
-          name.stdebug.sqlite<-paste("stdebug.Site",s,GCM[g],soil,"sqlite3",sep=".")
           
           #Rename the bmassavg.csv
           system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
           system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
-          system(paste("mv stdebug.sqlite3 ",name.stdebug.sqlite,sep=""))
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
           source(output.file,local = TRUE)
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
@@ -189,7 +185,7 @@ s<-site[1]
                     #Change directory to the executable directory
                     setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
                     #Run stepwat2
-                    system("./stepwat    -f  files.in -s -o ../../sw_src/testing/files_step_soilwat.in")
+                    system("./stepwat -f  files.in -s")
                     
                     #Change directory to "Output" folder
                     setwd("Output")
@@ -197,12 +193,10 @@ s<-site[1]
                     #Identify the name of the biomass output file
                     name.bmass.csv<-paste("bmassavg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
                     name.mort.csv<-paste("mortavg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
-                    name.stdebug.sqlite<-paste("stdebug.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"sqlite3",sep=".")
                     
                     #Rename the bmassavg.csv
                     system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
                     system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
-                    system(paste("mv stdebug.sqlite3 ",name.stdebug.sqlite,sep=""))
                     
                     setwd(paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
                     source(output.file,local = TRUE)
@@ -219,7 +213,7 @@ s<-site[1]
               #Change directory to the executable directory
               setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
               #Run stepwat2
-              system("./stepwat    -f  files.in -s -o ../../sw_src/testing/files_step_soilwat.in")
+              system("./stepwat -f  files.in -s")
               
               #Change directory to "Output" folder
               setwd("Output")
@@ -227,12 +221,10 @@ s<-site[1]
               #Identify the name of the biomass output file
               name.bmass.csv<-paste("bmassavg.Site",s,GCM[g],y,r,soil,"csv",sep=".")
               name.mort.csv<-paste("mortavg.Site",s,GCM[g],y,r,soil,"csv",sep=".")
-              name.stdebug.sqlite<-paste("stdebug.Site",s,GCM[g],y,r,soil,"sqlite3",sep=".")
               
               #Rename the bmassavg.csv
               system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
               system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
-              system(paste("mv stdebug.sqlite3 ",name.stdebug.sqlite,sep=""))
               
               setwd(paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
               source(output.file,local = TRUE)
