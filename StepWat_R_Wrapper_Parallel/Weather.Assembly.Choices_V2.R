@@ -29,7 +29,7 @@ if (INT==30)
     for(year in AssemblyStartYear: (AssemblyStartYear+30))
     {
       x<-data.frame()
-      x<-temp_assembly_dataframe[temp_assembly_dataframe$year==year,1:4];
+      x<-temp_assembly_dataframe[temp_assembly_dataframe$year==year,2:5];
       colnames(x)<-c("#DOY","Tmax_C", "Tmin_C","PPT_cm")# relabel the columns names 
       rownames(x)<- NULL #make rownames null (need this or else will have an extra column)
       write.table(x, file=paste("weath.",year,sep=""), sep="\t", row.names=F,quote=F) #write your year file in your directory
