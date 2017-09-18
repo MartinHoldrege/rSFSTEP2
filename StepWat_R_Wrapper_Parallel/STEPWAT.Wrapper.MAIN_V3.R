@@ -24,7 +24,7 @@ source.dir<-paste(source.dir,"/", sep="")
 setwd(source.dir)
 
 #Set database location
-db_loc<-"/"
+db_loc<-""
 
 #Database location, edit the name of the weather database accordingly
 database<-file.path(db_loc,"dbWeatherData_Sagebrush_KP.sqlite", sep="")
