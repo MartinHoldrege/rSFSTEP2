@@ -7,8 +7,7 @@
 library(plyr)
 
 #Connecting to the database
-stopifnot(rSOILWAT2::dbW_setConnection(database, check_version = TRUE)) 
-
+stopifnot(rSOILWAT2::dbW_setConnection(database, check_version = TRUE))
 #########################################################################
 #Functions to access respective data
 
