@@ -22,7 +22,7 @@ registerDoParallel(proc_count)
   
     ############ make mkv_prob.in file #############   
     #input data for particular site and scenario
-    DGF<-data.frame(sw_weatherList[[s]][[h]])
+    DGF<-data.frame(rSOILWAT2::dbW_weatherData_to_dataframe(sw_weatherList[[s]][[h]]))
     #add WET column 
     DGF<-within(DGF, WET<-FALSE)
     DGF[(DGF$PPT_cm>0),"WET"]<-TRUE
@@ -105,20 +105,20 @@ registerDoParallel(proc_count)
             p_W_D<-p_W_D/(yr-(sum(DGF[(DGF$WW==1)&(DGF$DOY==i-1),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i-1),8])))
           }
                    
-          CF.max.w<-(abs(mean(DGF[(DGF$WET=="TRUE"),2])/mean(DGF[(DGF$DOY==i),2]))) + (mean(DGF[(DGF$WET=="TRUE"),2])-mean(DGF[(DGF$DOY==i),2]))/mean(DGF[(DGF$DOY==i),2])
+          CF.max.w<-(abs(mean(DGF[(DGF$WET=="TRUE"),3])/mean(DGF[(DGF$DOY==i),3]))) + (mean(DGF[(DGF$WET=="TRUE"),3])-mean(DGF[(DGF$DOY==i),3]))/mean(DGF[(DGF$DOY==i),3])
           if (CF.max.w=='NaN'){CF.max.w<-1}
           if (CF.max.w > 1.0) {CF.max.w<-1}
-          CF.max.d<-(abs(mean(DGF[(DGF$WET=="FALSE"),2])/mean(DGF[(DGF$DOY==i),2]))) + (mean(DGF[(DGF$WET=="FALSE"),2])-mean(DGF[(DGF$DOY==i),2]))/mean(DGF[(DGF$DOY==i),2])
+          CF.max.d<-(abs(mean(DGF[(DGF$WET=="FALSE"),3])/mean(DGF[(DGF$DOY==i),3]))) + (mean(DGF[(DGF$WET=="FALSE"),3])-mean(DGF[(DGF$DOY==i),3]))/mean(DGF[(DGF$DOY==i),3])
           if (CF.max.d=='NaN'){CF.max.d<-1}
           if (CF.max.d < 1.0) {CF.max.d<-1}
-          CF.min.w<-(abs(mean(DGF[(DGF$WET=="TRUE"),3])/mean(DGF[(DGF$DOY==i),3]))) + (mean(DGF[(DGF$WET=="TRUE"),3])-mean(DGF[(DGF$DOY==i),3]))/mean(DGF[(DGF$DOY==i),3])
+          CF.min.w<-(abs(mean(DGF[(DGF$WET=="TRUE"),4])/mean(DGF[(DGF$DOY==i),4]))) + (mean(DGF[(DGF$WET=="TRUE"),4])-mean(DGF[(DGF$DOY==i),4]))/mean(DGF[(DGF$DOY==i),4])
           if (CF.min.w=='NaN'){CF.min.w<-1}
           if (CF.min.w > 1.0) {CF.min.w<-1}
-          CF.min.d<-(abs(mean(DGF[(DGF$WET=="FALSE"),3])/mean(DGF[(DGF$DOY==i),3]))) + (mean(DGF[(DGF$WET=="FALSE"),3])-mean(DGF[(DGF$DOY==i),3]))/mean(DGF[(DGF$DOY==i),3])
+          CF.min.d<-(abs(mean(DGF[(DGF$WET=="FALSE"),4])/mean(DGF[(DGF$DOY==i),4]))) + (mean(DGF[(DGF$WET=="FALSE"),4])-mean(DGF[(DGF$DOY==i),4]))/mean(DGF[(DGF$DOY==i),4])
           if (CF.min.d=='NaN'){CF.min.d<-1}
           if (CF.min.d < 1.0) {CF.min.d<-1}   
-          PPT_avg<-mean(DGF[(DGF$DOY==i)&(DGF$PPT_cm>0),4]) #average the ppt across all the years for that day
-          PPT_sd<-(sd((DGF[(DGF$DOY==i),4]))) #standard deviation the ppt across all the years for that day
+          PPT_avg<-mean(DGF[(DGF$DOY==i)&(DGF$PPT_cm>0),5]) #average the ppt across all the years for that day
+          PPT_sd<-(sd((DGF[(DGF$DOY==i),5]))) #standard deviation the ppt across all the years for that day
 	 	
 	 	  if(is.na(PPT_sd)==TRUE){PPT_sd<-0}
           CF.max.w<-CF.max.w
@@ -138,10 +138,11 @@ registerDoParallel(proc_count)
 ###########################################################################
 
     ################## Write mkv_covar.in FILE  ##############################
-    DGF_covar<-data.frame(sw_weatherList[[s]][[h]])
+    DGF_covar<-data.frame(rSOILWAT2::dbW_weatherData_to_dataframe(sw_weatherList[[s]][[h]]))
     for (k in 1:nrow(DGF_covar))
     {
-      tempdate<-strptime(paste(DGF_covar$year[k],DGF_covar$DOY[k]),format="%Y %j")
+      tempdate<-strptime(paste(DGF_covar$Year[k],DGF_covar$DOY[k]),format="%Y %j")
+      #tempdate<-strptime(paste(DGF_covar$year[k],DGF_covar$DOY[k]),format="%Y %j")
       DGF_covar$WEEK[k]<-as.numeric(strftime(tempdate,format="%W")) # if PPT >0 the day is labeled wet
       DGF_covar$WEEK[k]<-DGF_covar$WEEK[k]+1
     }
@@ -154,8 +155,8 @@ registerDoParallel(proc_count)
 
     for (w in 1:53) { 
     WEEK<-w
-    min<-(DGF_covar[(DGF_covar$WEEK==w),3])
-    max<-(DGF_covar[(DGF_covar$WEEK==w),2])
+    min<-(DGF_covar[(DGF_covar$WEEK==w),4])
+    max<-(DGF_covar[(DGF_covar$WEEK==w),3])
     MIN.MAX<-cov(min,max) #covariance between min and max temp over all days in week for all years
     MIN.MIN<-cov(min,min) #covariance between min temps over all days in week for all years
     MAX.MAX<-cov(max,max) #covariance between max temps over all days in week for all years

@@ -44,20 +44,15 @@ setwd(directory)
     
     #read in csv file and remove empty column at the end
     total_bmass=read.csv('total_bmass.csv',header=T)
-    
-    #write grep function to remove extra column headers that appear throughout spreadsheet
-    #total_bmass=total_bmass[grep("Year",total_bmass$Disturbs,invert=T),]
-    
+       
     #read in mort file and also remove extra column headers
     total_mort=read.csv('total_mort.csv',header=T)
-    #total_mort=total_mort[grep("Age",total_mort$Age,invert=T),]
     
     setwd(directory)
     
     #change working directory to where SOILWAT output files are
     setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
     total_yr=read.csv('total_yr.csv',header=T)
-    #total_yr=total_yr[grep("YEAR",total_yr$YEAR,invert=T),]
     
     #adding RCP and YEARS columns to current total_bmass file
     if(g==1)
@@ -79,7 +74,7 @@ setwd(directory)
    		total_bmass=total_bmass[,c(1:94,97:100,95:96)]
     
     	total_yr=total_yr[,c(1:190,193:196,191:192)]
-		total_mort=total_mort[,c(1:32,35:38,33:34)]
+		total_mort=total_mort[,c(1:31,34:37,32:33)]
     }
     
       #write all tables to the SQLite database
@@ -92,4 +87,3 @@ setwd(directory)
 
 tickoff<-proc.time()-tickon
 print(tickoff)
-
