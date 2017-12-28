@@ -58,7 +58,29 @@ species2<-c(609,676,729,730,778,792,809,818,826,829,854,857,862)
 species3<-c(163,211,221,230,264,283,341,354,365,380,387,497,524,543,566,581,608,175,178,217,319,335,369,498,595,659,4,7,14,15,23,79)
 species<-"species"
 
+#######################################################################################
+#KS: Source site soil requirements from a csv
+soil_data <- read.csv("InputData_SoilLayers.csv", header=TRUE, sep=",")
+soil_data_site<-soil_data[soil_data$Site==1,]
+treatments<-unique(soil_data_site$soil_treatment)
+
+setwd("STEPWAT_DIST")
+
+for(i in treatments)
+{
+  df=soil_data_site[soil_data_site$soil_treatment==i,]
+  df <- subset(df, select = -c(1,2) )
+  write.table(df, file = paste0(i,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
+}
+
+treatments<-as.character(treatments)
+
+#Soil types are specified here, in accordance with the files added to STEPWAT_DIST folder
+soil.types<-treatments#c("soils.17sand.13clay","soils.68sand.10clay") #KS: uncommented to test overhaul of inputs
+
 ################################ Weather Query Code ###################################
+
+setwd(source.dir)
 
 #Setup parameters for the weather aquisition (years, scenarios, timeperiod, GCMs) 
 simstartyr <- 1979
@@ -199,9 +221,6 @@ graz.freq<-c(1)
 
 #Set grazing intensity, these correspond to the file options in the STEPWAT_DIST folder 
 graz_intensity<-c("lowgraz","modgraz","highgraz")
-
-#Soil types are specified here, in accordance with the files added to STEPWAT_DIST folder
-soil.types<-c("soils.17sand.13clay","soils.68sand.10clay")
 
 #Source the code in wrapper script, run the STEPWAT2 code for each combination of disturbances, soils, climate scenarios
 source(wrapper.file)
