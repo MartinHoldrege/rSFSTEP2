@@ -15,9 +15,6 @@ library(rSOILWAT2)
 #Number of cores
 proc_count<-6
 
-#Enter email id for timing statistics, add your email below in "" and uncomment out if you want to use
-#emailid<-""
-
 #Source directory, the source.directory will be filled in automatically when rSFSTEP2 runs
 source.dir<-"nopath"
 source.dir<-paste(source.dir,"/", sep="")
@@ -27,7 +24,8 @@ setwd(source.dir)
 db_loc<-""
 
 #Database location, edit the name of the weather database accordingly
-database<-file.path(db_loc,"dbWeatherData_Sagebrush_KP.sqlite")
+database_name<-"dbWeatherData_Sagebrush_KP.v3.2.0.sqlite"
+database<-file.path(db_loc,database_name)
  
 #Query script (Loads data from the database into a list)
 query.file<-paste(source.dir,"RSoilWat31.Weather.Data.Query_V2.R", sep="")
@@ -78,9 +76,8 @@ treatments<-as.character(treatments)
 #Soil types are specified here, in accordance with the files added to STEPWAT_DIST folder
 soil.types<-treatments#c("soils.17sand.13clay","soils.68sand.10clay") #KS: uncommented to test overhaul of inputs
 
-################################ Weather Query Code ###################################
 
-setwd(source.dir)
+################################ Weather Query Code ###################################
 
 #Setup parameters for the weather aquisition (years, scenarios, timeperiod, GCMs) 
 simstartyr <- 1979
@@ -91,32 +88,43 @@ climate.ambient <- "Current"
 climate.conditions <- c(climate.ambient,  "RCP45.CanESM2", "RCP45.CESM1-CAM5", "RCP45.CSIRO-Mk3-6-0", "RCP45.FGOALS-g2", "RCP45.FGOALS-s2", "RCP45.GISS-E2-R", "RCP45.HadGEM2-CC", "RCP45.HadGEM2-ES",
                         "RCP45.inmcm4", "RCP45.IPSL-CM5A-MR", "RCP45.MIROC5", "RCP45.MIROC-ESM","RCP45.MRI-CGCM3", "RCP85.CanESM2", "RCP85.CESM1-CAM5", "RCP85.CSIRO-Mk3-6-0", "RCP85.FGOALS-g2","RCP85.FGOALS-s2","RCP85.GISS-E2-R","RCP85.HadGEM2-CC","RCP85.HadGEM2-ES","RCP85.inmcm4","RCP85.IPSL-CM5A-MR","RCP85.MIROC5","RCP85.MIROC-ESM","RCP85.MRI-CGCM3")
 
-#Difference between start and end year(if you want 2030-2060 use 50; if you want 2070-2100 use 90 below)
-#use with Vic weather database and all new weather databases
-deltaFutureToSimStart_yr <- c("d50","d90")
-#use with KP weather database
-#deltaFutureToSimStart_yr <- c(50,90)
-
-#Downscaling method
-#use with Vic weather database and all new weather databases
-downscaling.method <- c("hybrid-delta-3mod")
-#use with KP weather database
-#downscaling.method <- c("hybrid-delta")
-
 #Store climate conditons
 #List of all future and current scenarios putting "Current" first	
 temp <- climate.conditions[!grepl(climate.ambient, climate.conditions)] #make sure 'climate.ambient' is first entry
 if(length(temp) > 0){
-#use with Vic weather database and all new weather databases
-temp <- paste0(deltaFutureToSimStart_yr, "yrs.", rep(temp, each=length(deltaFutureToSimStart_yr)))	#add (multiple) deltaFutureToSimStart_yr
-#use with KP weather database
-#temp <- paste0(deltaFutureToSimStart_yr, "years.", rep(temp, each=length(deltaFutureToSimStart_yr)))	#add (multiple) deltaFutureToSimStart_yr
-
-temp <- paste0(downscaling.method, ".", rep(temp, each=length(downscaling.method))) #add (multiple) downscaling.method
+  if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
+  {
+    #use with Vic weather database and all new weather databases
+    #Difference between start and end year(if you want 2030-2060 use 50; if you want 2070-2100 use 90 below)
+    deltaFutureToSimStart_yr <- c("d50","d90")
+    #use with Vic weather database and all new weather databases
+    #Downscaling method
+    downscaling.method <- c("hybrid-delta-3mod")
+    #use with Vic weather database and all new weather databases
+    temp <- paste0(deltaFutureToSimStart_yr, "yrs.", rep(temp, each=length(deltaFutureToSimStart_yr)))	#add (multiple) deltaFutureToSimStart_yr
+    #Set Years
+    #use with Vic weather database and all new weather databases
+    YEARS<-c("d50yrs","d90yrs")
+  }
+  else
+  {
+    #use with KP weather database
+    #Difference between start and end year(if you want 2030-2060 use 50; if you want 2070-2100 use 90 below)
+    deltaFutureToSimStart_yr <- c(50,90)
+    #use with KP weather database
+    #Downscaling method
+    downscaling.method <- c("hybrid-delta")
+    #use with KP weather database
+    temp <- paste0(deltaFutureToSimStart_yr, "years.", rep(temp, each=length(deltaFutureToSimStart_yr)))	#add (multiple) deltaFutureToSimStart_yr
+    #Set Years
+    #use with KP weather database
+    YEARS<-c("50years","90years")
+  }
 }
-
+temp <- paste0(downscaling.method, ".", rep(temp, each=length(downscaling.method))) #add (multiple) downscaling.method
 climate.conditions <-  c("Current",temp)
 temp<-c("Current",temp)
+
 
 #Vector of sites, the code needs to be run on, this will be populated by rSFSTEP2
 sites<-c(notassigned) 
@@ -221,6 +229,9 @@ graz.freq<-c(1)
 
 #Set grazing intensity, these correspond to the file options in the STEPWAT_DIST folder 
 graz_intensity<-c("lowgraz","modgraz","highgraz")
+
+#Soil types are specified here, in accordance with the files added to STEPWAT_DIST folder
+soil.types<-c("soils.17sand.13clay","soils.68sand.10clay")
 
 #Source the code in wrapper script, run the STEPWAT2 code for each combination of disturbances, soils, climate scenarios
 source(wrapper.file)
