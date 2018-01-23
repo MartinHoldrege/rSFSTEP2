@@ -51,15 +51,99 @@ site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10)
 #This code is used in the circumstance when you want to use different species.in parameters for different sites
 #In this case, we have three different species.in files which are found in the STEPWAT_DIST folder. The below strings
 #correspond to which sites we want to use each species.in file for. 
-species1<-c(21,80,144,150,244,291,374,409,411,542,320,384,391,413,501,592,687,733,758,761,781,787,798,816,824,828,866,868,869,876,879)
-species2<-c(609,676,729,730,778,792,809,818,826,829,854,857,862)
-species3<-c(163,211,221,230,264,283,341,354,365,380,387,497,524,543,566,581,608,175,178,217,319,335,369,498,595,659,4,7,14,15,23,79)
-species<-"species"
+#species1<-c(21,80,144,150,244,291,374,409,411,542,320,384,391,413,501,592,687,733,758,761,781,787,798,816,824,828,866,868,869,876,879)
+#species2<-c(609,676,729,730,778,792,809,818,826,829,854,857,862)
+#species3<-c(163,211,221,230,264,283,341,354,365,380,387,497,524,543,566,581,608,175,178,217,319,335,369,498,595,659,4,7,14,15,23,79)
+#species<-"species"
+
+#######################################################################################
+
+#######################################################################################
+#KS: Source site species requirements from a csv
+species_data <- read.csv("InputData_Species.csv", header=TRUE, sep=",")
+species_data_all_sites<-unique(species_data$Site)
+
+if(any(grepl(",",species_data_all_sites))==TRUE)
+{
+  species_data_all_sites_vectors<-species_data_all_sites[grepl(",",species_data_all_sites)]
+  for(j in species_data_all_sites_vectors)
+  {
+    if(grepl(site,j))
+    {
+      species_data_site<-species_data[species_data$Site==j,]
+      treatments_vector_species<-unique(species_data_site$treatment)
+      setwd("STEPWAT_DIST")
+      for(i in treatments_vector_species)
+      {
+        df=species_data_site[species_data_site$treatment==i,]
+        df <- subset(df, select = -c(1,2) )
+        write.table(df, file = paste0("species_",i,"_vector",".in"),quote = FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+      }
+    }
+  }
+  setwd("..")
+  
+  }
+
+
+species_data_site<-species_data[species_data$Site==site | species_data$Site=="all",]
+treatments_species<-unique(species_data_site$treatment)
+
+setwd("STEPWAT_DIST")
+
+for(i in treatments_species)
+{
+  df=species_data_site[species_data_site$treatment==i,]
+  df <- subset(df, select = -c(1,2) )
+  write.table(df, file = paste0("species_",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+}
+
+treatments_species<-as.character(treatments_species)
+treatments_species <- paste("species_",treatments_species,sep="")
+treatments_vector_species<-as.character(treatments_vector_species)
+treatments_vector_species <- paste("species_",treatments_vector_species, "_vector", sep="")
+
+#Soil types are specified here, in accordance with the files added to STEPWAT_DIST folder
+species<-c(treatments_species,treatments_vector_species)#c("soils.17sand.13clay","soils.68sand.10clay") #KS: uncommented to test overhaul of inputs
+species<-paste(species,".in",sep="")
+
+for (i in species)
+{
+  system(paste("cat ","species_template.in>>",i,sep=""))
+}
+
 
 #######################################################################################
 #KS: Source site soil requirements from a csv
+
+setwd("..")
+
 soil_data <- read.csv("InputData_SoilLayers.csv", header=TRUE, sep=",")
-soil_data_site<-soil_data[soil_data$Site==1,]
+soil_data_all_sites<-unique(soil_data$Site)
+soil_data_all_sites_vectors<-soil_data_all_sites[grepl(",",soil_data_all_sites)]
+
+if(any(grepl(",",soil_data_all_sites))==TRUE)
+{
+  for(j in soil_data_all_sites_vectors)
+  {
+    if(grepl(site,j))
+    {
+      soil_data_site<-soil_data[soil_data$Site==j,]
+      treatments_vector<-unique(soil_data_site$soil_treatment)
+      setwd("STEPWAT_DIST")
+      for(i in treatments_vector)
+      {
+        df=soil_data_site[soil_data_site$soil_treatment==i,]
+        df <- subset(df, select = -c(1,2) )
+        write.table(df, file = paste0(i,"_vector",".in"),row.names=FALSE,col.names = FALSE,sep="\t")
+      }
+    }
+  }
+  setwd("..")
+}
+
+
+soil_data_site<-soil_data[soil_data$Site==site | soil_data$Site=="all",]
 treatments<-unique(soil_data_site$soil_treatment)
 
 setwd("STEPWAT_DIST")
@@ -72,11 +156,106 @@ for(i in treatments)
 }
 
 treatments<-as.character(treatments)
+treatments_vector<-as.character(treatments_vector)
+treatments_vector <- paste(treatments_vector, "_vector", sep="")
 
 #Soil types are specified here, in accordance with the files added to STEPWAT_DIST folder
-soil.types<-treatments#c("soils.17sand.13clay","soils.68sand.10clay") #KS: uncommented to test overhaul of inputs
+soil.types<-c(treatments,treatments_vector)#c("soils.17sand.13clay","soils.68sand.10clay") #KS: uncommented to test overhaul of inputs
+
+#######################################################################################
+#KS: Source site rgroup requirements from a csv
+
+setwd("..")
+
+rgroup_data <- read.csv("InputData_Rgroup.csv", header=TRUE, sep=",")
+rgroup_data_all_sites<-unique(rgroup_data$Site)
+rgroup_data_all_sites_vectors<-rgroup_data_all_sites[grepl(",",rgroup_data_all_sites)]
+
+if(any(grepl(",",rgroup_data_all_sites))==TRUE)
+{
+  for(j in rgroup_data_all_sites_vectors)
+  {
+    print(j)
+    if(grepl(site,j))
+    {
+      rgroup_data_site<-rgroup_data[rgroup_data$Site==j,]
+      treatments_vector<-unique(rgroup_data_site$treatment)
+      setwd("STEPWAT_DIST")
+      for(i in treatments_vector)
+      {
+        df=rgroup_data_site[rgroup_data_site$treatment==i,]
+        df <- subset(df, select = -c(1,2) )
+        write.table(df, file = paste0(i,"_vector",".in"),row.names=FALSE,col.names = FALSE,sep="\t")
+      }
+    }
+  }
+  setwd("..")
+}
 
 
+rgroup_data_site<-rgroup_data[rgroup_data$Site==site | rgroup_data$Site=="all",]
+treatments<-unique(rgroup_data_site$treatment)
+
+setwd("STEPWAT_DIST")
+
+#Specify kill frequency
+dist.freq<-vector(mode="double", length=0)
+
+#Specify grazing frequency
+graz.freq<-vector(mode="double", length=0)
+
+#Set grazing intensity
+graz_intensity<-vector(mode="character", length=0)
+
+
+for(i in treatments)
+{
+  df=rgroup_data_site[rgroup_data_site$treatment==i,]
+  df <- subset(df, select = -c(1,2) )
+  
+  temp<-df['killfrq']
+  temp<-unique(temp)
+  temp<-as.numeric(temp)
+  dist.freq.current<-temp
+  dist.freq<-c(dist.freq,temp)
+  
+  temp<-df['grazing_frq']
+  temp<-unique(temp)
+  temp<-as.numeric(temp)
+  graz.freq.current<-temp
+  graz.freq<-c(graz.freq,temp)
+  
+  temp<-df['proportion_grazing']
+  temp<-unique(temp)
+  temp<-max(temp)
+  temp<-as.numeric(temp)
+  if(temp==0.24)
+  {
+    temp="lowgraz"
+  }else if(temp==0.41)
+  {
+    temp="modgraz"
+    
+  }else if(temp==0.58)
+  {
+    temp="highgraz"
+  }
+  graz_intensity.current<-temp
+  graz_intensity<-c(graz_intensity,temp)
+  write.table(df, file = paste0("rgroup.","freq",dist.freq.current,".graz",graz_intensity.current,".",graz_intensity.current,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+}
+
+graz.freq<-unique(graz.freq)
+
+rgroup_files<-list.files(path=".",pattern = "rgroup")
+rgroup_files<-rgroup_files[rgroup_files!="rgroup_template.in"]
+
+for (i in rgroup_files)
+{
+  system(paste("cat ","rgroup_template.in >>",i,sep=""))
+}
+
+setwd("..")
 ################################ Weather Query Code ###################################
 
 #Setup parameters for the weather aquisition (years, scenarios, timeperiod, GCMs) 
@@ -137,7 +316,7 @@ source(query.file)
 ############################### Weather Assembly Code #################################
 
 #This script assembles the necessary weather data that was extracted during the weather query step
-site<-c(sitefolderid)
+site<-c(site)
 #Set output directories
 weather.dir<-source.dir
 setwd(weather.dir)
@@ -193,12 +372,12 @@ source(markov.file)
 ########### Set parameters ###############################################
 
 #This code is utilized if you want to use different species parameters for different sites
-if(is.element(sites,species1))
-{
-    species<-"species1.in"
-} else if (is.element(sites,species2)) {
-    species<-"species2.in"
-} else {	species<-"species3.in" }
+#if(is.element(sites,species1))
+#{
+#    species<-"species1.in"
+#} else if (is.element(sites,species2)) {
+#    species<-"species2.in"
+#} else {	species<-"species3.in" }
 
 #This will be populated by rSFSTEP2
 site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10) 
@@ -222,16 +401,16 @@ dist.graz.flag<-T
 dist.directory<-paste(source.dir,"STEPWAT_DIST/",sep="")
 
 #Specify fire return interval
-dist.freq<-c(0,10,50) # if not using disturbance but are using grazing set 'dist.freq<-0'
+#dist.freq<-c(0,10,50) # if not using disturbance but are using grazing set 'dist.freq<-0'
 
 #Specify grazing frequency, if not use grazing set to 0, if grazing on, set to 1, if both wanted set to c(0,1)
-graz.freq<-c(1)
+#graz.freq<-c(1)
 
 #Set grazing intensity, these correspond to the file options in the STEPWAT_DIST folder 
-graz_intensity<-c("lowgraz","modgraz","highgraz")
+#graz_intensity<-c("lowgraz","modgraz","highgraz")
 
 #Soil types are specified here, in accordance with the files added to STEPWAT_DIST folder
-soil.types<-c("soils.17sand.13clay","soils.68sand.10clay")
+#soil.types<-c("soils.17sand.13clay","soils.68sand.10clay")
 
 #Source the code in wrapper script, run the STEPWAT2 code for each combination of disturbances, soils, climate scenarios
 source(wrapper.file)
