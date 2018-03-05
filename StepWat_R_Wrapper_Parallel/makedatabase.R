@@ -6,7 +6,6 @@ library(plyr)
 library(RSQLite)
 tickon<-proc.time()
 
-
 #Add number of sites and GCMs
 s<-sitefolderid
 GCM<-14
@@ -30,28 +29,13 @@ setwd(directory)
     #setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
     #temp<-data.frame(read.csv("total_dy.csv",header=TRUE, sep=","))
     #dbWriteTable(db, "total_dy", temp, append=T)
-    
-    #setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
-    #temp<-data.frame(read.csv("total_wk.csv",header=TRUE, sep=","))
-    #dbWriteTable(db, "total_wk", temp, append=T)
-    
-    #setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
-    #temp<-data.frame(read.csv("total_mo.csv",header=TRUE, sep=","))
-    #dbWriteTable(db, "total_mo", temp, append=T)
-    
+        
     #set working directory to where the biomass and mortality output files are
     setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
     
-    #read in csv file and remove empty column at the end
+    #read in output files
     total_bmass=read.csv('total_bmass.csv',header=T)
-       
-    #read in mort file and also remove extra column headers
     total_mort=read.csv('total_mort.csv',header=T)
-    
-    setwd(directory)
-    
-    #change working directory to where SOILWAT output files are
-    setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
     total_yr=read.csv('total_yr.csv',header=T)
     
     #adding RCP and YEARS columns to current total_bmass file

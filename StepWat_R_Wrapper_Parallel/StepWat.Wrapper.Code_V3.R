@@ -30,10 +30,6 @@ s<-site[1]
       setwd(dist.directory)
       soil.type.name<-paste0(soil,".in")
       system(paste0("cp ",soil.type.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input"))
-      system(paste0("cp ",soil.type.name," ",directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Input"))
-      setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Input"))
-      system("rm soils_v30.in")
-      system(paste0("mv ",soil.type.name," soils_v30.in"))
       setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input"))
       system("rm soils_v30.in")
       system(paste0("mv ",soil.type.name," soils_v30.in"))
@@ -48,7 +44,6 @@ s<-site[1]
         
         #Identify the directory the weather will be pasted into        
         weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
-        weather.dir3<-paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Input/data_39.0625_-119.4375/",sep="")
         
         #Copy the weather data into the randomdata folder, commenting out creation of weather.in files as default so rSFSTEP2
         #uses only weather data generated from the markov weather generator but retain this code if one wants to create and copy 30 years of 
@@ -61,19 +56,7 @@ s<-site[1]
         #Paste in the site-specific markov weather generator files into the appropriate folder
           system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir2,sep=""))
           system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir2,sep=""))
-        
-        #Copy the weather data into the data_39.0625_-199.4375 folder, commenting out creation of weather.in files as default so rSFSTEP2
-        #uses only weather data generated from the markov weather generator but retain this code if one wants to create and copy 30 years of 
-        #weather.in files into the weather folder
-        if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
-        #Copy the weather data into the data_39.0625_-199.4375 folder
-        system(paste("cp -a ",weath.read,"/. ",weather.dir3,sep=""))
-        } 
-        
-        #Paste in the site-specific markov weather generator files into the appropriate folder
-          system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir3,sep=""))
-          system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir3,sep=""))
-        
+                      
         #If disturbances are turned on, loop through and run STEPWAT2 for all disturbance combinations (grazing X fire) for current conditions
         if (dist.graz.flag == T) {
           for (dst in dist.freq) {
@@ -131,7 +114,6 @@ s<-site[1]
           #Rename the bmassavg.csv
           system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
           system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
-          setwd(paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
           source(output.file,local = TRUE)
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
         }
@@ -156,7 +138,6 @@ s<-site[1]
             
            #Identify the directory the weather will be pasted into        
             weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
-            weather.dir3<-paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Input/data_39.0625_-119.4375/",sep="")
             
             #Copy the weather data into the randomdata folder,commenting out creation of weather.in files as default
             if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
@@ -166,16 +147,7 @@ s<-site[1]
             
               system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir2,sep=""))
               system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir2,sep=""))
-            
-            #Copy the weather data into the data_39.0625_-199.4375 folder,commenting out creation of weather.in files as default
-            if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
-            #Copy the weather data into the data_39.0625_-199.4375 folder
-            system(paste("cp -a ",weath.read,"/. ",weather.dir3,sep=""))
-            } 
-            
-              system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir3,sep=""))
-              system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir3,sep=""))
-            
+                                 
             if (dist.graz.flag == T) {
               for (dst in dist.freq) {
                 for (grz in graz.freq) {
@@ -204,7 +176,6 @@ s<-site[1]
                     system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
                     system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
                     
-                    setwd(paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
                     source(output.file,local = TRUE)
                     setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
                   }}
@@ -232,7 +203,6 @@ s<-site[1]
               system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
               system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
               
-              setwd(paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
               source(output.file,local = TRUE)
               setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
             }
