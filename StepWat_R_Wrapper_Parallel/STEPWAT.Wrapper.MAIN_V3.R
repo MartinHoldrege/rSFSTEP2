@@ -79,9 +79,9 @@ if(any(grepl(",",species_data_all_sites))==TRUE)
         df <- subset(df, select = -c(1,2) )
         write.table(df, file = paste0("species_",i,"_vector",".in"),quote = FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
       }
+      setwd("..")
     }
   }
-  setwd("..")
   
   }
 
@@ -137,9 +137,9 @@ if(any(grepl(",",soil_data_all_sites))==TRUE)
         df <- subset(df, select = -c(1,2) )
         write.table(df, file = paste0(i,"_vector",".in"),row.names=FALSE,col.names = FALSE,sep="\t")
       }
+      setwd("..")
     }
   }
-  setwd("..")
 }
 
 
@@ -175,7 +175,6 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
 {
   for(j in rgroup_data_all_sites_vectors)
   {
-    print(j)
     if(grepl(site,j))
     {
       rgroup_data_site<-rgroup_data[rgroup_data$Site==j,]
@@ -187,9 +186,9 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
         df <- subset(df, select = -c(1,2) )
         write.table(df, file = paste0(i,"_vector",".in"),row.names=FALSE,col.names = FALSE,sep="\t")
       }
-    }
+      setwd("..")
+      }
   }
-  setwd("..")
 }
 
 
@@ -242,10 +241,12 @@ for(i in treatments)
   }
   graz_intensity.current<-temp
   graz_intensity<-c(graz_intensity,temp)
-  write.table(df, file = paste0("rgroup.","freq",dist.freq.current,".graz",graz_intensity.current,".",graz_intensity.current,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+  write.table(df, file = paste0("rgroup.","freq",dist.freq.current,".graz",".",graz.freq,".",graz_intensity.current,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
 }
 
+dist.freq<-unique(dist.freq)
 graz.freq<-unique(graz.freq)
+graz_intensity<-unique(graz_intensity)
 
 rgroup_files<-list.files(path=".",pattern = "rgroup")
 rgroup_files<-rgroup_files[rgroup_files!="rgroup_template.in"]

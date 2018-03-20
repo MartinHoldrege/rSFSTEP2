@@ -16,7 +16,7 @@ s<-site[1]
       setwd(dist.directory)
       
       #Copy in the relevant species.in file for each site, as specified in the STEPWAT.Wrapper.MAIN_V3.R
-      if(species!="species")
+      for(species in species.types)
       {
           system(paste0("cp ",species," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input"))
           setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input"))
