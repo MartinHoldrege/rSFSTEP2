@@ -213,11 +213,11 @@ if(GCM[g]=="Current")
         tempbmass$graz_freq<-NA
         tempbmass$intensity<-NA
     }
+        tempbmass$RCP<-rep("NONE",length(tempbmass$site))
+    	tempbmass$YEARS<-rep("NONE",length(tempbmass$site))   
 }else
 {
-   tempbmass$soilType<-soil
-    tempbmass$RCP<-r
-    tempbmass$YEARS<-y
+    tempbmass$soilType<-soil
     tempbmass$dist_flag<-dist.graz.flag
     
     if(dist.graz.flag==T)
@@ -231,6 +231,8 @@ if(GCM[g]=="Current")
         tempbmass$graz_freq<-NA
         tempbmass$intensity<-NA
     }
+        tempbmass$RCP<-r
+    	tempbmass$YEARS<-y
 }
 
 tempmort$site<-sites[1]
@@ -251,11 +253,11 @@ if(GCM[g]=="Current")
         tempmort$graz_freq<-NA
         tempmort$intensity<-NA
     }
+        tempmort$RCP<-rep("NONE",length(tempmort$site))
+    	tempmort$YEARS<-rep("NONE",length(tempmort$site))
 }else
 {
     tempmort$soilType<-soil
-    tempmort$RCP<-r
-    tempmort$YEARS<-y
     tempmort$dist_flag<-dist.graz.flag
     
     if(dist.graz.flag==T)
@@ -269,6 +271,8 @@ if(GCM[g]=="Current")
         tempmort$graz_freq<-NA
         tempmort$intensity<-NA
     }
+        tempmort$RCP<-r
+    	tempmort$YEARS<-y
 }
 
 write.table(tempbmass, "total_bmass.csv",sep=",",col.names=!file.exists("total_bmass.csv"),row.names=F,quote = F,append=T)
