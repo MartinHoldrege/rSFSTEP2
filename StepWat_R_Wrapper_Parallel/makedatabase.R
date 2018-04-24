@@ -21,30 +21,33 @@ setwd(source.dir)
 directory<-source.dir
 setwd(directory)
   for (g in 1:GCM)
-  {
-    #default is to not put daily, monthly, and weekly output into SQLite database. In most cases, we will not save weekly
-    #and monthly output. Daily output is currently too large to drop into SQLite database. Once we have added aggregation
-    #of the daily output to rSFSTEP2, we will want daily output in the SQLite database as well.
-    
-    #setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
-    #temp<-data.frame(read.csv("total_dy.csv",header=TRUE, sep=","))
-    #dbWriteTable(db, "total_dy", temp, append=T)
-        
+  {      
     #set working directory to where the biomass and mortality output files are
     setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
     
     #read in output files
     total_bmass=read.csv('total_bmass.csv',header=T)
     total_mort=read.csv('total_mort.csv',header=T)
-    total_yr=read.csv('total_yr.csv',header=T)
+
+	setwd(directory)
+    #change working directory to where SOILWAT output files are
+	setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output/sw_output",sep=""))
     
-      #write all tables to the SQLite database
-    dbWriteTable(db, "total_yr",total_yr, append=T)
+  	total_sw2_yearly_slyrs=read.csv('total_sw2_yearly_slyrs.csv',header=T)
+    total_sw2_yearly=read.csv('total_sw2_yearly.csv',header=T)
+
+    #default is to not put daily output into SQLite database as is currently too large. Once we have added aggregation of the daily output to rSFSTEP2, we will want daily output in the SQLite database as well.
+    #total_sw2_daily_slyrs<-read.csv('total_sw2_daily_slyrs.csv',header=T)
+    #total_sw2_daily<-read.csv('total_sw2_daily.csv',header=T)    
+    
+    #write all tables to the SQLite database
+    dbWriteTable(db, "total_sw2_yearly_slyrs",total_sw2_yearly_slyrs, append=T)
+    dbWriteTable(db, "total_sw2_yearly",total_sw2_yearly, append=T)
     dbWriteTable(db, "total_bmass", total_bmass, append=T)
-    dbWriteTable(db, "total_mort", total_mort,append=T)
-    
+    dbWriteTable(db, "total_mort", total_mort,append=T) 
   }
-  setwd(source.dir)
+  
+setwd(source.dir)
 
 tickoff<-proc.time()-tickon
 print(tickoff)
