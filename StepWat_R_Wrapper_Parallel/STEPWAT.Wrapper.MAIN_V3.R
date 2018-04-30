@@ -28,6 +28,8 @@ db_loc<-""
 
 #Database location, edit the name of the weather database accordingly
 database<-file.path(db_loc,"dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
+#Provide the actual name of the database in quotes below
+database_name=""
  
 #Query script (Loads data from the database into a list)
 query.file<-paste(source.dir,"RSoilWat31.Weather.Data.Query_V2.R", sep="")
