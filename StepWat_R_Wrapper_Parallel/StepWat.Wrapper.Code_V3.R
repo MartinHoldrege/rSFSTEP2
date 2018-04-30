@@ -168,16 +168,19 @@ s<-site[1]
             
             #Go to the weather directory
             setwd(paste(assembly_output,"Site_",s,sep=""))
-			#use with Vic database and all new weather databases
-            setwd(paste("Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep=""))
-            #use with KP weather database
-            #setwd(paste("Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep=""))
-            
-            #use with Vic database and all new weather databases
-            weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
-            #use with KP weather database
-            #weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
-            
+			
+			#use with Vic weather database and all new weather databases
+			if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
+			{
+    			setwd(paste("Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep=""))
+			    weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
+ 			 }
+ 		 	else
+  			{
+   				setwd(paste("Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep=""))
+   				weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
+  			}
+	            
            #Identify the directory the weather will be pasted into        
             weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
             

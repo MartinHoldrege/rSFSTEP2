@@ -27,7 +27,9 @@ setwd(source.dir)
 db_loc<-""
 
 #Database location, edit the name of the weather database accordingly
-database<-file.path(db_loc,"dbWeatherData_Sagebrush_KP.sqlite")
+database<-file.path(db_loc,"dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
+#Provide the actual name of the database in quotes below
+database_name=""
  
 #Query script (Loads data from the database into a list)
 query.file<-paste(source.dir,"RSoilWat31.Weather.Data.Query_V2.R", sep="")
@@ -68,28 +70,36 @@ climate.ambient <- "Current"
 #Specify the RCP/GCM combinations
 climate.conditions <- c(climate.ambient,  "RCP45.CanESM2", "RCP45.CESM1-CAM5", "RCP45.CSIRO-Mk3-6-0", "RCP45.FGOALS-g2", "RCP45.FGOALS-s2", "RCP45.GISS-E2-R", "RCP45.HadGEM2-CC", "RCP45.HadGEM2-ES",
                         "RCP45.inmcm4", "RCP45.IPSL-CM5A-MR", "RCP45.MIROC5", "RCP45.MIROC-ESM","RCP45.MRI-CGCM3", "RCP85.CanESM2", "RCP85.CESM1-CAM5", "RCP85.CSIRO-Mk3-6-0", "RCP85.FGOALS-g2","RCP85.FGOALS-s2","RCP85.GISS-E2-R","RCP85.HadGEM2-CC","RCP85.HadGEM2-ES","RCP85.inmcm4","RCP85.IPSL-CM5A-MR","RCP85.MIROC5","RCP85.MIROC-ESM","RCP85.MRI-CGCM3")
-
-#Difference between start and end year(if you want 2030-2060 use 50; if you want 2070-2100 use 90 below)
-#use with Vic weather database and all new weather databases
-deltaFutureToSimStart_yr <- c("d50","d90")
-#use with KP weather database
-#deltaFutureToSimStart_yr <- c(50,90)
-
-#Downscaling method
-#use with Vic weather database and all new weather databases
-downscaling.method <- c("hybrid-delta-3mod")
-#use with KP weather database
-#downscaling.method <- c("hybrid-delta")
-
 #Store climate conditons
 #List of all future and current scenarios putting "Current" first	
 temp <- climate.conditions[!grepl(climate.ambient, climate.conditions)] #make sure 'climate.ambient' is first entry
 if(length(temp) > 0){
-#use with Vic weather database and all new weather databases
-temp <- paste0(deltaFutureToSimStart_yr, "yrs.", rep(temp, each=length(deltaFutureToSimStart_yr)))	#add (multiple) deltaFutureToSimStart_yr
-#use with KP weather database
-#temp <- paste0(deltaFutureToSimStart_yr, "years.", rep(temp, each=length(deltaFutureToSimStart_yr)))	#add (multiple) deltaFutureToSimStart_yr
 
+#use with Vic weather database and all new weather databases
+if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
+{
+    #Difference between start and end year(if you want 2030-2060 use 50; if you want 2070-2100 use 90 below)
+    deltaFutureToSimStart_yr <- c("d50","d90")
+    
+    #Downscaling method
+    downscaling.method <- c("hybrid-delta-3mod")
+    temp <- paste0(deltaFutureToSimStart_yr, "yrs.", rep(temp, each=length(deltaFutureToSimStart_yr)))
+    
+    #Set Years
+    YEARS<-c("d50yrs","d90yrs")
+  }
+  else
+  {
+    #Difference between start and end year(if you want 2030-2060 use 50; if you want 2070-2100 use 90 below)
+    deltaFutureToSimStart_yr <- c(50,90)
+    
+    #Downscaling method
+    downscaling.method <- c("hybrid-delta")
+   
+    temp <- paste0(deltaFutureToSimStart_yr, "years.", rep(temp, each=length(deltaFutureToSimStart_yr)))
+    #Set Years
+    YEARS<-c("50years","90years")
+  }
 temp <- paste0(downscaling.method, ".", rep(temp, each=length(downscaling.method))) #add (multiple) downscaling.method
 }
 
@@ -134,8 +144,7 @@ RE<-FIN/INT
 # choose between "basic" (for 1,5,10,30 year); "back" (for 5 year non-driest back-to-back);
 #         OR "drought" (for 5 year non-driest back-to-back and only once in 20 years); or "markov"
 #         (for markov code output) !!!! if using Markov remember to flag it in weathersetup.in !!!!
-#Set Type
-#TYPE="basic" is for both basic and markov. TYPE="markov" is for only markov.
+#Set Type, TYPE="basic" is for both basic and markov. TYPE="markov" is for only markov.
 TYPE<-"basic"
 
 #Source the code in assembly script
@@ -181,10 +190,6 @@ GCM<-c("Current","CanESM2","CESM1-CAM5","CSIRO-Mk3-6-0","FGOALS-g2","FGOALS-s2",
 #Set RCPs
 RCP<-c("RCP45","RCP85")
 #Set Years
-#use with Vic weather database and all new weather databases
-YEARS<-c("d50yrs","d90yrs")
-#use with KP weather database
-#YEARS<-c("50years","90years")
 
 #Disturbance Flag, turn to "F" if not using disturbances (grazing,fire)
 dist.graz.flag<-T
