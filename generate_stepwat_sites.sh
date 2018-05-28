@@ -6,7 +6,7 @@ siteid=(1) #add site ids here
 cd StepWat_R_Wrapper_Parallel
 #module load git/2.9.2
 wait
-git clone --single-branch --recursive https://github.com/Burke-Lauenroth-Lab/STEPWAT2.git
+git clone --branch master --recursive https://github.com/Burke-Lauenroth-Lab/STEPWAT2.git
 wait
 cd STEPWAT2
 make
