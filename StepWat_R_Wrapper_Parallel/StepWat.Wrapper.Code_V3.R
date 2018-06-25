@@ -16,6 +16,7 @@ s<-site[1]
       setwd(dist.directory)
       
       #Copy in the relevant species.in file for each site, as specified in the STEPWAT.Wrapper.MAIN_V3.R
+      #If you don't want to use replicated species.in files for each site, simply comment out the below.
       if(species!="species")
       {
           system(paste0("cp ",species," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input"))
@@ -91,21 +92,30 @@ s<-site[1]
                 
                 #Daily SOILWAT2 output
                 #Identify the name of the sw daily output files
-                name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
-                name.sw2.daily.csv<-paste("sw2_daily.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs_agg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                name.sw2.daily.csv<-paste("sw2_daily_agg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
                 
                 #Rename the daily SOILWAT2 output files
-                system(paste("mv sw2_daily_slyrs.csv ",name.sw2.daily.slyrs.csv,sep=""))
-                system(paste("mv sw2_daily.csv ",name.sw2.daily.csv,sep=""))
+                system(paste("mv sw2_daily_slyrs_agg.csv ",name.sw2.daily.slyrs.csv,sep=""))
+                system(paste("mv sw2_daily_agg.csv ",name.sw2.daily.csv,sep=""))
+                
+                #Monthly SOILWAT2 output
+                #Identify the name of the sw monthly output files
+                name.sw2.monthly.slyrs.csv<-paste("sw2_monthly_slyrs_agg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                name.sw2.monthly.csv<-paste("sw2_monthly_agg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                
+                #Rename the monthly SOILWAT2 output files
+                system(paste("mv sw2_monthly_slyrs_agg.csv ",name.sw2.monthly.slyrs.csv,sep=""))
+                system(paste("mv sw2_monthly_agg.csv ",name.sw2.monthly.csv,sep=""))
                 
                 #Yearly SOILWAT2 output
                 #Identify the name of the sw yearly output files
-                name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
-                name.sw2.yearly.csv<-paste("sw2_yearly.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs_agg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                name.sw2.yearly.csv<-paste("sw2_yearly_agg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
                 
                 #Rename the yearly SOILWAT2 output files
-                system(paste("mv sw2_yearly_slyrs.csv ",name.sw2.yearly.slyrs.csv,sep=""))
-                system(paste("mv sw2_yearly.csv ",name.sw2.yearly.csv,sep=""))
+                system(paste("mv sw2_yearly_slyrs_agg.csv ",name.sw2.yearly.slyrs.csv,sep=""))
+                system(paste("mv sw2_yearly_agg.csv ",name.sw2.yearly.csv,sep=""))
                 
                 source(output.file,local = TRUE)
                 setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
@@ -140,21 +150,30 @@ s<-site[1]
                 
           #Daily SOILWAT2 output
           #Identify the name of the sw daily output files
-          name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs.Site",s,GCM[g],soil,"csv",sep=".")
-          name.sw2.daily.csv<-paste("sw2_daily.Site",s,GCM[g],soil,"csv",sep=".")
+          name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs_agg.Site",s,GCM[g],soil,"csv",sep=".")
+          name.sw2.daily.csv<-paste("sw2_daily_agg.Site",s,GCM[g],soil,"csv",sep=".")
                 
           #Rename the daily SOILWAT2 output files
-          system(paste("mv sw2_daily_slyrs.csv ",name.sw2.daily.slyrs.csv,sep=""))
-          system(paste("mv sw2_daily.csv ",name.sw2.daily.csv,sep=""))
+          system(paste("mv sw2_daily_slyrs_agg.csv ",name.sw2.daily.slyrs.csv,sep=""))
+          system(paste("mv sw2_daily_agg.csv ",name.sw2.daily.csv,sep=""))
+          
+          #Monthly SOILWAT2 output
+          #Identify the name of the sw monthly output files
+          name.sw2.monthly.slyrs.csv<-paste("sw2_monthly_slyrs_agg.Site",s,GCM[g],soil,"csv",sep=".")
+          name.sw2.monthly.csv<-paste("sw2_monthly_agg.Site",s,GCM[g],soil,"csv",sep=".")
+                
+          #Rename the monthly SOILWAT2 output files
+          system(paste("mv sw2_monthly_slyrs_agg.csv ",name.sw2.monthly.slyrs.csv,sep=""))
+          system(paste("mv sw2_monthly_agg.csv ",name.sw2.monthly.csv,sep=""))
                 
           #Yearly SOILWAT2 output
           #Identify the name of the sw yearly output files
-          name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs.Site",s,GCM[g],soil,"csv",sep=".")
-          name.sw2.yearly.csv<-paste("sw2_yearly.Site",s,GCM[g],soil,"csv",sep=".")
+          name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs_agg.Site",s,GCM[g],soil,"csv",sep=".")
+          name.sw2.yearly.csv<-paste("sw2_yearly_agg.Site",s,GCM[g],soil,"csv",sep=".")
                 
           #Rename the yearly SOILWAT2 output files
-          system(paste("mv sw2_yearly_slyrs.csv ",name.sw2.yearly.slyrs.csv,sep=""))
-          system(paste("mv sw2_yearly.csv ",name.sw2.yearly.csv,sep=""))
+          system(paste("mv sw2_yearly_slyrs_agg.csv ",name.sw2.yearly.slyrs.csv,sep=""))
+          system(paste("mv sw2_yearly_agg.csv ",name.sw2.yearly.csv,sep=""))
           
           source(output.file,local = TRUE)
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
@@ -226,21 +245,30 @@ s<-site[1]
                 
                 	#Daily SOILWAT2 output
                 	#Identify the name of the sw daily output files
-                	name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
-                	name.sw2.daily.csv<-paste("sw2_daily.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                	name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs_agg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                	name.sw2.daily.csv<-paste("sw2_daily_agg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
                 
                 	#Rename the daily SOILWAT2 output files
-                	system(paste("mv sw2_daily_slyrs.csv ",name.sw2.daily.slyrs.csv,sep=""))
-                	system(paste("mv sw2_daily.csv ",name.sw2.daily.csv,sep=""))
+                	system(paste("mv sw2_daily_slyrs_agg.csv ",name.sw2.daily.slyrs.csv,sep=""))
+                	system(paste("mv sw2_daily_agg.csv ",name.sw2.daily.csv,sep=""))
+                	
+                	#Monthly SOILWAT2 output
+                	#Identify the name of the sw monthly output files
+                	name.sw2.monthly.slyrs.csv<-paste("sw2_monthly_slyrs_agg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                	name.sw2.monthly.csv<-paste("sw2_monthly_agg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                	
+                	#Rename the monthly SOILWAT2 output files
+                	system(paste("mv sw2_monthly_slyrs_agg.csv ",name.sw2.monthly.slyrs.csv,sep=""))
+                	system(paste("mv sw2_monthly_agg.csv ",name.sw2.monthly.csv,sep=""))
                 
                 	#Yearly SOILWAT2 output
                 	#Identify the name of the sw yearly output files
-                	name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
-                	name.sw2.yearly.csv<-paste("sw2_yearly.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                	name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs_agg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                	name.sw2.yearly.csv<-paste("sw2_yearly_agg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
                 	
                 	#Rename the yearly SOILWAT2 output files
-                	system(paste("mv sw2_yearly_slyrs.csv ",name.sw2.yearly.slyrs.csv,sep=""))
-                	system(paste("mv sw2_yearly.csv ",name.sw2.yearly.csv,sep=""))
+                	system(paste("mv sw2_yearly_slyrs_agg.csv ",name.sw2.yearly.slyrs.csv,sep=""))
+                	system(paste("mv sw2_yearly_agg.csv ",name.sw2.yearly.csv,sep=""))
                     
                     source(output.file,local = TRUE)
                     setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
@@ -274,21 +302,30 @@ s<-site[1]
                 
           	 #Daily SOILWAT2 output
          	 #Identify the name of the sw daily output files
-         	 name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs.Site",s,GCM[g],y,r,soil,"csv",sep=".")
-          	 name.sw2.daily.csv<-paste("sw2_daily.Site",s,GCM[g],y,r,soil,"csv",sep=".")
+         	 name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs_agg.Site",s,GCM[g],y,r,soil,"csv",sep=".")
+          	 name.sw2.daily.csv<-paste("sw2_daily_agg.Site",s,GCM[g],y,r,soil,"csv",sep=".")
                 
           	#Rename the daily SOILWAT2 output files
-          	system(paste("mv sw2_daily_slyrs.csv ",name.sw2.daily.slyrs.csv,sep=""))
-          	system(paste("mv sw2_daily.csv ",name.sw2.daily.csv,sep=""))
+          	system(paste("mv sw2_daily_slyrs_agg.csv ",name.sw2.daily.slyrs.csv,sep=""))
+          	system(paste("mv sw2_daily_agg.csv ",name.sw2.daily.csv,sep=""))
+          	
+          	#Monthly SOILWAT2 output
+          	#Identify the name of the sw monthly output files
+          	name.sw2.monthly.slyrs.csv<-paste("sw2_monthly_slyrs_agg.Site",s,GCM[g],y,r,soil,"csv",sep=".")
+          	name.sw2.monthly.csv<-paste("sw2_monthly_agg.Site",s,GCM[g],y,r,soil,"csv",sep=".")
                 
+          	#Rename the monthly SOILWAT2 output files
+          	system(paste("mv sw2_monthly_slyrs_agg.csv ",name.sw2.monthly.slyrs.csv,sep=""))
+          	system(paste("mv sw2_monthly_agg.csv ",name.sw2.monthly.csv,sep=""))
+          	          	               
           	#Yearly SOILWAT2 output
           	#Identify the name of the sw yearly output files
-          	name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs.Site",s,GCM[g],y,r,soil,"csv",sep=".")
-          	name.sw2.yearly.csv<-paste("sw2_yearly.Site",s,GCM[g],y,r,soil,"csv",sep=".")
+          	name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs_agg.Site",s,GCM[g],y,r,soil,"csv",sep=".")
+          	name.sw2.yearly.csv<-paste("sw2_yearly_agg.Site",s,GCM[g],y,r,soil,"csv",sep=".")
                 
           	#Rename the yearly SOILWAT2 output files
-          	system(paste("mv sw2_yearly_slyrs.csv ",name.sw2.yearly.slyrs.csv,sep=""))
-          	system(paste("mv sw2_yearly.csv ",name.sw2.yearly.csv,sep=""))
+          	system(paste("mv sw2_yearly_slyrs_agg.csv ",name.sw2.yearly.slyrs.csv,sep=""))
+          	system(paste("mv sw2_yearly_agg.csv ",name.sw2.yearly.csv,sep=""))
               
               source(output.file,local = TRUE)
               setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))

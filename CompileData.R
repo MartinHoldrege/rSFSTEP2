@@ -21,12 +21,16 @@ con<-dbConnect(SQLite(),input_database)
 total_bmass_g<-data.frame(dbGetQuery(con,'select * from total_bmass'))
 total_sw2_yearly_slyrs_g<-data.frame(dbGetQuery(con,'select * from total_sw2_yearly_slyrs'))
 total_sw2_yearly_g<-data.frame(dbGetQuery(con,'select * from total_sw2_yearly'))
+total_sw2_monthly_slyrs_g<-data.frame(dbGetQuery(con,'select * from total_sw2_monthly_slyrs'))
+total_sw2_monthly_g<-data.frame(dbGetQuery(con,'select * from total_sw2_monthly'))
 
 dbDisconnect(con)
 
 dbWriteTable(db, "total_bmass", total_bmass_g, append=T)
 dbWriteTable(db, "total_sw2_yearly_slyrs",total_sw2_yearly_slyrs_g, append=T)
 dbWriteTable(db, "total_sw2_yearly",total_sw2_yearly_g, append=T)
+dbWriteTable(db, "total_sw2_monthly_slyrs",total_sw2_monthly_slyrs_g, append=T)
+dbWriteTable(db, "total_sw2_monthly",total_sw2_monthly_g, append=T)
 
 }
 
