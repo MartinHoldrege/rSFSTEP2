@@ -43,7 +43,8 @@ s<-site[1]
         setwd(paste("Site_",s,"_",GCM[g],sep=""))
         weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_",GCM[g],sep="")
         
-        #Identify the directory the weather will be pasted into        
+        #Identify the directory the weather will be pasted into    
+        weather.dir<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/",sep="")
         weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
         
         #Copy the weather data into the randomdata folder, commenting out creation of weather.in files as default so rSFSTEP2
@@ -55,8 +56,8 @@ s<-site[1]
         } 
         
         #Paste in the site-specific markov weather generator files into the appropriate folder
-          system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir2,sep=""))
-          system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir2,sep=""))
+          system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir,sep=""))
+          system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir,sep=""))
                       
         #If disturbances are turned on, loop through and run STEPWAT2 for all disturbance combinations (grazing X fire) for current conditions
         if (dist.graz.flag == T) {
@@ -200,7 +201,8 @@ s<-site[1]
    				weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
   			}
 	            
-           #Identify the directory the weather will be pasted into        
+           #Identify the directory the weather will be pasted into   
+            weather.dir<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/",sep="")
             weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
             
             #Copy the weather data into the randomdata folder,commenting out creation of weather.in files as default
@@ -209,8 +211,8 @@ s<-site[1]
             system(paste("cp -a ",weath.read,"/. ",weather.dir2,sep=""))
             } 
             
-              system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir2,sep=""))
-              system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir2,sep=""))
+              system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir,sep=""))
+              system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir,sep=""))
                                  
             if (dist.graz.flag == T) {
               for (dst in dist.freq) {
