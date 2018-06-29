@@ -32,8 +32,8 @@ s<-site[1]
       soil.type.name<-paste0(soil,".in")
       system(paste0("cp ",soil.type.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input"))
       setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input"))
-      system("rm soils_v30.in")
-      system(paste0("mv ",soil.type.name," soils_v30.in"))
+      system("rm soils.in")
+      system(paste0("mv ",soil.type.name," soils.in"))
       
       #Go to the weather directory
       setwd(paste(assembly_output,"Site_",s,sep=""))
