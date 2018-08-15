@@ -85,28 +85,27 @@ registerDoParallel(proc_count)
           #prbability of wet|dry is the number of wet given dry years for that day divdied by the number of
           #total years (yrs identified by user) minus the total number of wet days from the previous day
           #or the number of dry days
+        
+        #sum the number of wet given wet years for that day and the number of wet given dry years for that day
+		p_W_W<-sum(DGF[(DGF$WW==1)&(DGF$DOY==i),7])
+        p_W_D<-sum(DGF[(DGF$WD==1)&(DGF$DOY==i),8])
+          
+          #for DOY 1
           if(i==1)
           {
-            p_W_W<-sum(DGF[(DGF$WW==1)&(DGF$DOY==i),7])
-            p_W_D<-sum(DGF[(DGF$WD==1)&(DGF$DOY==i),8])
-            
-            p_W_W<-p_W_W/(sum(DGF[(DGF$WW==1)&(DGF$DOY==i+364),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i+364),8]))
+			#make sure that we are not dividing by 0, which would result in p_W_W of NaN (undefined)
+			totalwet.doy1=sum(DGF[(DGF$WW==1)&(DGF$DOY==i+364),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i+364),8])
+            p_W_W<-ifelse(totalwet.doy1>0, p_W_W/totalwet.doy1, 0)
             p_W_D<-p_W_D/(yr-(sum(DGF[(DGF$WW==1)&(DGF$DOY==i+364),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i+364),8])))
           
+          #for all other DOY	
           }else
           {
-            p_W_W<-sum(DGF[(DGF$WW==1)&(DGF$DOY==i),7])
-            p_W_D<-sum(DGF[(DGF$WD==1)&(DGF$DOY==i),8])
-
-            p_W_W<-sum(DGF[(DGF$WW==1)&(DGF$DOY==i),7])
-            p_W_D<-sum(DGF[(DGF$WD==1)&(DGF$DOY==i),8])
-            
-            p_W_W<-p_W_W/(sum(DGF[(DGF$WW==1)&(DGF$DOY==i-1),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i-1),8]))
+			#make sure that we are not dividing by 0, which would result in p_W_W of NaN (undefined)
+            totalwet.notdoy1=sum(DGF[(DGF$WW==1)&(DGF$DOY==i-1),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i-1),8]) 
+            p_W_W<-ifelse(totalwet.notdoy1>0, p_W_W/totalwet.notdoy1, 0)
             p_W_D<-p_W_D/(yr-(sum(DGF[(DGF$WW==1)&(DGF$DOY==i-1),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i-1),8])))
           }
-              	  
-    	  if (p_W_W=='NaN'){p_W_W<-0}
-          if (p_W_D=='NaN'){p_W_W<-0}
                    
           CF.max.w<-(abs(mean(DGF[(DGF$WET=="TRUE"),3])/mean(DGF[(DGF$DOY==i),3]))) + (mean(DGF[(DGF$WET=="TRUE"),3])-mean(DGF[(DGF$DOY==i),3]))/mean(DGF[(DGF$DOY==i),3])
           if (CF.max.w=='NaN'){CF.max.w<-1}
