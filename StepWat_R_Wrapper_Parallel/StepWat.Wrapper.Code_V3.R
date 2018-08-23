@@ -30,13 +30,9 @@ s<-site[1]
       setwd(dist.directory)
       soil.type.name<-paste0(soil,".in")
       system(paste0("cp ",soil.type.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input"))
-      system(paste0("cp ",soil.type.name," ",directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Input"))
-      setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Input"))
-      system("rm soils_v30.in")
-      system(paste0("mv ",soil.type.name," soils_v30.in"))
       setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input"))
-      system("rm soils_v30.in")
-      system(paste0("mv ",soil.type.name," soils_v30.in"))
+      system("rm soils.in")
+      system(paste0("mv ",soil.type.name," soils.in"))
       
       #Go to the weather directory
       setwd(paste(assembly_output,"Site_",s,sep=""))
@@ -46,9 +42,9 @@ s<-site[1]
         setwd(paste("Site_",s,"_",GCM[g],sep=""))
         weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_",GCM[g],sep="")
         
-        #Identify the directory the weather will be pasted into        
+        #Identify the directory the weather will be pasted into    
+        weather.dir<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/",sep="")
         weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
-        weather.dir3<-paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Input/data_39.0625_-119.4375/",sep="")
         
         #Copy the weather data into the randomdata folder, commenting out creation of weather.in files as default so rSFSTEP2
         #uses only weather data generated from the markov weather generator but retain this code if one wants to create and copy 30 years of 
@@ -59,21 +55,9 @@ s<-site[1]
         } 
         
         #Paste in the site-specific markov weather generator files into the appropriate folder
-          system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir2,sep=""))
-          system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir2,sep=""))
-        
-        #Copy the weather data into the data_39.0625_-199.4375 folder, commenting out creation of weather.in files as default so rSFSTEP2
-        #uses only weather data generated from the markov weather generator but retain this code if one wants to create and copy 30 years of 
-        #weather.in files into the weather folder
-        if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
-        #Copy the weather data into the data_39.0625_-199.4375 folder
-        system(paste("cp -a ",weath.read,"/. ",weather.dir3,sep=""))
-        } 
-        
-        #Paste in the site-specific markov weather generator files into the appropriate folder
-          system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir3,sep=""))
-          system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir3,sep=""))
-        
+          system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir,sep=""))
+          system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir,sep=""))
+                      
         #If disturbances are turned on, loop through and run STEPWAT2 for all disturbance combinations (grazing X fire) for current conditions
         if (dist.graz.flag == T) {
           for (dst in dist.freq) {
@@ -90,7 +74,7 @@ s<-site[1]
                 #Change directory to the executable directory
                 setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
                 #Run stepwat2
-                system("./stepwat -f  files.in -s")
+                system("./stepwat -f  files.in -s -o")
                 
                 #Change directory to "Output" folder
                 setwd("Output")
@@ -103,14 +87,43 @@ s<-site[1]
                 system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
                 system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
                 
-                setwd(paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
+                #Change directory to where SOILWAT2 output is stored
+                setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output/sw_output",sep=""))
+                
+                #Daily SOILWAT2 output
+                #Identify the name of the sw daily output files
+                name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs_agg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                name.sw2.daily.csv<-paste("sw2_daily_agg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                
+                #Rename the daily SOILWAT2 output files
+                system(paste("mv sw2_daily_slyrs_agg.csv ",name.sw2.daily.slyrs.csv,sep=""))
+                system(paste("mv sw2_daily_agg.csv ",name.sw2.daily.csv,sep=""))
+                
+                #Monthly SOILWAT2 output
+                #Identify the name of the sw monthly output files
+                name.sw2.monthly.slyrs.csv<-paste("sw2_monthly_slyrs_agg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                name.sw2.monthly.csv<-paste("sw2_monthly_agg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                
+                #Rename the monthly SOILWAT2 output files
+                system(paste("mv sw2_monthly_slyrs_agg.csv ",name.sw2.monthly.slyrs.csv,sep=""))
+                system(paste("mv sw2_monthly_agg.csv ",name.sw2.monthly.csv,sep=""))
+                
+                #Yearly SOILWAT2 output
+                #Identify the name of the sw yearly output files
+                name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs_agg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                name.sw2.yearly.csv<-paste("sw2_yearly_agg.Site",s,GCM[g],"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                
+                #Rename the yearly SOILWAT2 output files
+                system(paste("mv sw2_yearly_slyrs_agg.csv ",name.sw2.yearly.slyrs.csv,sep=""))
+                system(paste("mv sw2_yearly_agg.csv ",name.sw2.yearly.csv,sep=""))
+                
                 source(output.file,local = TRUE)
                 setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
               }}
             
             print(paste0("DIST.GRAZ D",dst,".G",grz," DONE"))
           }
-          
+     
         }
         
         #If disturbances are turned off, run STEPWAT2 for no fire, no grazing for current conditions
@@ -119,7 +132,7 @@ s<-site[1]
           #Change directory to the executable directory
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
           #Run stepwat2
-          system("./stepwat -f  files.in -s")
+          system("./stepwat -f  files.in -s -o")
           
           #Change directory to "Output" folder
           setwd("Output")
@@ -131,7 +144,37 @@ s<-site[1]
           #Rename the bmassavg.csv
           system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
           system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
-          setwd(paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
+          
+          #Change directory to where SOILWAT2 output is stored
+          setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output/sw_output",sep=""))
+                
+          #Daily SOILWAT2 output
+          #Identify the name of the sw daily output files
+          name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs_agg.Site",s,GCM[g],soil,"csv",sep=".")
+          name.sw2.daily.csv<-paste("sw2_daily_agg.Site",s,GCM[g],soil,"csv",sep=".")
+                
+          #Rename the daily SOILWAT2 output files
+          system(paste("mv sw2_daily_slyrs_agg.csv ",name.sw2.daily.slyrs.csv,sep=""))
+          system(paste("mv sw2_daily_agg.csv ",name.sw2.daily.csv,sep=""))
+          
+          #Monthly SOILWAT2 output
+          #Identify the name of the sw monthly output files
+          name.sw2.monthly.slyrs.csv<-paste("sw2_monthly_slyrs_agg.Site",s,GCM[g],soil,"csv",sep=".")
+          name.sw2.monthly.csv<-paste("sw2_monthly_agg.Site",s,GCM[g],soil,"csv",sep=".")
+                
+          #Rename the monthly SOILWAT2 output files
+          system(paste("mv sw2_monthly_slyrs_agg.csv ",name.sw2.monthly.slyrs.csv,sep=""))
+          system(paste("mv sw2_monthly_agg.csv ",name.sw2.monthly.csv,sep=""))
+                
+          #Yearly SOILWAT2 output
+          #Identify the name of the sw yearly output files
+          name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs_agg.Site",s,GCM[g],soil,"csv",sep=".")
+          name.sw2.yearly.csv<-paste("sw2_yearly_agg.Site",s,GCM[g],soil,"csv",sep=".")
+                
+          #Rename the yearly SOILWAT2 output files
+          system(paste("mv sw2_yearly_slyrs_agg.csv ",name.sw2.yearly.slyrs.csv,sep=""))
+          system(paste("mv sw2_yearly_agg.csv ",name.sw2.yearly.csv,sep=""))
+          
           source(output.file,local = TRUE)
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
         }
@@ -144,19 +187,22 @@ s<-site[1]
             
             #Go to the weather directory
             setwd(paste(assembly_output,"Site_",s,sep=""))
-			#use with Vic database and all new weather databases
-            setwd(paste("Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep=""))
-            #use with KP weather database
-            #setwd(paste("Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep=""))
-            
-            #use with Vic database and all new weather databases
-            weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
-            #use with KP weather database
-            #weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
-            
-           #Identify the directory the weather will be pasted into        
+			
+			#use with Vic weather database and all new weather databases
+			if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
+			{
+    			setwd(paste("Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep=""))
+			    weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
+ 			 }
+ 		 	else
+  			{
+   				setwd(paste("Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep=""))
+   				weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
+  			}
+	            
+           #Identify the directory the weather will be pasted into   
+            weather.dir<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/",sep="")
             weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
-            weather.dir3<-paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Input/data_39.0625_-119.4375/",sep="")
             
             #Copy the weather data into the randomdata folder,commenting out creation of weather.in files as default
             if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
@@ -164,18 +210,9 @@ s<-site[1]
             system(paste("cp -a ",weath.read,"/. ",weather.dir2,sep=""))
             } 
             
-              system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir2,sep=""))
-              system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir2,sep=""))
-            
-            #Copy the weather data into the data_39.0625_-199.4375 folder,commenting out creation of weather.in files as default
-            if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
-            #Copy the weather data into the data_39.0625_-199.4375 folder
-            system(paste("cp -a ",weath.read,"/. ",weather.dir3,sep=""))
-            } 
-            
-              system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir3,sep=""))
-              system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir3,sep=""))
-            
+              system(paste("cp ",weath.read,"/mkv_covar.in ",weather.dir,sep=""))
+              system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir,sep=""))
+                                 
             if (dist.graz.flag == T) {
               for (dst in dist.freq) {
                 for (grz in graz.freq) {
@@ -191,7 +228,7 @@ s<-site[1]
                     #Change directory to the executable directory
                     setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
                     #Run stepwat2
-                    system("./stepwat -f  files.in -s")
+                    system("./stepwat -f  files.in -s -o")
                     
                     #Change directory to "Output" folder
                     setwd("Output")
@@ -204,7 +241,36 @@ s<-site[1]
                     system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
                     system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
                     
-                    setwd(paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
+                    #Change directory to where SOILWAT2 output is stored
+                	setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output/sw_output",sep=""))
+                
+                	#Daily SOILWAT2 output
+                	#Identify the name of the sw daily output files
+                	name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs_agg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                	name.sw2.daily.csv<-paste("sw2_daily_agg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                
+                	#Rename the daily SOILWAT2 output files
+                	system(paste("mv sw2_daily_slyrs_agg.csv ",name.sw2.daily.slyrs.csv,sep=""))
+                	system(paste("mv sw2_daily_agg.csv ",name.sw2.daily.csv,sep=""))
+                	
+                	#Monthly SOILWAT2 output
+                	#Identify the name of the sw monthly output files
+                	name.sw2.monthly.slyrs.csv<-paste("sw2_monthly_slyrs_agg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                	name.sw2.monthly.csv<-paste("sw2_monthly_agg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                	
+                	#Rename the monthly SOILWAT2 output files
+                	system(paste("mv sw2_monthly_slyrs_agg.csv ",name.sw2.monthly.slyrs.csv,sep=""))
+                	system(paste("mv sw2_monthly_agg.csv ",name.sw2.monthly.csv,sep=""))
+                
+                	#Yearly SOILWAT2 output
+                	#Identify the name of the sw yearly output files
+                	name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs_agg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                	name.sw2.yearly.csv<-paste("sw2_yearly_agg.Site",s,GCM[g],y,r,"D",dst,"G",grz,intensity,soil,"csv",sep=".")
+                	
+                	#Rename the yearly SOILWAT2 output files
+                	system(paste("mv sw2_yearly_slyrs_agg.csv ",name.sw2.yearly.slyrs.csv,sep=""))
+                	system(paste("mv sw2_yearly_agg.csv ",name.sw2.yearly.csv,sep=""))
+                    
                     source(output.file,local = TRUE)
                     setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
                   }}
@@ -219,7 +285,7 @@ s<-site[1]
               #Change directory to the executable directory
               setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
               #Run stepwat2
-              system("./stepwat -f  files.in -s")
+              system("./stepwat -f  files.in -s -o")
               
               #Change directory to "Output" folder
               setwd("Output")
@@ -232,7 +298,36 @@ s<-site[1]
               system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
               system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
               
-              setwd(paste(directory,"Stepwat.Site.",s,".",g,"/sw_src/testing/Output",sep=""))
+              #Change directory to where SOILWAT2 output is stored
+          	  setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output/sw_output",sep=""))
+                
+          	 #Daily SOILWAT2 output
+         	 #Identify the name of the sw daily output files
+         	 name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs_agg.Site",s,GCM[g],y,r,soil,"csv",sep=".")
+          	 name.sw2.daily.csv<-paste("sw2_daily_agg.Site",s,GCM[g],y,r,soil,"csv",sep=".")
+                
+          	#Rename the daily SOILWAT2 output files
+          	system(paste("mv sw2_daily_slyrs_agg.csv ",name.sw2.daily.slyrs.csv,sep=""))
+          	system(paste("mv sw2_daily_agg.csv ",name.sw2.daily.csv,sep=""))
+          	
+          	#Monthly SOILWAT2 output
+          	#Identify the name of the sw monthly output files
+          	name.sw2.monthly.slyrs.csv<-paste("sw2_monthly_slyrs_agg.Site",s,GCM[g],y,r,soil,"csv",sep=".")
+          	name.sw2.monthly.csv<-paste("sw2_monthly_agg.Site",s,GCM[g],y,r,soil,"csv",sep=".")
+                
+          	#Rename the monthly SOILWAT2 output files
+          	system(paste("mv sw2_monthly_slyrs_agg.csv ",name.sw2.monthly.slyrs.csv,sep=""))
+          	system(paste("mv sw2_monthly_agg.csv ",name.sw2.monthly.csv,sep=""))
+          	          	               
+          	#Yearly SOILWAT2 output
+          	#Identify the name of the sw yearly output files
+          	name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs_agg.Site",s,GCM[g],y,r,soil,"csv",sep=".")
+          	name.sw2.yearly.csv<-paste("sw2_yearly_agg.Site",s,GCM[g],y,r,soil,"csv",sep=".")
+                
+          	#Rename the yearly SOILWAT2 output files
+          	system(paste("mv sw2_yearly_slyrs_agg.csv ",name.sw2.yearly.slyrs.csv,sep=""))
+          	system(paste("mv sw2_yearly_agg.csv ",name.sw2.yearly.csv,sep=""))
+              
               source(output.file,local = TRUE)
               setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
             }

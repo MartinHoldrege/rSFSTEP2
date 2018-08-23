@@ -4,266 +4,282 @@
 
 library(plyr)
 
-#Input files with respective extensions, weekly and monthly are commented out as default
-dy_files<-system("ls *.dy",intern = TRUE)
-#wk_files<-system("ls *.wk",intern = TRUE)
-#mo_files<-system("ls *.mo",intern = TRUE)
-yr_files<-system("ls *.yr",intern = TRUE)
+setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output/sw_output",sep=""))
 
-#Write master file for all .dy files
-LL<-list()
-timeframe<-dy_files
+#daily files
+tempsw2_daily_slyrs<-data.frame(read.csv(name.sw2.daily.slyrs.csv))
+tempsw2_daily<-data.frame(read.csv(name.sw2.daily.csv))
 
-for(j in 1:length(dy_files)) 
-{
-  temp_df<-data.frame()
-  temp_df<-data.frame(read.table(timeframe[j],header=FALSE))
-  colnames(temp_df) <- paste(timeframe[j], colnames(temp_df), sep = "_")
-  colnames(temp_df)[1] <- "YEAR"
-  colnames(temp_df)[2] <- "DOY"
-  LL[[j]]<-temp_df
-}
+#write master daily file for soil-layer variables
+tempsw2_daily_slyrs$site<-sites[1]
+tempsw2_daily_slyrs$GCM<-GCM[g]
 
-total<-LL[[1]]
-
-for(j in 2:length(dy_files)) 
-{
-  total<-merge(total,LL[[j]],by=c("YEAR","DOY"))
-}
-
-total<-total[order(total$DOY),]
-total<-total[order(total$YEAR),]
-
-total$site<-sites[1]
-total$GCM<-GCM[g]
+#tempsw2_daily_slyrs<-tempsw2_daily_slyrs[order(tempsw2_daily_slyrs$DOY),]
+#tempsw2_daily_slyrs<-tempsw2_daily_slyrs[order(tempsw2_daily_slyrs$YEAR),]
 
 if(GCM[g]=="Current")
 {
-total$soilType<-soil
-total$dist_flag<-dist.graz.flag
+    tempsw2_daily_slyrs$soilType<-soil
+    tempsw2_daily_slyrs$dist_flag<-dist.graz.flag
     if(dist.graz.flag==T)
     {
-        total$dist_freq<-dst
-        total$graz_freq<-graz.freq
-        total$intensity<-intensity
+        tempsw2_daily_slyrs$dist_freq<-dst
+        tempsw2_daily_slyrs$graz_freq<-graz.freq
+        tempsw2_daily_slyrs$intensity<-intensity
     }else
     {
-        total$dist_freq<-NA
-        total$graz_freq<-NA
-        total$intensity<-NA
+        tempsw2_daily_slyrs$dist_freq<-NA
+        tempsw2_daily_slyrs$graz_freq<-NA
+        tempsw2_daily_slyrs$intensity<-NA
     }
+    tempsw2_daily_slyrs$RCP<-rep("NONE",length(tempsw2_daily_slyrs$site))
+    tempsw2_daily_slyrs$YEARS<-rep("NONE",length(tempsw2_daily_slyrs$site))  
 }else
 {
-total$soilType<-soil
-total$RCP<-r
-total$YEARS<-y
-total$dist_flag<-dist.graz.flag
-
+    tempsw2_daily_slyrs$soilType<-soil
+    tempsw2_daily_slyrs$dist_flag<-dist.graz.flag
+    
     if(dist.graz.flag==T)
     {
-        total$dist_freq<-dst
-        total$graz_freq<-graz.freq
-        total$intensity<-intensity
+        tempsw2_daily_slyrs$dist_freq<-dst
+        tempsw2_daily_slyrs$graz_freq<-graz.freq
+        tempsw2_daily_slyrs$intensity<-intensity
     }else
     {
-    total$dist_freq<-NA
-    total$graz_freq<-NA
-    total$intensity<-NA
+        tempsw2_daily_slyrs$dist_freq<-NA
+        tempsw2_daily_slyrs$graz_freq<-NA
+        tempsw2_daily_slyrs$intensity<-NA
     }
+    tempsw2_daily_slyrs$RCP<-r
+    tempsw2_daily_slyrs$YEARS<-y  
 }
 
-#dbWriteTable(db, "total_dy", total, append=T)
-write.table(total, "total_dy.csv",sep=",",col.names=!file.exists("total_dy.csv"),row.names=F,quote = F,append = T)
+#write master daily file for non-soil layer files
+tempsw2_daily$site<-sites[1]
+tempsw2_daily$GCM<-GCM[g]
 
-#Write master file for all .wk files
-#LL<-list()
-#timeframe<-wk_files
-#for(j in 1:length(wk_files))
-#{
-#  temp_df<-data.frame()
-#  temp_df<-data.frame(read.table(timeframe[j],header=FALSE))
-#  colnames(temp_df) <- paste(timeframe[j], colnames(temp_df), sep = "_")
-#  colnames(temp_df)[1] <- "YEAR"
-#  colnames(temp_df)[2] <- "WEEK"
-#  LL[[j]]<-temp_df
-#}
-
-#total<-LL[[1]]
-
-#for(j in 2:length(wk_files))
-#{
-#  total<-merge(total,LL[[j]],by=c("YEAR","WEEK"))
-#}
-
-#total<-total[order(total$WEEK),]
-#total<-total[order(total$YEAR),]
-
-#total$site<-sites[1]
-#total$GCM<-GCM[g]
-#if(GCM[g]=="Current")
-#{
-#total$soilType<-soil
-#total$dist_flag<-dist.graz.flag
-#    if(dist.graz.flag==T)
-#    {
-#        total$dist_freq<-dst
-#        total$graz_freq<-graz.freq
-#        total$intensity<-intensity
-#    }else
-#    {
-#        total$dist_freq<-NA
-#        total$graz_freq<-NA
-#        total$intensity<-NA
-#    }
-#}else
-#{
-#total$soilType<-soil
-#total$RCP<-r
-#total$YEARS<-y
-#total$dist_flag<-dist.graz.flag
-#
-#   if(dist.graz.flag==T)
-#    {
-#        total$dist_freq<-dst
-#        total$graz_freq<-graz.freq
-#        total$intensity<-intensity
-#    }else
-#    {
-#    total$dist_freq<-NA
-#    total$graz_freq<-NA
-#    total$intensity<-NA
-#    }
-#}
-
-#dbWriteTable(db, "total_wk", total, append=T)
-#write.table(total, "total_wk.csv",sep=",",row.names=F,quote = F,append = T)
-
-#Write master file for all .mo files
-#LL<-list()
-#timeframe<-mo_files
-
-#for(j in 1:length(mo_files))
-#{
-#  temp_df<-data.frame()
-#  temp_df<-data.frame(read.table(timeframe[j],header=FALSE))
-#  colnames(temp_df) <- paste(timeframe[j], colnames(temp_df), sep = "_")
-#  colnames(temp_df)[1] <- "YEAR"
-#  colnames(temp_df)[2] <- "MONTH"
-#  LL[[j]]<-temp_df
-#}
-
-#total<-LL[[1]]
-
-#for(j in 2:length(mo_files))
-#{
-#  total<-merge(total,LL[[j]],by=c("YEAR","MONTH"))
-#}
-
-#total<-total[order(total$MONTH),]
-#total<-total[order(total$YEAR),]
-#total$site<-sites[1]
-#total$GCM<-GCM[g]
-
-#if(GCM[g]=="Current")
-#{
-#total$soilType<-soil
-#total$dist_flag<-dist.graz.flag
-#    if(dist.graz.flag==T)
-#   {
-#        total$dist_freq<-dst
-#        total$graz_freq<-graz.freq
-#        total$intensity<-intensity
-#    }else
-#    {
-#        total$dist_freq<-NA
-#        total$graz_freq<-NA
-#        total$intensity<-NA
- #   }
-#}else
-#{
-#total$soilType<-soil
-#total$RCP<-r
-#total$YEARS<-y
-#total$dist_flag<-dist.graz.flag
-
-    #if(dist.graz.flag==T)
-    #{
-    #    total$dist_freq<-dst
-    #    total$graz_freq<-graz.freq
-    #    total$intensity<-intensity
-    #}else
-    #{
-    #total$dist_freq<-NA
-    #total$graz_freq<-NA
-    #total$intensity<-NA
-    #}
-#}
-#dbWriteTable(db, "total_mo", total, append=T)
-#write.table(total, "total_mo.csv",sep=",",row.names=F,quote = F,append = T)
-
-#Write master file for all .yr files
-LL<-list()
-timeframe<-yr_files
-
-for(j in 1:length(yr_files))
-{
-  temp_df<-data.frame()
-  temp_df<-data.frame(read.table(timeframe[j],header=FALSE))
-  colnames(temp_df) <- paste(timeframe[j], colnames(temp_df), sep = "_")
-  colnames(temp_df)[1] <- "YEAR"
-  LL[[j]]<-temp_df
-}
-
-total<-LL[[1]]
-
-for(j in 2:length(yr_files))
-{
-  total<-merge(total,LL[[j]],by=c("YEAR"))
-}
-
-total<-total[order(total$YEAR),]
-total$site<-sites[1]
-total$GCM<-GCM[g]
+#tempsw2_daily<-tempsw2_daily[order(tempsw2_daily$DOY),]
+#tempsw2_daily<-tempsw2_daily[order(tempsw2_daily$YEAR),]
 
 if(GCM[g]=="Current")
 {
-total$soilType<-soil
-total$dist_flag<-dist.graz.flag
+    tempsw2_daily$soilType<-soil
+    tempsw2_daily$dist_flag<-dist.graz.flag
     if(dist.graz.flag==T)
     {
-        total$dist_freq<-dst
-        total$graz_freq<-graz.freq
-        total$intensity<-intensity
+       tempsw2_daily$dist_freq<-dst
+       tempsw2_daily$graz_freq<-graz.freq
+       tempsw2_daily$intensity<-intensity
     }else
     {
-        total$dist_freq<-NA
-        total$graz_freq<-NA
-        total$intensity<-NA
+        tempsw2_daily$dist_freq<-NA
+        tempsw2_daily$graz_freq<-NA
+        tempsw2_daily$intensity<-NA
     }
+        tempsw2_daily$RCP<-rep("NONE",length(tempsw2_daily$site))
+    	tempsw2_daily$YEARS<-rep("NONE",length(tempsw2_daily$site))
 }else
 {
-total$soilType<-soil
-total$RCP<-r
-total$YEARS<-y
-total$dist_flag<-dist.graz.flag
-
+    tempsw2_daily$soilType<-soil
+    tempsw2_daily$dist_flag<-dist.graz.flag
+    
     if(dist.graz.flag==T)
     {
-        total$dist_freq<-dst
-        total$graz_freq<-graz.freq
-        total$intensity<-intensity
+       tempsw2_daily$dist_freq<-dst
+       tempsw2_daily$graz_freq<-graz.freq
+       tempsw2_daily$intensity<-intensity
     }else
     {
-    total$dist_freq<-NA
-    total$graz_freq<-NA
-    total$intensity<-NA
+        tempsw2_daily$dist_freq<-NA
+        tempsw2_daily$graz_freq<-NA
+        tempsw2_daily$intensity<-NA
     }
+        tempsw2_daily$RCP<-r
+    	tempsw2_daily$YEARS<-y
 }
 
-#dbWriteTable(db, "total_yr", total, append=T)
-write.table(total, "total_yr.csv",sep=",",col.names=!file.exists("total_yr.csv"),row.names=F,quote = F,append = T)
-#write.table(total, "total_yr.csv",sep=",",row.names=F,quote = F,append=T)
+write.table(tempsw2_daily_slyrs, "total_sw2_daily_slyrs.csv",sep=",",col.names=!file.exists("total_sw2_daily_slyrs.csv"),row.names=F,quote = F,append=T)
+write.table(tempsw2_daily, "total_sw2_daily.csv",sep=",",col.names=!file.exists("total_sw2_daily.csv"),row.names=F,quote = F,append=T)
 
+#monthly files
+tempsw2_monthly_slyrs<-data.frame(read.csv(name.sw2.monthly.slyrs.csv))
+tempsw2_monthly<-data.frame(read.csv(name.sw2.monthly.csv))
+
+#write master monthly file for soil-layer variables
+tempsw2_monthly_slyrs$site<-sites[1]
+tempsw2_monthly_slyrs$GCM<-GCM[g]
+
+if(GCM[g]=="Current")
+{
+    tempsw2_monthly_slyrs$soilType<-soil
+    tempsw2_monthly_slyrs$dist_flag<-dist.graz.flag
+    if(dist.graz.flag==T)
+    {
+        tempsw2_monthly_slyrs$dist_freq<-dst
+        tempsw2_monthly_slyrs$graz_freq<-graz.freq
+        tempsw2_monthly_slyrs$intensity<-intensity
+    }else
+    {
+        tempsw2_monthly_slyrs$dist_freq<-NA
+        tempsw2_monthly_slyrs$graz_freq<-NA
+        tempsw2_monthly_slyrs$intensity<-NA
+    }
+        tempsw2_monthly_slyrs$RCP<-rep("NONE",length(tempsw2_monthly_slyrs$site))
+    	tempsw2_monthly_slyrs$YEARS<-rep("NONE",length(tempsw2_monthly_slyrs$site))
+}else
+{
+    tempsw2_monthly_slyrs$soilType<-soil
+    tempsw2_monthly_slyrs$dist_flag<-dist.graz.flag
+    
+    if(dist.graz.flag==T)
+    {
+        tempsw2_monthly_slyrs$dist_freq<-dst
+        tempsw2_monthly_slyrs$graz_freq<-graz.freq
+        tempsw2_monthly_slyrs$intensity<-intensity
+    }else
+    {
+        tempsw2_monthly_slyrs$dist_freq<-NA
+        tempsw2_monthly_slyrs$graz_freq<-NA
+        tempsw2_monthly_slyrs$intensity<-NA
+    }
+        tempsw2_monthly_slyrs$RCP<-r
+    	tempsw2_monthly_slyrs$YEARS<-y
+}
+
+#write master monthly file for non-soil layer files
+tempsw2_monthly$site<-sites[1]
+tempsw2_monthly$GCM<-GCM[g]
+
+if(GCM[g]=="Current")
+{
+    tempsw2_monthly$soilType<-soil
+    tempsw2_monthly$dist_flag<-dist.graz.flag
+    if(dist.graz.flag==T)
+    {
+       tempsw2_monthly$dist_freq<-dst
+       tempsw2_monthly$graz_freq<-graz.freq
+       tempsw2_monthly$intensity<-intensity
+    }else
+    {
+        tempsw2_monthly$dist_freq<-NA
+        tempsw2_monthly$graz_freq<-NA
+        tempsw2_monthly$intensity<-NA
+    }
+        tempsw2_monthly$RCP<-rep("NONE",length(tempsw2_monthly$site))
+    	tempsw2_monthly$YEARS<-rep("NONE",length(tempsw2_monthly$site))
+}else
+{
+    tempsw2_monthly$soilType<-soil
+    tempsw2_monthly$dist_flag<-dist.graz.flag
+    
+    if(dist.graz.flag==T)
+    {
+       tempsw2_monthly$dist_freq<-dst
+       tempsw2_monthly$graz_freq<-graz.freq
+       tempsw2_monthly$intensity<-intensity
+    }else
+    {
+        tempsw2_monthly$dist_freq<-NA
+        tempsw2_monthly$graz_freq<-NA
+        tempsw2_monthly$intensity<-NA
+    }
+        tempsw2_monthly$RCP<-r
+    	tempsw2_monthly$YEARS<-y
+}
+
+write.table(tempsw2_monthly_slyrs, "total_sw2_monthly_slyrs.csv",sep=",",col.names=!file.exists("total_sw2_monthly_slyrs.csv"),row.names=F,quote = F,append=T)
+write.table(tempsw2_monthly, "total_sw2_monthly.csv",sep=",",col.names=!file.exists("total_sw2_monthly.csv"),row.names=F,quote = F,append=T)
+
+#yearly files
+tempsw2_yearly_slyrs<-data.frame(read.csv(name.sw2.yearly.slyrs.csv))
+tempsw2_yearly<-data.frame(read.csv(name.sw2.yearly.csv))
+
+#write master yearly file for soil-layer variables
+tempsw2_yearly_slyrs$site<-sites[1]
+tempsw2_yearly_slyrs$GCM<-GCM[g]
+
+if(GCM[g]=="Current")
+{
+    tempsw2_yearly_slyrs$soilType<-soil
+    tempsw2_yearly_slyrs$dist_flag<-dist.graz.flag
+    if(dist.graz.flag==T)
+    {
+        tempsw2_yearly_slyrs$dist_freq<-dst
+        tempsw2_yearly_slyrs$graz_freq<-graz.freq
+        tempsw2_yearly_slyrs$intensity<-intensity
+    }else
+    {
+        tempsw2_yearly_slyrs$dist_freq<-NA
+        tempsw2_yearly_slyrs$graz_freq<-NA
+        tempsw2_yearly_slyrs$intensity<-NA
+    }
+        tempsw2_yearly_slyrs$RCP<-rep("NONE",length(tempsw2_yearly_slyrs$site))
+    	tempsw2_yearly_slyrs$YEARS<-rep("NONE",length(tempsw2_yearly_slyrs$site))
+}else
+{
+    tempsw2_yearly_slyrs$soilType<-soil
+    tempsw2_yearly_slyrs$dist_flag<-dist.graz.flag
+    
+    if(dist.graz.flag==T)
+    {
+        tempsw2_yearly_slyrs$dist_freq<-dst
+        tempsw2_yearly_slyrs$graz_freq<-graz.freq
+        tempsw2_yearly_slyrs$intensity<-intensity
+    }else
+    {
+        tempsw2_yearly_slyrs$dist_freq<-NA
+        tempsw2_yearly_slyrs$graz_freq<-NA
+        tempsw2_yearly_slyrs$intensity<-NA
+    }
+        tempsw2_yearly_slyrs$RCP<-r
+    	tempsw2_yearly_slyrs$YEARS<-y
+}
+
+#write master yearly file for non-soil layer files
+tempsw2_yearly$site<-sites[1]
+tempsw2_yearly$GCM<-GCM[g]
+
+if(GCM[g]=="Current")
+{
+    tempsw2_yearly$soilType<-soil
+    tempsw2_yearly$dist_flag<-dist.graz.flag
+    if(dist.graz.flag==T)
+    {
+       tempsw2_yearly$dist_freq<-dst
+       tempsw2_yearly$graz_freq<-graz.freq
+       tempsw2_yearly$intensity<-intensity
+    }else
+    {
+        tempsw2_yearly$dist_freq<-NA
+        tempsw2_yearly$graz_freq<-NA
+        tempsw2_yearly$intensity<-NA
+    }
+        tempsw2_yearly$RCP<-rep("NONE",length(tempsw2_yearly$site))
+    	tempsw2_yearly$YEARS<-rep("NONE",length(tempsw2_yearly$site))
+}else
+{
+    tempsw2_yearly$soilType<-soil
+    tempsw2_yearly$dist_flag<-dist.graz.flag
+    
+    if(dist.graz.flag==T)
+    {
+       tempsw2_yearly$dist_freq<-dst
+       tempsw2_yearly$graz_freq<-graz.freq
+       tempsw2_yearly$intensity<-intensity
+    }else
+    {
+        tempsw2_yearly$dist_freq<-NA
+        tempsw2_yearly$graz_freq<-NA
+        tempsw2_yearly$intensity<-NA
+    }
+        tempsw2_yearly$RCP<-r
+    	tempsw2_yearly$YEARS<-y
+}
+
+write.table(tempsw2_yearly_slyrs, "total_sw2_yearly_slyrs.csv",sep=",",col.names=!file.exists("total_sw2_yearly_slyrs.csv"),row.names=F,quote = F,append=T)
+write.table(tempsw2_yearly, "total_sw2_yearly.csv",sep=",",col.names=!file.exists("total_sw2_yearly.csv"),row.names=F,quote = F,append=T)
+
+#Write total bmass and mort files
 setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
 tempbmass<-data.frame(read.csv(name.bmass.csv))
 tempmort<-data.frame(read.csv(name.mort.csv))
@@ -286,11 +302,11 @@ if(GCM[g]=="Current")
         tempbmass$graz_freq<-NA
         tempbmass$intensity<-NA
     }
+        tempbmass$RCP<-rep("NONE",length(tempbmass$site))
+    	tempbmass$YEARS<-rep("NONE",length(tempbmass$site))   
 }else
 {
-   tempbmass$soilType<-soil
-    tempbmass$RCP<-r
-    tempbmass$YEARS<-y
+    tempbmass$soilType<-soil
     tempbmass$dist_flag<-dist.graz.flag
     
     if(dist.graz.flag==T)
@@ -304,6 +320,8 @@ if(GCM[g]=="Current")
         tempbmass$graz_freq<-NA
         tempbmass$intensity<-NA
     }
+        tempbmass$RCP<-r
+    	tempbmass$YEARS<-y
 }
 
 tempmort$site<-sites[1]
@@ -324,11 +342,11 @@ if(GCM[g]=="Current")
         tempmort$graz_freq<-NA
         tempmort$intensity<-NA
     }
+        tempmort$RCP<-rep("NONE",length(tempmort$site))
+    	tempmort$YEARS<-rep("NONE",length(tempmort$site))
 }else
 {
     tempmort$soilType<-soil
-    tempmort$RCP<-r
-    tempmort$YEARS<-y
     tempmort$dist_flag<-dist.graz.flag
     
     if(dist.graz.flag==T)
@@ -342,6 +360,8 @@ if(GCM[g]=="Current")
         tempmort$graz_freq<-NA
         tempmort$intensity<-NA
     }
+        tempmort$RCP<-r
+    	tempmort$YEARS<-y
 }
 
 write.table(tempbmass, "total_bmass.csv",sep=",",col.names=!file.exists("total_bmass.csv"),row.names=F,quote = F,append=T)

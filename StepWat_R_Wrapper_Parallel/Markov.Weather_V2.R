@@ -104,6 +104,9 @@ registerDoParallel(proc_count)
             p_W_W<-p_W_W/(sum(DGF[(DGF$WW==1)&(DGF$DOY==i-1),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i-1),8]))
             p_W_D<-p_W_D/(yr-(sum(DGF[(DGF$WW==1)&(DGF$DOY==i-1),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i-1),8])))
           }
+              	  
+    	  if (p_W_W=='NaN'){p_W_W<-0}
+          if (p_W_D=='NaN'){p_W_W<-0}
                    
           CF.max.w<-(abs(mean(DGF[(DGF$WET=="TRUE"),3])/mean(DGF[(DGF$DOY==i),3]))) + (mean(DGF[(DGF$WET=="TRUE"),3])-mean(DGF[(DGF$DOY==i),3]))/mean(DGF[(DGF$DOY==i),3])
           if (CF.max.w=='NaN'){CF.max.w<-1}
@@ -121,6 +124,7 @@ registerDoParallel(proc_count)
           PPT_sd<-(sd((DGF[(DGF$DOY==i),5]))) #standard deviation the ppt across all the years for that day
 	 	
 	 	  if(is.na(PPT_sd)==TRUE){PPT_sd<-0}
+	 	  if(is.na(PPT_avg)==TRUE){PPT_avg<-0}
           CF.max.w<-CF.max.w
           CF.max.d<-CF.max.d
           CF.min.w<-CF.min.w
