@@ -15,6 +15,7 @@ s<-site[1]
       
       setwd(dist.directory)
       
+      #If you don't want to use replicated species.in files for each site, simply comment out the below
       #Copy in the relevant species.in file for each site, as specified in the STEPWAT.Wrapper.MAIN_V3.R
       for(species in species.types)
       {

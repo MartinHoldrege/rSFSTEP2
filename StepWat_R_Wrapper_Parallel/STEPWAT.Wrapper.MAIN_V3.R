@@ -26,7 +26,6 @@ db_loc<-""
 #Database location, edit the name of the weather database accordingly
 database_name<-"dbWeatherData_Sagebrush_KP.v3.2.0.sqlite"
 database<-file.path(db_loc,database_name)
-database_name=""
  
 #Query script (Loads data from the database into a list)
 query.file<-paste(source.dir,"RSoilWat31.Weather.Data.Query_V2.R", sep="")
@@ -275,13 +274,6 @@ if(length(temp) > 0){
 
 if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
 {
-    #Difference between start and end year(if you want 2030-2060 use 50; if you want 2070-2100 use 90 below)
-    #Set Years
-    YEARS<-c("d50yrs","d90yrs")
-  }
-  else
-  if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
-  {
     #use with Vic weather database and all new weather databases
     #Difference between start and end year(if you want 2030-2060 use 50; if you want 2070-2100 use 90 below)
     deltaFutureToSimStart_yr <- c("d50","d90")
