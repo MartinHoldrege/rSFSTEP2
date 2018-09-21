@@ -62,6 +62,8 @@ setwd(db_loc)
 
 #Read in Input Species CSV data
 species_data <- read.csv("InputData_Species.csv", header=TRUE, sep=",")
+#Set working directory to source directory
+setwd(source.dir)
 #Get all sites listed in the CSV
 species_data_all_sites<-unique(species_data$Site)
 
@@ -97,6 +99,8 @@ if(any(grepl(",",species_data_all_sites))==TRUE)
   
   }
 
+#Set working directory to STEPWAT_DIST
+setwd("STEPWAT_DIST")
 #Get species data for the site or "all" sites
 species_data_site<-species_data[species_data$Site==site | species_data$Site=="all",]
 #Get all treatments associated with the site or all sites
