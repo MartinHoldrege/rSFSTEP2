@@ -367,7 +367,7 @@ RE<-FIN/INT
 #         OR "drought" (for 5 year non-driest back-to-back and only once in 20 years); or "markov"
 #         (for markov code output) !!!! if using Markov remember to flag it in weathersetup.in !!!!
 #Set Type, TYPE="basic" is for both basic and markov. TYPE="markov" is for only markov.
-TYPE<-"basic"
+TYPE<-"markov"
 
 #Source the code in assembly script
 source(assemble.file)
