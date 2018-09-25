@@ -140,52 +140,74 @@ setwd(source.dir)
 #######################################################################################
 #KS: Source site soil requirements from a csv
 
-setwd("..")
+#Set working directory to location with inputs
+setwd(db_loc)
 
+#Read in soil data from the soil inputs csv
 soil_data <- read.csv("InputData_SoilLayers.csv", header=TRUE, sep=",")
+#Set working directory to source directory
+setwd(source.dir)
+#Get all sites specified in the csv apart from all
 soil_data_all_sites<-unique(soil_data$Site)
+#Get all multiple sites separated by comma
 soil_data_all_sites_vectors<-soil_data_all_sites[grepl(",",soil_data_all_sites)]
 
+#Service multiple sites separated by comma first if any
 if(any(grepl(",",soil_data_all_sites))==TRUE)
 {
   for(j in soil_data_all_sites_vectors)
   {
+    #If current site in soil_data_all_sites_vectors generate the soils.in file for it
     if(grepl(site,j))
     {
+      #Get all columns of csv where site matches the site under inspection
       soil_data_site<-soil_data[soil_data$Site==j,]
+      #Get all soil treatments pertaining to the site
       treatments_vector<-unique(soil_data_site$soil_treatment)
       setwd("STEPWAT_DIST")
+      #For each treatment specific to the site under inspection generate a soils.in file
       for(i in treatments_vector)
       {
+        #Get all columns of csv
         df=soil_data_site[soil_data_site$soil_treatment==i,]
+        #Get rid of first two columns
         df <- subset(df, select = -c(1,2) )
-        write.table(df, file = paste0(i,"_vector",".in"),row.names=FALSE,col.names = FALSE,sep="\t")
+        #Generate the file
+        write.table(df, file = paste0("soils_",i,"_vector_",site,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
       }
       setwd("..")
     }
   }
 }
 
-
+#Service soils data for the current site or for "all"
 soil_data_site<-soil_data[soil_data$Site==site | soil_data$Site=="all",]
+#Get all treatments pertaining to site or "all"
 treatments<-unique(soil_data_site$soil_treatment)
 
 setwd("STEPWAT_DIST")
 
 for(i in treatments)
 {
+  #For each treatment grab the soils data for the current site or "all"
   df=soil_data_site[soil_data_site$soil_treatment==i,]
+  #Drop first two columns
   df <- subset(df, select = -c(1,2) )
-  write.table(df, file = paste0(i,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
+  #Write the soils file
+  write.table(df, file = paste0("soils_",i,"_",site,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
 }
 
+#Compile name of all soil files generated above
 treatments<-as.character(treatments)
+treatments<- paste("soils_",treatments,"_",site, sep="")
 treatments_vector<-as.character(treatments_vector)
-treatments_vector <- paste(treatments_vector, "_vector", sep="")
+treatments_vector <- paste("soils_",treatments_vector, "_vector_",site, sep="")
 
 #Soil types are specified here, in accordance with the files added to STEPWAT_DIST folder
 soil.types<-c(treatments,treatments_vector)#c("soils.17sand.13clay","soils.68sand.10clay") #KS: uncommented to test overhaul of inputs
 
+#Set working directory back to source directory
+setwd(source.dir)
 #######################################################################################
 #KS: Source site rgroup requirements from a csv
 
