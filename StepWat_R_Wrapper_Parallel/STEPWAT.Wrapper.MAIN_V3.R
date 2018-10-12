@@ -18,7 +18,7 @@ source.dir<-"nopath"
 source.dir<-paste(source.dir,"/", sep="")
 setwd(source.dir)
 
-#Set database location
+#Set database and inputs location
 db_loc<-""
 
 #Database location, edit the name of the weather database accordingly
@@ -55,27 +55,43 @@ site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10)
 #species<-"species"
 
 #######################################################################################
+#Set working directory to location with inputs
+setwd(db_loc)
 
-#######################################################################################
 #KS: Source site species requirements from a csv
+
+#Read in Input Species CSV data
 species_data <- read.csv("InputData_Species.csv", header=TRUE, sep=",")
+#Set working directory to source directory
+setwd(source.dir)
+#Get all sites listed in the CSV
 species_data_all_sites<-unique(species_data$Site)
 
+#Service multiple sites separated by comma in the csv
 if(any(grepl(",",species_data_all_sites))==TRUE)
 {
+  #Get all multiple sites
   species_data_all_sites_vectors<-species_data_all_sites[grepl(",",species_data_all_sites)]
+  #Iterate through each multiple site
   for(j in species_data_all_sites_vectors)
   {
+    #if the site under inspection exists in multiple sites in the csv
     if(grepl(site,j))
     {
+      #Get data for the multiple sites containing site under inspection from CSV
       species_data_site<-species_data[species_data$Site==j,]
+      #List all treatments associated with the multiple sites
       treatments_vector_species<-unique(species_data_site$treatment)
       setwd("STEPWAT_DIST")
+      #Iterate through each treatment
       for(i in treatments_vector_species)
       {
+        #Get data for the specific treatment
         df=species_data_site[species_data_site$treatment==i,]
+        #Get rid of site and treatment columns
         df <- subset(df, select = -c(1,2) )
-        write.table(df, file = paste0("species_",i,"_vector",".in"),quote = FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+        #Write the specifies .in file
+        write.table(df, file = paste0("species_",i,"_vector_",site,".in"),quote = FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
       }
       setwd("..")
     }
@@ -83,83 +99,115 @@ if(any(grepl(",",species_data_all_sites))==TRUE)
   
   }
 
-
+#Set working directory to STEPWAT_DIST
+setwd("STEPWAT_DIST")
+#Get species data for the site or "all" sites
 species_data_site<-species_data[species_data$Site==site | species_data$Site=="all",]
+#Get all treatments associated with the site or all sites
 treatments_species<-unique(species_data_site$treatment)
 
-setwd("STEPWAT_DIST")
-
+#Write file for each treatment for the specific site or "all" sites in the CSV
 for(i in treatments_species)
 {
+  #Get data for a specific treatment
   df=species_data_site[species_data_site$treatment==i,]
+  #Get rid of first two columns i.e. site id and treatment type
   df <- subset(df, select = -c(1,2) )
-  write.table(df, file = paste0("species_",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+  #Write the species.in file
+  write.table(df, file = paste0("species_",i,"_",site,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
 }
 
+#Get all files created above for species
 treatments_species<-as.character(treatments_species)
 treatments_species <- paste("species_",treatments_species,sep="")
 treatments_vector_species<-as.character(treatments_vector_species)
 treatments_vector_species <- paste("species_",treatments_vector_species, "_vector", sep="")
 
-#Soil types are specified here, in accordance with the files added to STEPWAT_DIST folder
+#Soil types are specified here, in accordance with the files added to input folder
+#File names of all created species files above are all now stored in species variable
 species<-c(treatments_species,treatments_vector_species)#c("soils.17sand.13clay","soils.68sand.10clay") #KS: uncommented to test overhaul of inputs
-species<-paste(species,".in",sep="")
+species<-paste(species,"_",site,".in",sep="")
 
+#Prior to this step make sure species_template.in exists in the inputs folder
+#append species_template.in to all the created files
 for (i in species)
 {
   system(paste("cat ","species_template.in>>",i,sep=""))
 }
 
-
+#Set working directory back to source directory
+setwd(source.dir)
 #######################################################################################
 #KS: Source site soil requirements from a csv
 
-setwd("..")
+#Set working directory to location with inputs
+setwd(db_loc)
 
+#Read in soil data from the soil inputs csv
 soil_data <- read.csv("InputData_SoilLayers.csv", header=TRUE, sep=",")
+#Set working directory to source directory
+setwd(source.dir)
+#Get all sites specified in the csv apart from all
 soil_data_all_sites<-unique(soil_data$Site)
+#Get all multiple sites separated by comma
 soil_data_all_sites_vectors<-soil_data_all_sites[grepl(",",soil_data_all_sites)]
 
+#Service multiple sites separated by comma first if any
 if(any(grepl(",",soil_data_all_sites))==TRUE)
 {
   for(j in soil_data_all_sites_vectors)
   {
+    #If current site in soil_data_all_sites_vectors generate the soils.in file for it
     if(grepl(site,j))
     {
+      #Get all columns of csv where site matches the site under inspection
       soil_data_site<-soil_data[soil_data$Site==j,]
+      #Get all soil treatments pertaining to the site
       treatments_vector<-unique(soil_data_site$soil_treatment)
       setwd("STEPWAT_DIST")
+      #For each treatment specific to the site under inspection generate a soils.in file
       for(i in treatments_vector)
       {
+        #Get all columns of csv
         df=soil_data_site[soil_data_site$soil_treatment==i,]
+        #Get rid of first two columns
         df <- subset(df, select = -c(1,2) )
-        write.table(df, file = paste0(i,"_vector",".in"),row.names=FALSE,col.names = FALSE,sep="\t")
+        #Generate the file
+        write.table(df, file = paste0("soils_",i,"_vector_",site,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
       }
       setwd("..")
     }
   }
 }
 
-
+#Service soils data for the current site or for "all"
 soil_data_site<-soil_data[soil_data$Site==site | soil_data$Site=="all",]
+#Get all treatments pertaining to site or "all"
 treatments<-unique(soil_data_site$soil_treatment)
 
 setwd("STEPWAT_DIST")
 
 for(i in treatments)
 {
+  #For each treatment grab the soils data for the current site or "all"
   df=soil_data_site[soil_data_site$soil_treatment==i,]
+  #Drop first two columns
   df <- subset(df, select = -c(1,2) )
-  write.table(df, file = paste0(i,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
+  #Write the soils file
+  write.table(df, file = paste0("soils_",i,"_",site,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
 }
 
+#Compile name of all soil files generated above
 treatments<-as.character(treatments)
+treatments<- paste("soils_",treatments,"_",site, sep="")
 treatments_vector<-as.character(treatments_vector)
-treatments_vector <- paste(treatments_vector, "_vector", sep="")
+treatments_vector <- paste("soils_",treatments_vector, "_vector_",site, sep="")
 
 #Soil types are specified here, in accordance with the files added to STEPWAT_DIST folder
 soil.types<-c(treatments,treatments_vector)#c("soils.17sand.13clay","soils.68sand.10clay") #KS: uncommented to test overhaul of inputs
 
+#Set working directory back to source directory
+setwd(source.dir)
 #######################################################################################
 #KS: Source site rgroup requirements from a csv
 
