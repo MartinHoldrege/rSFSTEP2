@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #Assign Job Name
-#SBATCH --job-name=makedatabase
+#SBATCH --job-name=makeoutputdatabases
 
 #Assign Account Name
-#SBATCH --account=sagebrush-steppehab
+#SBATCH --account=sagebrush
 
 #Set Max Wall Time
 #days-hours:minutes:seconds
@@ -17,8 +17,10 @@
 
 #Load Required Modules
 
-module load intel/16.3
-module load R/3.2.5
+module load intel/18.0.1
+module load gcc/7.3.0
+module load swset/2018.05
+module load r/3.5.0
 
 srun Rscript makedatabase.R
 
