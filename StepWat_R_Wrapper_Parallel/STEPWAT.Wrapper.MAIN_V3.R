@@ -266,7 +266,7 @@ for(i in treatments)
   }
   graz_intensity.current<-temp
   graz_intensity<-c(graz_intensity,temp)
-  write.table(df, file = paste0("rgroup.","freq",dist.freq.current,".graz",".",graz.freq,".",graz_intensity.current,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+  write.table(df, file = paste0("rgroup.","freq",dist.freq.current,".graz",".",graz.freq.current,".",graz_intensity.current,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
 }
 
 dist.freq<-unique(dist.freq)
