@@ -58,10 +58,16 @@ site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10)
 #Set working directory to location with inputs
 setwd(db_loc)
 
-#KS: Source site species requirements from a csv
-
-#Read in Input Species CSV data
+#Read in all input data
+#species-specific parameters
 species_data <- read.csv("InputData_Species.csv", header=TRUE, sep=",")
+
+#soils properties for multiple soil layers
+soil_data <- read.csv("InputData_SoilLayers.csv", header=TRUE, sep=",")
+
+#functional type (rgroup) specific parameters
+rgroup_data <- read.csv("InputData_Rgroup.csv", header=TRUE, sep=",")
+
 #Set working directory to source directory
 setwd(source.dir)
 #Get all sites listed in the CSV
@@ -140,13 +146,6 @@ setwd(source.dir)
 #######################################################################################
 #KS: Source site soil requirements from a csv
 
-#Set working directory to location with inputs
-setwd(db_loc)
-
-#Read in soil data from the soil inputs csv
-soil_data <- read.csv("InputData_SoilLayers.csv", header=TRUE, sep=",")
-#Set working directory to source directory
-setwd(source.dir)
 #Get all sites specified in the csv apart from all
 soil_data_all_sites<-unique(soil_data$Site)
 #Get all multiple sites separated by comma
@@ -211,9 +210,6 @@ setwd(source.dir)
 #######################################################################################
 #KS: Source site rgroup requirements from a csv
 
-setwd("..")
-
-rgroup_data <- read.csv("InputData_Rgroup.csv", header=TRUE, sep=",")
 rgroup_data_all_sites<-unique(rgroup_data$Site)
 rgroup_data_all_sites_vectors<-rgroup_data_all_sites[grepl(",",rgroup_data_all_sites)]
 
