@@ -99,14 +99,10 @@ if(any(grepl(",",species_data_all_sites))==TRUE)
         #Write the specifies .in file
         write.table(df, file = paste0("species_",i,"_vector_",site,".in"),quote = FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
       }
-      setwd("..")
     }
   }
-  
-  }
+}
 
-#Set working directory to STEPWAT_DIST
-setwd("STEPWAT_DIST")
 #Get species data for the site or "all" sites
 species_data_site<-species_data[species_data$Site==site | species_data$Site=="all",]
 #Get all treatments associated with the site or all sites
@@ -141,8 +137,6 @@ for (i in species)
   system(paste("cat ","species_template.in>>",i,sep=""))
 }
 
-#Set working directory back to source directory
-setwd(source.dir)
 #######################################################################################
 #KS: Source site soil requirements from a csv
 
@@ -163,7 +157,6 @@ if(any(grepl(",",soil_data_all_sites))==TRUE)
       soil_data_site<-soil_data[soil_data$Site==j,]
       #Get all soil treatments pertaining to the site
       treatments_vector<-unique(soil_data_site$soil_treatment)
-      setwd("STEPWAT_DIST")
       #For each treatment specific to the site under inspection generate a soils.in file
       for(i in treatments_vector)
       {
@@ -174,7 +167,6 @@ if(any(grepl(",",soil_data_all_sites))==TRUE)
         #Generate the file
         write.table(df, file = paste0("soils_",i,"_vector_",site,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
       }
-      setwd("..")
     }
   }
 }
@@ -183,8 +175,6 @@ if(any(grepl(",",soil_data_all_sites))==TRUE)
 soil_data_site<-soil_data[soil_data$Site==site | soil_data$Site=="all",]
 #Get all treatments pertaining to site or "all"
 treatments<-unique(soil_data_site$soil_treatment)
-
-setwd("STEPWAT_DIST")
 
 for(i in treatments)
 {
@@ -205,8 +195,6 @@ treatments_vector <- paste("soils_",treatments_vector, "_vector_",site, sep="")
 #Soil types are specified here, in accordance with the files added to STEPWAT_DIST folder
 soil.types<-c(treatments,treatments_vector)#c("soils.17sand.13clay","soils.68sand.10clay") #KS: uncommented to test overhaul of inputs
 
-#Set working directory back to source directory
-setwd(source.dir)
 #######################################################################################
 #KS: Source site rgroup requirements from a csv
 
@@ -228,16 +216,12 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
         df <- subset(df, select = -c(1,2) )
         write.table(df, file = paste0(i,"_vector",".in"),row.names=FALSE,col.names = FALSE,sep="\t")
       }
-      setwd("..")
-      }
+    }
   }
 }
 
-
 rgroup_data_site<-rgroup_data[rgroup_data$Site==site | rgroup_data$Site=="all",]
 treatments<-unique(rgroup_data_site$treatment)
-
-setwd("STEPWAT_DIST")
 
 #Specify kill frequency
 dist.freq<-vector(mode="double", length=0)
@@ -247,7 +231,6 @@ graz.freq<-vector(mode="double", length=0)
 
 #Set grazing intensity
 graz_intensity<-vector(mode="character", length=0)
-
 
 for(i in treatments)
 {
@@ -299,6 +282,7 @@ for (i in rgroup_files)
 }
 
 setwd("..")
+
 ################################ Weather Query Code ###################################
 
 #Setup parameters for the weather aquisition (years, scenarios, timeperiod, GCMs) 
