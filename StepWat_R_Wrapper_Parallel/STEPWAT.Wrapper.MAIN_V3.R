@@ -209,7 +209,6 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
     {
       rgroup_data_site<-rgroup_data[rgroup_data$Site==j,]
       treatments_vector<-unique(rgroup_data_site$treatment)
-      setwd("STEPWAT_DIST")
       for(i in treatments_vector)
       {
         df=rgroup_data_site[rgroup_data_site$treatment==i,]
