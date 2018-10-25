@@ -32,13 +32,13 @@ registerDoParallel(proc_count)
     {
       if(i==1)
       {
-        if((DGF$WET[i]==TRUE)&(DGF$WET[i+364]==TRUE))
+        if((DGF$WET[i]==TRUE)&(DGF$WET[nrow(DGF)]==TRUE))
         {
           DGF$WW[i]=1
           DGF$WD[i]=0
           
         }
-        else if((DGF$WET[i]==TRUE)&(DGF$WET[i+364]==FALSE))
+        else if((DGF$WET[i]==TRUE)&(DGF$WET[nrow(DGF)]==FALSE))
         {
           DGF$WW[i]=0
           DGF$WD[i]=1
@@ -87,14 +87,20 @@ registerDoParallel(proc_count)
           #or the number of dry days
         
         #sum the number of wet given wet years for that day and the number of wet given dry years for that day
-		p_W_W<-sum(DGF[(DGF$WW==1)&(DGF$DOY==i),7])
+		    p_W_W<-sum(DGF[(DGF$WW==1)&(DGF$DOY==i),7])
         p_W_D<-sum(DGF[(DGF$WD==1)&(DGF$DOY==i),8])
           
           #for DOY 1
           if(i==1)
           {
-			#make sure that we are not dividing by 0, which would result in p_W_W of NaN (undefined)
-			totalwet.doy1=sum(DGF[(DGF$WW==1)&(DGF$DOY==i+364),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i+364),8])
+			      #make sure that we are not dividing by 0, which would result in p_W_W of NaN (undefined)
+            totalwet.doy1 <- ifelse(DGF$WET[nrow(DGF)], 1,0)
+			      #totalwet.doy1=sum(DGF[(DGF$WW==1)&(DGF$DOY==i+364),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i+364),8])
+            for(j in 1:(nrow(DGF)-1)){
+              if((DGF$DOY[j] > DGF$DOY[j+1]) & DGF$WET[j]){
+                totalwet.doy1 <- totalwet.doy1 + 1
+              }
+            }
             p_W_W<-ifelse(totalwet.doy1>0, p_W_W/totalwet.doy1, 0)
             p_W_D<-p_W_D/(yr-(sum(DGF[(DGF$WW==1)&(DGF$DOY==i+364),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i+364),8])))
           
