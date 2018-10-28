@@ -7,6 +7,9 @@ library(DBI)
 library(RSQLite)
 library(rSOILWAT2)
 
+stopifnot(utils::packageVersion("rSOILWAT2") >= "2.4.0")
+
+
 #Load source files and directories in the environment
 #Note: Change number of processors and output database location according to your system
 
@@ -34,6 +37,9 @@ assemble.file<-paste(source.dir,"Weather.Assembly.Choices_V2.R", sep="")
 
 #Markov script (To generate cov and prob files)
 markov.file<-paste(source.dir,"Markov.Weather_V2.R",sep="")
+
+#Vegetation script (to estimate relative abundance of functional groups based on climate relationships)
+vegetation.file <- file.path(source.dir, "rSFSTEP2_Vegetation.R")
 
 #Wrapper script
 wrapper.file<-paste(source.dir,"StepWat.Wrapper.Code_V3.R", sep="")
@@ -161,6 +167,19 @@ yr<-30
 source(markov.file)
 
 ############################# End MARKOV Weather Generator Code ##############################
+
+############################# Vegetation Code ##############################
+# This code determines plant functional type relative abundance/composition
+# and then scales STEPWAT2 parameters accordingly
+source(vegetation.file)
+
+# Array of plant functional type relative abundance/composition
+relVegAbund <- estimate_STEPWAT_relativeVegAbundance(sw_weatherList)
+
+#TODO: Scale STEPWAT2 parameters
+
+############################# Vegetation Code ##############################
+
 
 ############### Run Wrapper Code ############################################################
 
