@@ -6,7 +6,7 @@ siteid=(1) #add site ids here
 cd StepWat_R_Wrapper_Parallel
 #module load git/2.17.1
 wait
-git clone --branch resource_partitioning_overhaul --recursive https://github.com/DrylandEcology/STEPWAT2.git
+git clone --branch master --recursive https://github.com/DrylandEcology/STEPWAT2.git
 wait
 cd STEPWAT2
 make
