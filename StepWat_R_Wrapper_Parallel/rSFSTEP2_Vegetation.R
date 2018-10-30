@@ -39,17 +39,9 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
   if (length(site_latitude) != n_sites && length(site_latitude) > 1) {
     stop("'estimate_STEPWAT_relativeVegAbundance': argument 'site_latitude' ",
       "must have a length one or be equal to the length of 'sw_weatherList'.")
-
-  } else if (n_sites > 1 && length(site_latitude) == 1) {
-    site_latitude <- rep_len(site_latitude, n_sites)
-  }
+  } 
 
   n_climate.conditions <- unique(lengths(sw_weatherList))
-
-  if (length(n_climate.conditions) != 1) {
-    stop("'estimate_STEPWAT_relativeVegAbundance': argument 'sw_weatherList' ",
-      "contains variable numbers of 'climate.conditions' among 'sites'.")
-  }
 
   # Determine output size
   temp_clim <- rSOILWAT2::calc_SiteClimate(
@@ -72,15 +64,14 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
 
 
   # Calculate relative abundance
-  for (k_sites in seq_len(n_sites)) {
     for (k_scen in seq_len(n_climate.conditions)) {
-      if (k_sites == 1 && k_scen == 1) {
+      if (k_scen == 1) {
         next
       }
 
       temp_clim <- rSOILWAT2::calc_SiteClimate(
-        weatherList = sw_weatherList[[k_sites]][[k_scen]], do_C4vars = TRUE,
-        latitude = site_latitude[k_sites])
+        weatherList = sw_weatherList[[n_sites]][[k_scen]], do_C4vars = TRUE,
+        latitude = site_latitude[n_sites])
 
       temp_veg <- rSOILWAT2::estimate_PotNatVeg_composition(
         MAP_mm = 10 * temp_clim[["MAP_cm"]], MAT_C = temp_clim[["MAT_C"]],
@@ -88,9 +79,8 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
         mean_monthly_Temp_C = temp_clim[["meanMonthlyTempC"]],
         dailyC4vars = temp_clim[["dailyC4vars"]])
 
-      res[k_sites, k_scen, ] <- temp_veg[["Rel_Abundance_L0"]]
+      res[n_sites, k_scen, ] <- temp_veg[["Rel_Abundance_L0"]]
     }
-  }
 
   res
 }
