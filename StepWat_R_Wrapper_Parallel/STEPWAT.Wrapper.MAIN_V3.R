@@ -113,7 +113,7 @@ source(query.file)
 ############################### Weather Assembly Code #################################
 
 #This script re-assembles the necessary weather data that was extracted during the weather query step based on user specifications
-#If the user wants to exclusively utilize randomly generate weather data from the markov weather generator, no settings should be changed here
+#If the user wants to exclusively utilize randomly generated weather data from the markov weather generator, no settings should be changed here
 
 #Set output directories
 weather.dir<-source.dir
@@ -127,22 +127,17 @@ setwd(assembly_output)
 #Number of scenarios (GCM X RCP X Periods run)
 H<-length(temp)
 
-#Parameters for weather assembly script
+#Starting year for which weath.in files will be written
 AssemblyStartYear<-1980
-# Number of years (in one section)
-K<-30
-# Interval Size
-INT<-30
-# Final number of years wanted
-FIN<-30
-#Resampling time
-RE<-FIN/INT
 
-#### Type ##########################################
-# choose between "basic" (for 1,5,10,30 year); "back" (for 5 year non-driest back-to-back);
-#         OR "drought" (for 5 year non-driest back-to-back and only once in 20 years); or "markov"
-#         (for markov code output) !!!! if using Markov remember to flag it in weathersetup.in !!!!
-#Set Type, TYPE="basic" is for both basic and markov. TYPE="markov" is for only markov.
+#Number of years for which weath.in files will be written 
+INT<-30
+
+#### TYPE ##########################################
+# choose between "basic" (for 1,5,10,30 year) or "markov". If using the "markov" option, the appropriate flag needs to be set in weathersetup.in in STEPWAT2 (this is the default)
+
+#Set TYPE: TYPE="basic" will write both weath.in files and the markov weather files to StepWat.Weather.Markov.Test. In this case, the weath.in files will be used initially to force STEPWAT2, thereafter randomly generated weather will be used based on the markov files.
+#TYPE="markov" will write just the two markov files to StepWat.Weather.Markov.Test and only randomly generated weather will be used to run STEPWAT2 simulations. This is the preferred and default option.
 TYPE<-"markov"
 
 #Source the weather assembly script
