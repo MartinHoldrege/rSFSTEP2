@@ -111,9 +111,6 @@ source(query.file)
 #This script re-assembles the necessary weather data that was extracted during the weather query step based on user specifications
 #If the user wants to exclusively utilize randomly generate weather data from the markov weather generator, no settings should be changed here
 
-#site will be set automatically by rSFSTEP2
-site<-c(sitefolderid)
-
 #Set output directories
 weather.dir<-source.dir
 setwd(weather.dir)
@@ -152,7 +149,6 @@ source(assemble.file)
 ############################# MARKOV Weather File Generation Code ##############################
 #This code generates two site-specific files necessary for the Markov Weather Generator in SOILWAT2. mk_covar.in
 #and mk_prob.in. These files are generated based on the site-specific and scenario-specific weather data for each site that is extracted during the previous step.
-site<-c(sitefolderid)
 
 #Change directory to the folder specific to this site within StepWat.Weather.Markov.Test
 setwd(assembly_output)
@@ -176,9 +172,6 @@ if(is.element(sites,species1))
 } else if (is.element(sites,species2)) {
     species<-"species2.in"
 } else {	species<-"species3.in" }
-
-#This will be populated by rSFSTEP2
-site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10) 
 
 #Directory stores working directory
 directory<-source.dir
