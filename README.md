@@ -12,5 +12,6 @@ git remote set-url origin https://github.com/Burke-Lauenroth-Lab/rSFSTEP2.git
 If using GitHub Desktop you may want to remove existing clones, update the local clones via command line, re-start GitHub Desktop and add
 a new clone of the updated repository.
 
+The following R packages are required and need to be installed prior to using rSFSTEP2: DBI, RSQLite, rSOILWAT2, doParallel
 
 The ReadMe.txt contains instructions to run rSFSTEP2

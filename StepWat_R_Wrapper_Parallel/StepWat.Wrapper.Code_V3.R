@@ -1,12 +1,7 @@
-#The Burke-Lauenroth Laboratory 
-#STEPWAT R Wrapper
-#Wrapper script to to loop through and run STEPWAT2 for all of the sites and GCM/PERIOD/RCP combinations
+#Wrapper script to to loop through and run STEPWAT2 for each site for all combinations of climate scenarios (GCM/PERIOD/RCP), disturbances (fire, grazing), and species, rgroup, and soil conditions 
 
-#Load libraries
-library(doParallel)
+#Set up system for parallel processing
 registerDoParallel(proc_count)
-library(plyr)
-library(RSQLite)
 
 setwd(directory)
 

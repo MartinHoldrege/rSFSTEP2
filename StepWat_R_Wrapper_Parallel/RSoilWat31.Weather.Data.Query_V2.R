@@ -1,10 +1,4 @@
-#The Burke-Lauenroth Laboratory 
-#STEPWAT R Wrapper
-#Query script for STEPWAT Wrapper
-#Script to extract respective data from the database into a list
-
-#Load required libraries
-library(plyr)
+#Weather query script to extract respective weather data for all scenarios from a pre-generated weather database into a list (sw_weatherList)
 
 #Connecting to the database
 stopifnot(rSOILWAT2::dbW_setConnection(database, check_version = TRUE))

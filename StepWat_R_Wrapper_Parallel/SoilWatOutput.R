@@ -1,8 +1,4 @@
-#The Burke-Lauenroth Laboratory 
-#SoilWatOutput.R
-#Script to combine all outputs of SoilWat in terms of days,weeks,months and years
-
-library(plyr)
+#Script that combines all individual output csv files for all climate-disturbance-input combinations into a master "total" file for each type of outputs: bmass, mort, sw2 (daily, monthly, yearly)
 
 setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output/sw_output",sep=""))
 
