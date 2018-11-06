@@ -65,7 +65,7 @@ s<-site[1]
             for (grz in graz.freq) {
               for(intensity in graz_intensity ){
                 setwd(paste0(dist.directory))
-                dist.graz.name<-paste0("rgroup.freq",dst,".graz",grz,".",intensity,".in")
+                dist.graz.name<-paste0("rgroup.freq",dst,".graz.",grz,".",intensity,".in")
                 system(paste0("cp ",dist.graz.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))
                 
                 setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))
