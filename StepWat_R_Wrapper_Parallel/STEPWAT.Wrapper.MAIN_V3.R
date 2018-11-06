@@ -60,7 +60,11 @@ endyr <- 2010
 climate.ambient <- "Current"
 
 #Specify the RCP/GCM combinations
-climate.conditions <- c(climate.ambient,  "RCP45.CanESM2", "RCP45.CESM1-CAM5", "RCP45.CSIRO-Mk3-6-0", "RCP45.FGOALS-g2", "RCP45.FGOALS-s2", "RCP45.GISS-E2-R", "RCP45.HadGEM2-CC", "RCP45.HadGEM2-ES",
+#Default settings for testing rSFSTEP2, which represents a single GCM and two RCPs
+climate.conditions <- c(climate.ambient,  "RCP45.CanESM2", "RCP85.CanESM2")
+
+#All climate conditions typically utilized in complete simulation runs, uncomment for simulation runs
+#climate.conditions <- c(climate.ambient,  "RCP45.CanESM2", "RCP45.CESM1-CAM5", "RCP45.CSIRO-Mk3-6-0", "RCP45.FGOALS-g2", "RCP45.FGOALS-s2", "RCP45.GISS-E2-R", "RCP45.HadGEM2-CC", "RCP45.HadGEM2-ES",
                         "RCP45.inmcm4", "RCP45.IPSL-CM5A-MR", "RCP45.MIROC5", "RCP45.MIROC-ESM","RCP45.MRI-CGCM3", "RCP85.CanESM2", "RCP85.CESM1-CAM5", "RCP85.CSIRO-Mk3-6-0", "RCP85.FGOALS-g2","RCP85.FGOALS-s2","RCP85.GISS-E2-R","RCP85.HadGEM2-CC","RCP85.HadGEM2-ES","RCP85.inmcm4","RCP85.IPSL-CM5A-MR","RCP85.MIROC5","RCP85.MIROC-ESM","RCP85.MRI-CGCM3")
 #Store climate conditons
 #List of all future and current scenarios putting "Current" first	
@@ -177,7 +181,11 @@ if(is.element(sites,species1))
 directory<-source.dir
 
 #Set GCMs, must match GCMs set in climate.conditions above
-GCM<-c("Current","CanESM2","CESM1-CAM5","CSIRO-Mk3-6-0","FGOALS-g2","FGOALS-s2","GISS-E2-R","HadGEM2-CC","HadGEM2-ES","inmcm4", "IPSL-CM5A-MR", "MIROC5", "MIROC-ESM", "MRI-CGCM3")
+#Default settings for testing rSFSTEP2, which represents a subset of potential GCMs
+GCM<-c("Current","CanESM2")
+
+#All GCM options typically utilized in complete simulation runs, uncomment for simulation runs
+#GCM<-c("Current","CanESM2","CESM1-CAM5","CSIRO-Mk3-6-0","FGOALS-g2","FGOALS-s2","GISS-E2-R","HadGEM2-CC","HadGEM2-ES","inmcm4", "IPSL-CM5A-MR", "MIROC5", "MIROC-ESM", "MRI-CGCM3")
 
 #Set RCPs, must match RCPs set in climate.conditions above
 RCP<-c("RCP45","RCP85")
@@ -188,17 +196,29 @@ dist.graz.flag<-T
 #Set the path to the STEPWAT_DIST folder where disturbance inputs (held in rgroup.in), species inputs (held in species.in), and soil inputs (held in soils.in) are specified
 dist.directory<-paste(source.dir,"STEPWAT_DIST/",sep="")
 
-#Specify fire return interval
-dist.freq<-c(0,10,50) # if not using disturbance but are using grazing set 'dist.freq<-0'
+#Specify fire return interval (FRI). If not simulating fire but do want grazing set 'dist.freq<-0'
+#Default settings for testing rSFSTEP2, which represents a single FRI
+dist.freq<-c(50)
+
+#All FRI options typically utilized in complete simulation runs, uncomment for simulation runs
+#dist.freq<-c(0,10,50)
 
 #Specify grazing frequency. If no grazing set to 0, if grazing on, set to 1, if both wanted set to c(0,1)
 graz.freq<-c(1)
 
 #Set grazing intensity, these correspond to the files in the STEPWAT_DIST folder 
-graz_intensity<-c("lowgraz","modgraz","highgraz")
+#Default settings for testing rSFSTEP2, which represents a single grazing treatment
+graz_intensity<-c("lowgraz")
+
+#All grazing intensity options typically utilized in complete simulation runs, uncomment for simulation runs
+#graz_intensity<-c("lowgraz","modgraz","highgraz")
 
 #Set soil types, these correspond to the files in the STEPWAT_DIST folder 
-soil.types<-c("soils.17sand.13clay","soils.68sand.10clay")
+#Default settings for testing rSFSTEP2, which represents a single soil treatment
+soil.types<-c("soils.17sand.13clay")
+
+#All soil options typically utilized in complete simulation runs, uncomment for simulation runs
+#soil.types<-c("soils.17sand.13clay","soils.68sand.10clay")
 
 #Source the wrapper script, run the STEPWAT2 code for each combination of disturbances, soils, species, and climate scenarios
 source(wrapper.file)
