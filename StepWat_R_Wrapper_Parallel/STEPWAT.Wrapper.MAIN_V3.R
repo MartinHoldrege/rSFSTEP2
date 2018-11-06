@@ -46,14 +46,6 @@ tick_on<-proc.time()
 #rSFSTEP2 will automatically populate the site string with the sites specified in generate_stepwat_sites.sh
 site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10)
 
-#This code is used in the circumstance when you want to use different species.in parameters for different sites
-#In this case, we have three different species.in files which are found in the STEPWAT_DIST folder. The below strings
-#correspond to which sites we want to use each species.in file for. 
-#species1<-c(21,80,144,150,244,291,374,409,411,542,320,384,391,413,501,592,687,733,758,761,781,787,798,816,824,828,866,868,869,876,879)
-#species2<-c(609,676,729,730,778,792,809,818,826,829,854,857,862)
-#species3<-c(163,211,221,230,264,283,341,354,365,380,387,497,524,543,566,581,608,175,178,217,319,335,369,498,595,659,4,7,14,15,23,79)
-#species<-"species"
-
 #######################################################################################
 #Set working directory to location with inputs
 setwd(db_loc)
@@ -394,14 +386,6 @@ source(markov.file)
 
 ########### Set parameters ###############################################
 
-#This code is utilized if you want to use different species parameters for different sites
-#if(is.element(sites,species1))
-#{
-#    species<-"species1.in"
-#} else if (is.element(sites,species2)) {
-#    species<-"species2.in"
-#} else {	species<-"species3.in" }
-
 #This will be populated by rSFSTEP2
 site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10) 
 
@@ -417,18 +401,6 @@ RCP<-c("RCP45","RCP85")
 dist.graz.flag<-T
 #Disturbance folder
 dist.directory<-paste(source.dir,"STEPWAT_DIST/",sep="")
-
-#Specify fire return interval
-#dist.freq<-c(0,10,50) # if not using disturbance but are using grazing set 'dist.freq<-0'
-
-#Specify grazing frequency, if not use grazing set to 0, if grazing on, set to 1, if both wanted set to c(0,1)
-#graz.freq<-c(1)
-
-#Set grazing intensity, these correspond to the file options in the STEPWAT_DIST folder 
-#graz_intensity<-c("lowgraz","modgraz","highgraz")
-
-#Soil types are specified here, in accordance with the files added to STEPWAT_DIST folder
-#soil.types<-c("soils.17sand.13clay","soils.68sand.10clay")
 
 #Source the code in wrapper script, run the STEPWAT2 code for each combination of disturbances, soils, climate scenarios
 source(wrapper.file)
