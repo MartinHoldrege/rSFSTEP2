@@ -18,9 +18,10 @@ On a super computer:
 
 Once the sbatch tasks have been succesfully completed, follow the steps below to compile all output.csv files into a SQLite database:
 
-9. Run the call_sbatch_database.sh script.
-10. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable site) and location (variable path) where you wish to collect the data, in the copydata.sh script.
-11. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
+9. Reset the number of GCMs used in OutputDatabase.R if not 14.
+10. Run the call_sbatch_database.sh script.
+11. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable site) and location (variable path) where you wish to collect the data, in the copydata.sh script.
+12. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
 
 On a local machine:
 --
@@ -33,9 +34,10 @@ On a local machine:
 
 Once the sbatch tasks have been succesfully completed, follow the steps below to compile all output.csv files into a SQLite database:
 
-7. Run the run_local_database.sh script.
-8. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable site) and location (variable path) where you wish to collect the data, in the copydata.sh script.
-9. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
+7. Reset the number of GCMs used in OutputDatabase.R if not 14.
+8. Run the run_local_database.sh script.
+9. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable site) and location (variable path) where you wish to collect the data, in the copydata.sh script.
+10. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
 
 Note: The method to run a shell script is present as a comment in the respective script. 
 
