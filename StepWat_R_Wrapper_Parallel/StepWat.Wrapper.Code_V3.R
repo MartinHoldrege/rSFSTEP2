@@ -13,19 +13,18 @@ setwd(directory)
 s<-site[1]
   foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
       
-    setwd(dist.directory)
-      
     #If you don't want to use replicated species.in files for each site, simply comment out the below
     #Copy in the relevant species.in file for each site, as specified in the STEPWAT.Wrapper.MAIN_V3.R
     for(sp in species)
     {
+      setwd(dist.directory)
       sp.filename <- paste(sp,".in",sep = "")
       system(paste0("cp ",sp.filename," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input"))
       setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input"))
       system("rm species.in")
       system(paste0("mv ",sp.filename," species.in"))
-    }
-    setwd(directory)      
+    
+      setwd(directory)      
     
    	#Copy in the soils.in file that is specified by the user in STEPWAT_DIST
     for(soil in soil.types){
@@ -334,6 +333,7 @@ s<-site[1]
         
       }
       print(paste("GCM ",GCM[g]," DONE",sep=""))
+    }
     }
   }
   
