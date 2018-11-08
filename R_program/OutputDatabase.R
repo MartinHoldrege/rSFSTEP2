@@ -1,8 +1,5 @@
-#The Burke-Lauenroth Laboratory 
-#SoilWatOutput.R
-#Script to rename the columns of the compiled csv files, and push them to a sqlite database.
+#Script that populates all "total" files for a site into a SQLite database for that site
 
-library(plyr)
 library(RSQLite)
 tickon<-proc.time()
 

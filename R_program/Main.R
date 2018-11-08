@@ -24,19 +24,19 @@ database_name=""
 database<-file.path(db_loc,database_name)
 
 #Weather query script (Loads weather data from the weather database for all climate scenarios into a list for each site)
-query.file<-paste(source.dir,"RSoilWat31.Weather.Data.Query_V2.R", sep="")
+query.file<-paste(source.dir,"WeatherQuery.R", sep="")
 
 #Weather assembly script (Assembles weather data with respect to years and conditions)
-assemble.file<-paste(source.dir,"Weather.Assembly.Choices_V2.R", sep="")
+assemble.file<-paste(source.dir,"WeatherAssembly.R", sep="")
 
 #Markov script (Generates site-specific markov files used for weather generation in SOILWAT2)
-markov.file<-paste(source.dir,"Markov.Weather_V2.R",sep="")
+markov.file<-paste(source.dir,"MarkovWeatherFileGenerator.R",sep="")
 
 #Wrapper script (Executes STEPWAT2 for all climate-disturbance-input parameter combinations)
-wrapper.file<-paste(source.dir,"StepWat.Wrapper.Code_V3.R", sep="")
+wrapper.file<-paste(source.dir,"CallSTEPWAT2.R", sep="")
 
 #Output script (Combines individual output files into a master output file for each site)
-output.file<-paste(source.dir,"SoilWatOutput.R", sep="")
+output.file<-paste(source.dir,"AppendTreatments.R", sep="")
 
 #Start timing for timing statistics
 tick_on<-proc.time()
@@ -45,7 +45,7 @@ tick_on<-proc.time()
 site<-c(sitefolderid)
 
 #This code is used in the circumstance when you want to use different species.in parameters for different sites
-#In this case, we have three different species.in files which are found in the STEPWAT_DIST folder. The below strings
+#In this case, we have three different species.in files which are found in the TreatmentFiles folder. The below strings
 #correspond to which sites we want to use each species.in file for. 
 species1<-c(21,80,144,150,244,291,374,409,411,542,320,384,391,413,501,592,687,733,758,761,781,787,798,816,824,828,866,868,869,876,879)
 species2<-c(609,676,729,730,778,792,809,818,826,829,854,857,862)
@@ -119,9 +119,9 @@ source(query.file)
 weather.dir<-source.dir
 setwd(weather.dir)
 
-#Create the StepWat.Weather.Markov.Test folder in which to place weath.in files and/or markov files (mkv_covar.in, mkv_prob.in)
-dir.create("StepWat.Weather.Markov.Test", showWarnings = FALSE)
-assembly_output<-paste(source.dir,"StepWat.Weather.Markov.Test/",sep="")
+#Create the WeatherFiles folder in which to place weath.in files and/or markov files (mkv_covar.in, mkv_prob.in)
+dir.create("WeatherFiles", showWarnings = FALSE)
+assembly_output<-paste(source.dir,"WeatherFiles/",sep="")
 setwd(assembly_output)
 
 #Number of scenarios (GCM X RCP X Periods run)
@@ -136,8 +136,8 @@ INT<-30
 #### TYPE ##########################################
 # choose between "basic" (for 1,5,10,30 year) or "markov". If using the "markov" option, the appropriate flag needs to be set in weathersetup.in in STEPWAT2 (this is the default)
 
-#Set TYPE: TYPE="basic" will write both weath.in files and the markov weather files to StepWat.Weather.Markov.Test. In this case, the weath.in files will be used initially to force STEPWAT2, thereafter randomly generated weather will be used based on the markov files.
-#TYPE="markov" will write just the two markov files to StepWat.Weather.Markov.Test and only randomly generated weather will be used to run STEPWAT2 simulations. This is the preferred and default option.
+#Set TYPE: TYPE="basic" will write both weath.in files and the markov weather files to the WeatherFiles folder. In this case, the weath.in files will be used initially to force STEPWAT2, thereafter randomly generated weather will be used based on the markov files.
+#TYPE="markov" will write just the two markov files to WeatherFiles and only randomly generated weather will be used to run STEPWAT2 simulations. This is the preferred and default option.
 TYPE<-"markov"
 
 #Source the weather assembly script
@@ -149,7 +149,7 @@ source(assemble.file)
 #This code generates two site-specific files necessary for the Markov Weather Generator in SOILWAT2. mk_covar.in
 #and mk_prob.in. These files are generated based on the site-specific and scenario-specific weather data for each site that is extracted during the previous step.
 
-#Change directory to the folder specific to this site within StepWat.Weather.Markov.Test
+#Change directory to the folder specific to this site within WeatherFiles
 setwd(assembly_output)
 
 #Number of years of historical or future weather data that will be utilized to generate mkv_covar.in and mkv_prob.in 
@@ -164,7 +164,7 @@ source(markov.file)
 
 ########### Set climate scenarios, disturbance regimes, and soil types for each STEPWAT2 should be executed ###############
 
-#This code utilizes different species parameters for different sites, default here is 3 unique sets of species parameters held in 3 separate species.in files in STEPWAT_DIST
+#This code utilizes different species parameters for different sites, default here is 3 unique sets of species parameters held in 3 separate species.in files in the TreatmentFiles folder
 if(is.element(sites,species1))
 {
     species<-"species1.in"
@@ -188,8 +188,8 @@ RCP<-c("RCP45","RCP85")
 #Disturbance flag, turn to "F" if not using disturbances (grazing,fire)
 dist.graz.flag<-T
 
-#Set the path to the STEPWAT_DIST folder where disturbance inputs (held in rgroup.in), species inputs (held in species.in), and soil inputs (held in soils.in) are specified
-dist.directory<-paste(source.dir,"STEPWAT_DIST/",sep="")
+#Set the path to the TreatmentFiles folder where disturbance inputs (held in rgroup.in), species inputs (held in species.in), and soil inputs (held in soils.in) are specified
+dist.directory<-paste(source.dir,"TreatmentFiles/",sep="")
 
 #Specify fire return interval (FRI). If not simulating fire but do want grazing set 'dist.freq<-0'
 #Default settings for testing rSFSTEP2, which represents a single FRI
@@ -201,14 +201,14 @@ dist.freq<-c(50)
 #Specify grazing frequency. If no grazing set to 0, if grazing on, set to 1, if both wanted set to c(0,1)
 graz.freq<-c(1)
 
-#Set grazing intensity, these correspond to the files in the STEPWAT_DIST folder 
+#Set grazing intensity, these correspond to the files in the TreatmentFiles folder 
 #Default settings for testing rSFSTEP2, which represents a single grazing treatment
 graz_intensity<-c("lowgraz")
 
 #All grazing intensity options typically utilized in complete simulation runs, uncomment for simulation runs
 #graz_intensity<-c("lowgraz","modgraz","highgraz")
 
-#Set soil types, these correspond to the files in the STEPWAT_DIST folder 
+#Set soil types, these correspond to the files in the TreatmentFiles folder 
 #Default settings for testing rSFSTEP2, which represents a single soil treatment
 soil.types<-c("soils.17sand.13clay")
 

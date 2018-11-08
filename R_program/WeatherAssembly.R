@@ -1,4 +1,4 @@
-#Script to assemble weather data from the sw_weatherList, according to the desired interval and type specified in the MAIN .R file
+#Script to assemble weather data from the sw_weatherList, according to the desired interval and type specified in the Main.R file
 
 if (INT==30)
 {

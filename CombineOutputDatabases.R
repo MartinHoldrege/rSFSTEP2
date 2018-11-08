@@ -1,8 +1,5 @@
-#The Burke-Lauenroth Laboratory 
-#STEPWAT R Wrapper
 #Script to compile individual Output Databases into 1 master SQLite file
 
-library(plyr)
 library(RSQLite)
 
 dir_db<-"" #Location where the databases are located, needs to be set by the user
