@@ -1,17 +1,13 @@
 # rSFSTEP2
 
-## Note: repository renamed from StepWat_R_Wrapper_parallel to rSFSTEP2 on Feb 23, 2017
+# Instructions for running rSFSTEP2
 
-All existing information should [automatically be redirected](https://help.github.com/articles/renaming-a-repository/) to the new name.
-
-Contributors are encouraged, however, to update local clones to [point to the new URL](https://help.github.com/articles/changing-a-remote-s-url/), i.e., 
-```
-git remote set-url origin https://github.com/Burke-Lauenroth-Lab/rSFSTEP2.git
-```
-Instructions for running rSFSTEP2
+Required R packages for rSFSTEP2: 
+DBI, RSQLite, rSOILWAT2, doParallel
 
 On a super computer:
-1. Make sure all the scripts are executable (i.e. given executable permissions) prior to following the steps above: chmod +x nameoffile
+--
+1. Make sure all the scripts are executable (i.e. given executable permissions) prior to following the steps below: chmod +x nameoffile
 2. Copy the weather database to the rSFSTEP2 folder.
 3. Set the location of the weather database in the STEPWAT.Wrapper.MAIN_V3.R script of the StepWat_R_Wrapper_Parallel folder (where it says Set database location), along with the name of the weather database (where it says Provide the name of the database in quotes).
 4. Add site ids, you wish to run the wrapper on, to the siteid variable (third line from top) in the generate_stepwat_sites.sh script. Site 1 is present, as an example.
@@ -21,12 +17,14 @@ On a super computer:
 8. Run the call_sbatch.sh script.
 
 Once the sbatch tasks have been succesfully completed, follow the steps below to compile all output.csv files into a SQLite database:
+
 9. Run the call_sbatch_database.sh script.
 10. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable site) and location (variable path) where you wish to collect the data, in the copydata.sh script.
 11. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
 
 On a local machine:
-1. Make sure all the scripts are executable (i.e. given executable permissions) prior to following the steps above: chmod +x nameoffile
+--
+1. Make sure all the scripts are executable (i.e. given executable permissions) prior to following the steps below: chmod +x nameoffile
 2. Copy the weather database to the rSFSTEP2 folder.
 3. Set the location of the weather database in the STEPWAT.Wrapper.MAIN_V3.R script of the StepWat_R_Wrapper_Parallel folder (where it says Set database location), along with the name of the weather database (where it says Provide the name of the database in quotes).
 4. Add site ids, you wish to run the wrapper on, to the siteid variable (third line from top) in the generate_stepwat_sites.sh script. Site 1 is present, as an example.
@@ -34,12 +32,18 @@ On a local machine:
 6. Run the run_local.sh script.
 
 Once the sbatch tasks have been succesfully completed, follow the steps below to compile all output.csv files into a SQLite database:
+
 7. Run the run_local_database.sh script.
 8. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable site) and location (variable path) where you wish to collect the data, in the copydata.sh script.
 9. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
 
-Note: The method to run a shell script, is present as a comment in the respective script. 
+Note: The method to run a shell script is present as a comment in the respective script. 
 
-Required R packages for rSFSTEP2: 
-DBI, RSQLite, rSOILWAT2, doParallel
+## Note: repository renamed from StepWat_R_Wrapper_parallel to rSFSTEP2 on Feb 23, 2017
 
+All existing information should [automatically be redirected](https://help.github.com/articles/renaming-a-repository/) to the new name.
+
+Contributors are encouraged, however, to update local clones to [point to the new URL](https://help.github.com/articles/changing-a-remote-s-url/), i.e., 
+```
+git remote set-url origin https://github.com/Burke-Lauenroth-Lab/rSFSTEP2.git
+```
