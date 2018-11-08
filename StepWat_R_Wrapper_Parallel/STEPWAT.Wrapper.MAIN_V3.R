@@ -120,11 +120,12 @@ treatments_vector_species <- paste("species_",treatments_vector_species, "_vecto
 #Soil types are specified here, in accordance with the files added to input folder
 #File names of all created species files above are all now stored in species variable
 species<-c(treatments_species,treatments_vector_species)#c("soils.17sand.13clay","soils.68sand.10clay") #KS: uncommented to test overhaul of inputs
-species<-paste(species,"_",site,".in",sep="")
+species.filenames<-paste(species,"_",site,".in",sep="")
+species <- paste(species,"_",site,sep="")
 
 #Prior to this step make sure species_template.in exists in the inputs folder
 #append species_template.in to all the created files
-for (i in species)
+for (i in species.filenames)
 {
   system(paste("cat ","species_template.in>>",i,sep=""))
 }
