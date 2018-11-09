@@ -21,8 +21,6 @@ extract_data<-function(site_to_extract=NULL)
   for(i in seq_along(site_to_extract)){
     sw_weatherList[[i]] <- try(.local(sid=site_to_extract[i]), silent=TRUE)
   }
-  #Saving the list as a .RData file
-  save(sw_weatherList, file=file.path(source.dir, "WeatherData_2016.RData"))
   return (sw_weatherList)
 }
 	
