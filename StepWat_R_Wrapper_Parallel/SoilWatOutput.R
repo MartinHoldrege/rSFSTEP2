@@ -24,7 +24,7 @@ if(GCM[g]=="Current")
     if(dist.graz.flag==T)
     {
         tempsw2_daily_slyrs$dist_freq<-dst
-        tempsw2_daily_slyrs$graz_freq<-graz.freq
+        tempsw2_daily_slyrs$graz_freq<-grz
         tempsw2_daily_slyrs$intensity<-intensity
     }else
     {
@@ -42,7 +42,7 @@ if(GCM[g]=="Current")
     if(dist.graz.flag==T)
     {
         tempsw2_daily_slyrs$dist_freq<-dst
-        tempsw2_daily_slyrs$graz_freq<-graz.freq
+        tempsw2_daily_slyrs$graz_freq<-grz
         tempsw2_daily_slyrs$intensity<-intensity
     }else
     {
@@ -68,7 +68,7 @@ if(GCM[g]=="Current")
     if(dist.graz.flag==T)
     {
        tempsw2_daily$dist_freq<-dst
-       tempsw2_daily$graz_freq<-graz.freq
+       tempsw2_daily$graz_freq<-grz
        tempsw2_daily$intensity<-intensity
     }else
     {
@@ -86,7 +86,7 @@ if(GCM[g]=="Current")
     if(dist.graz.flag==T)
     {
        tempsw2_daily$dist_freq<-dst
-       tempsw2_daily$graz_freq<-graz.freq
+       tempsw2_daily$graz_freq<-grz
        tempsw2_daily$intensity<-intensity
     }else
     {
@@ -116,7 +116,7 @@ if(GCM[g]=="Current")
     if(dist.graz.flag==T)
     {
         tempsw2_monthly_slyrs$dist_freq<-dst
-        tempsw2_monthly_slyrs$graz_freq<-graz.freq
+        tempsw2_monthly_slyrs$graz_freq<-grz
         tempsw2_monthly_slyrs$intensity<-intensity
     }else
     {
@@ -134,7 +134,7 @@ if(GCM[g]=="Current")
     if(dist.graz.flag==T)
     {
         tempsw2_monthly_slyrs$dist_freq<-dst
-        tempsw2_monthly_slyrs$graz_freq<-graz.freq
+        tempsw2_monthly_slyrs$graz_freq<-grz
         tempsw2_monthly_slyrs$intensity<-intensity
     }else
     {
@@ -157,7 +157,7 @@ if(GCM[g]=="Current")
     if(dist.graz.flag==T)
     {
        tempsw2_monthly$dist_freq<-dst
-       tempsw2_monthly$graz_freq<-graz.freq
+       tempsw2_monthly$graz_freq<-grz
        tempsw2_monthly$intensity<-intensity
     }else
     {
@@ -170,7 +170,7 @@ if(GCM[g]=="Current")
 }else
 {
     tempsw2_monthly$soilType<-soil
-    tempsw2_monthly$dist_flag<-dist.graz.flag
+    tempsw2_monthly$dist_flag<-dist.grz
     
     if(dist.graz.flag==T)
     {
@@ -205,7 +205,7 @@ if(GCM[g]=="Current")
     if(dist.graz.flag==T)
     {
         tempsw2_yearly_slyrs$dist_freq<-dst
-        tempsw2_yearly_slyrs$graz_freq<-graz.freq
+        tempsw2_yearly_slyrs$graz_freq<-grz
         tempsw2_yearly_slyrs$intensity<-intensity
     }else
     {
@@ -223,7 +223,7 @@ if(GCM[g]=="Current")
     if(dist.graz.flag==T)
     {
         tempsw2_yearly_slyrs$dist_freq<-dst
-        tempsw2_yearly_slyrs$graz_freq<-graz.freq
+        tempsw2_yearly_slyrs$graz_freq<-grz
         tempsw2_yearly_slyrs$intensity<-intensity
     }else
     {
@@ -246,7 +246,7 @@ if(GCM[g]=="Current")
     if(dist.graz.flag==T)
     {
        tempsw2_yearly$dist_freq<-dst
-       tempsw2_yearly$graz_freq<-graz.freq
+       tempsw2_yearly$graz_freq<-grz
        tempsw2_yearly$intensity<-intensity
     }else
     {
@@ -264,7 +264,7 @@ if(GCM[g]=="Current")
     if(dist.graz.flag==T)
     {
        tempsw2_yearly$dist_freq<-dst
-       tempsw2_yearly$graz_freq<-graz.freq
+       tempsw2_yearly$graz_freq<-grz
        tempsw2_yearly$intensity<-intensity
     }else
     {
@@ -294,7 +294,7 @@ if(GCM[g]=="Current")
     if(dist.graz.flag==T)
     {
         tempbmass$dist_freq<-dst
-        tempbmass$graz_freq<-graz.freq
+        tempbmass$graz_freq<-grz
         tempbmass$intensity<-intensity
     }else
     {
@@ -312,7 +312,7 @@ if(GCM[g]=="Current")
     if(dist.graz.flag==T)
     {
         tempbmass$dist_freq<-dst
-        tempbmass$graz_freq<-graz.freq
+        tempbmass$graz_freq<-grz
         tempbmass$intensity<-intensity
     }else
     {
@@ -334,7 +334,7 @@ if(GCM[g]=="Current")
     if(dist.graz.flag==T)
     {
         tempmort$dist_freq<-dst
-        tempmort$graz_freq<-graz.freq
+        tempmort$graz_freq<-grz
         tempmort$intensity<-intensity
     }else
     {
@@ -352,7 +352,7 @@ if(GCM[g]=="Current")
     if(dist.graz.flag==T)
     {
         tempmort$dist_freq<-dst
-        tempmort$graz_freq<-graz.freq
+        tempmort$graz_freq<-grz
         tempmort$intensity<-intensity
     }else
     {
