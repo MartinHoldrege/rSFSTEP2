@@ -45,7 +45,7 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
 
   # Determine output size
   temp_clim <- rSOILWAT2::calc_SiteClimate(
-    weatherList = sw_weatherList[[1]][[1]], do_C4vars = TRUE,
+    weatherList = sw_weatherList[[1]][[1]], do_C4vars = TRUE, do_Cheatgrass_ClimVars = TRUE,
     latitude = site_latitude[1])
 
   temp_veg <- rSOILWAT2::estimate_PotNatVeg_composition(
@@ -70,7 +70,7 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
       }
 
       temp_clim <- rSOILWAT2::calc_SiteClimate(
-        weatherList = sw_weatherList[[n_sites]][[k_scen]], do_C4vars = TRUE,
+        weatherList = sw_weatherList[[n_sites]][[k_scen]], do_C4vars = TRUE, do_Cheatgrass_ClimVars = TRUE,
         latitude = site_latitude[n_sites])
 
       temp_veg <- rSOILWAT2::estimate_PotNatVeg_composition(
