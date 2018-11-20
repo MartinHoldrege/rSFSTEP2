@@ -7,6 +7,8 @@ library(DBI)
 library(RSQLite)
 library(rSOILWAT2)
 
+library(pryr)
+
 #Load source files and directories in the environment
 #Note: Change number of processors and output database location according to your system
 
