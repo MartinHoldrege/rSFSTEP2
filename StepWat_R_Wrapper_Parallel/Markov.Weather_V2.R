@@ -7,7 +7,7 @@
 library(doParallel)
 registerDoParallel(proc_count)
 
-#Loop through all sites
+  #Loop through all sites
   #load a particular site
   site<-site[1] 
   s<-1
@@ -78,7 +78,7 @@ registerDoParallel(proc_count)
         DGF$Tmin_C<-DGF$Tmin_C+273.15
        
       for (i in 1:366) #loop through all possible days in all years
-        {
+      {
           #probability of wet|wet is the number of wet given wet years for that day divided by the number
           #of total wet days from the previous day
         
@@ -86,49 +86,49 @@ registerDoParallel(proc_count)
           #total years (yrs identified by user) minus the total number of wet days from the previous day
           #or the number of dry days
         
-        #sum the number of wet given wet years for that day and the number of wet given dry years for that day
-		    p_W_W<-sum(DGF[(DGF$WW==1)&(DGF$DOY==i),7])
-        p_W_D<-sum(DGF[(DGF$WD==1)&(DGF$DOY==i),8])
+          #sum the number of wet given wet years for that day and the number of wet given dry years for that day
+		      p_W_W<-sum(DGF[(DGF$WW==1) & (DGF$DOY==i), 7])
+          p_W_D<-sum(DGF[(DGF$WD==1) & (DGF$DOY==i), 8])
           
-          #for DOY 1
+          #DOY 1: use the last day of the year to determine wet given wet
           if(i==1)
           {
 			      #make sure that we are not dividing by 0, which would result in p_W_W of NaN (undefined)
-            totalwet.doy1 <- ifelse(DGF$WET[nrow(DGF)], 1,0)
-			      #totalwet.doy1=sum(DGF[(DGF$WW==1)&(DGF$DOY==i+364),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i+364),8])
-            for(j in 1:(nrow(DGF)-1)){
-              if((DGF$DOY[j] > DGF$DOY[j+1]) & DGF$WET[j]){
+            totalwet.doy1 <- ifelse(DGF$WET[nrow(DGF)], 1, 0)
+            for(j in 1:(nrow(DGF) - 1)){
+              if((DGF$DOY[j] > DGF$DOY[j + 1]) & DGF$WET[j]){
                 totalwet.doy1 <- totalwet.doy1 + 1
               }
             }
             p_W_W<-ifelse(totalwet.doy1>0, p_W_W/totalwet.doy1, 0)
-            p_W_D<-p_W_D/(yr-(sum(DGF[(DGF$WW==1)&(DGF$DOY==i+364),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i+364),8])))
+            p_W_D<-p_W_D/(yr-(sum(DGF[(DGF$WW==1) & (DGF$DOY==i+364), 7])+sum(DGF[(DGF$WD==1) & (DGF$DOY==i+364), 8])))
           
           #for all other DOY	
           }else
           {
-			#make sure that we are not dividing by 0, which would result in p_W_W of NaN (undefined)
-            totalwet.notdoy1=sum(DGF[(DGF$WW==1)&(DGF$DOY==i-1),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i-1),8]) 
+			      #make sure that we are not dividing by 0, which would result in p_W_W of NaN (undefined)
+            totalwet.notdoy1=sum(DGF[(DGF$WW==1) & (DGF$DOY==i-1), 7]) + sum(DGF[(DGF$WD==1)&(DGF$DOY==i-1), 8]) 
             p_W_W<-ifelse(totalwet.notdoy1>0, p_W_W/totalwet.notdoy1, 0)
-            p_W_D<-p_W_D/(yr-(sum(DGF[(DGF$WW==1)&(DGF$DOY==i-1),7])+sum(DGF[(DGF$WD==1)&(DGF$DOY==i-1),8])))
+            p_W_D<-p_W_D / (yr - (sum(DGF[(DGF$WW==1) & (DGF$DOY==i-1), 7]) + sum(DGF[(DGF$WD==1)&(DGF$DOY==i-1), 8])))
           }
                    
-          CF.max.w<-(abs(mean(DGF[(DGF$WET=="TRUE"),3])/mean(DGF[(DGF$DOY==i),3]))) + (mean(DGF[(DGF$WET=="TRUE"),3])-mean(DGF[(DGF$DOY==i),3]))/mean(DGF[(DGF$DOY==i),3])
+          CF.max.w<-(abs(mean(DGF[(DGF$WET=="TRUE"),3])/mean(DGF[(DGF$DOY==i), 3]))) + (mean(DGF[(DGF$WET=="TRUE"), 3]) - mean(DGF[(DGF$DOY==i), 3])) / mean(DGF[(DGF$DOY==i), 3])
           if (CF.max.w=='NaN'){CF.max.w<-1}
           if (CF.max.w > 1.0) {CF.max.w<-1}
-          CF.max.d<-(abs(mean(DGF[(DGF$WET=="FALSE"),3])/mean(DGF[(DGF$DOY==i),3]))) + (mean(DGF[(DGF$WET=="FALSE"),3])-mean(DGF[(DGF$DOY==i),3]))/mean(DGF[(DGF$DOY==i),3])
+          CF.max.d<-(abs(mean(DGF[(DGF$WET=="FALSE"),3])/mean(DGF[(DGF$DOY==i), 3]))) + (mean(DGF[(DGF$WET=="FALSE"), 3]) - mean(DGF[(DGF$DOY==i), 3])) / mean(DGF[(DGF$DOY==i), 3])
           if (CF.max.d=='NaN'){CF.max.d<-1}
           if (CF.max.d < 1.0) {CF.max.d<-1}
-          CF.min.w<-(abs(mean(DGF[(DGF$WET=="TRUE"),4])/mean(DGF[(DGF$DOY==i),4]))) + (mean(DGF[(DGF$WET=="TRUE"),4])-mean(DGF[(DGF$DOY==i),4]))/mean(DGF[(DGF$DOY==i),4])
+          CF.min.w<-(abs(mean(DGF[(DGF$WET=="TRUE"),4])/mean(DGF[(DGF$DOY==i), 4]))) + (mean(DGF[(DGF$WET=="TRUE"), 4]) - mean(DGF[(DGF$DOY==i), 4])) / mean(DGF[(DGF$DOY==i), 4])
           if (CF.min.w=='NaN'){CF.min.w<-1}
           if (CF.min.w > 1.0) {CF.min.w<-1}
-          CF.min.d<-(abs(mean(DGF[(DGF$WET=="FALSE"),4])/mean(DGF[(DGF$DOY==i),4]))) + (mean(DGF[(DGF$WET=="FALSE"),4])-mean(DGF[(DGF$DOY==i),4]))/mean(DGF[(DGF$DOY==i),4])
+          CF.min.d<-(abs(mean(DGF[(DGF$WET=="FALSE"),4])/mean(DGF[(DGF$DOY==i), 4]))) + (mean(DGF[(DGF$WET=="FALSE"), 4]) - mean(DGF[(DGF$DOY==i), 4])) / mean(DGF[(DGF$DOY==i), 4])
           if (CF.min.d=='NaN'){CF.min.d<-1}
           if (CF.min.d < 1.0) {CF.min.d<-1}   
-          PPT_avg <- ifelse((sum(DGF$DOY==i & DGF$WET) > 0), (sum(DGF$PPT_cm[DGF$DOY== i]) / sum(DGF$DOY==i & DGF$WET)), 0) #average the ppt across all the years for that day
-          PPT_sd<-(sd((DGF[(DGF$DOY==i),5]))) #standard deviation the ppt across all the years for that day
+          PPT_avg <- ifelse((sum(DGF$DOY==i & DGF$WET) > 0), (sum(DGF$PPT_cm[DGF$DOY == i]) / sum(DGF$DOY==i & DGF$WET)), 0) #average the ppt across all the years for that day
+          PPT_sd<-(sd((DGF[(DGF$DOY==i), 5]))) #standard deviation the ppt across all the years for that day
 	 	
-	 	  if(is.na(PPT_sd)){PPT_sd<-0}
+          # PPT_sd == na iff there were no wet days for the previous day. This will set PPT_sd to 0 if this occurs.
+	 	      if(is.na(PPT_sd)){PPT_sd <- 0}
           CF.max.w<-CF.max.w
           CF.max.d<-CF.max.d
           CF.min.w<-CF.min.w
@@ -136,7 +136,7 @@ registerDoParallel(proc_count)
           
           newrow<-data.frame(DOY=i,p_W_W=p_W_W,p_W_D=p_W_D,PPT_avg=PPT_avg,PPT_sd=PPT_sd,CF.max.w=CF.max.w,CF.max.d=CF.max.d,CF.min.w=CF.min.w,CF.min.d=CF.min.d)
           DF<-rbind(DF,newrow)
-          } 
+      } 
 
     # print out the probability file
     colnames(DF)<-c("#DOY","p[W|W]","p[W|D]","PPT_avg","PPT_sd","CF.max.w","CF.max.d","CF.min.w","CF.min.d")# relabel the columns names 
