@@ -277,6 +277,35 @@ for (i in rgroup_files)
 
 setwd("..")
 
+########################### Garbage collection for species, rgroup, and soil requirements #######################
+# All of these variables were created in the species, soils, and rgroup sections. They will never be used again.
+# treatment vectors
+remove(graz_intensity.current)
+remove(dist.freq.current)
+remove(graz.freq.current)
+# variables related to rgroup
+remove(rgroup_data_site)
+remove(treatments)
+remove(df)
+remove(treatments_vector)
+remove(rgroup_data)
+remove(rgroup_data_all_sites)
+remove(rgroup_data_all_sites_vectors)
+remove(rgroup_files)
+# variables related to soil
+remove(soil_data)
+remove(soil_data_all_sites)
+remove(soil_data_all_sites_vectors)
+remove(soil_data_site)
+#variables related to species
+remove(db_loc)
+remove(species_data_site)
+remove(species_data_all_sites_vectors)
+remove(species_data)
+remove(treatments_vector_species)
+remove(treatments_species)
+remove(species.filenames)
+
 ################################ Weather Query Code ###################################
 
 #Setup parameters for the weather aquisition (years, scenarios, timeperiod, GCMs) 
@@ -330,6 +359,11 @@ sites<-c(notassigned)
 #Source the code in query script
 source(query.file)
 
+# these variables are no longer needed
+remove(climate.conditions)
+remove(query.file)
+remove(database)
+
 ############################### End Weather Query Code ################################
 
 ############################### Weather Assembly Code #################################
@@ -382,6 +416,11 @@ yr<-30
 
 #Source the code in markov script
 source(markov.file)
+
+#These variables are no longer needed
+remove(assemble.file)
+remove(markov.file)
+remove(temp)
 
 ############################# End MARKOV Weather Generator Code ##############################
 
