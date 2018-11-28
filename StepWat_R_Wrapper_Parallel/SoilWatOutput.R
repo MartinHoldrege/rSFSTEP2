@@ -170,7 +170,7 @@ if(GCM[g]=="Current")
 }else
 {
     tempsw2_monthly$soilType<-soil
-    tempsw2_monthly$dist_flag<-dist.grz
+    tempsw2_monthly$dist_flag<-dist.graz.flag
     
     if(dist.graz.flag==T)
     {
