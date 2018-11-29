@@ -67,6 +67,8 @@ setwd(source.dir)
 #Get all sites listed in the CSV
 species_data_all_sites<-unique(species_data$Site)
 
+contains_vector <- FALSE
+
 #Service multiple sites separated by comma in the csv
 if(any(grepl(",",species_data_all_sites))==TRUE)
 {
@@ -78,6 +80,7 @@ if(any(grepl(",",species_data_all_sites))==TRUE)
     #if the site under inspection exists in multiple sites in the csv
     if(grepl(site,j))
     {
+      contains_vector <- TRUE
       #Get data for the multiple sites containing site under inspection from CSV
       species_data_site<-species_data[species_data$Site==j,]
       #List all treatments associated with the multiple sites
@@ -101,7 +104,7 @@ if(any(grepl(",",species_data_all_sites))==TRUE)
 species_data_site<-species_data[species_data$Site==site | species_data$Site=="all",]
 
 #print a warning if there are no species inputs for this site.
-if(nrow(species_data_site) == 0){
+if(nrow(species_data_site) == 0 & !contains_vector){
   print(paste("Site",site,"contains no species inputs.", sep = " "))
 }
 
@@ -146,6 +149,8 @@ soil_data_all_sites<-unique(soil_data$Site)
 #Get all multiple sites separated by comma
 soil_data_all_sites_vectors<-soil_data_all_sites[grepl(",",soil_data_all_sites)]
 
+contains_vector <- FALSE
+
 #Service multiple sites separated by comma first if any
 if(any(grepl(",",soil_data_all_sites))==TRUE)
 {
@@ -154,6 +159,7 @@ if(any(grepl(",",soil_data_all_sites))==TRUE)
     #If current site in soil_data_all_sites_vectors generate the soils.in file for it
     if(grepl(site,j))
     {
+      contains_vector <- TRUE
       #Get all columns of csv where site matches the site under inspection
       soil_data_site<-soil_data[soil_data$Site==j,]
       #Get all soil treatments pertaining to the site
@@ -176,7 +182,7 @@ if(any(grepl(",",soil_data_all_sites))==TRUE)
 soil_data_site<-soil_data[soil_data$Site==site | soil_data$Site=="all",]
 
 #print a warning if there are no soil inputs for this site.
-if(nrow(soil_data_site) == 0){
+if(nrow(soil_data_site) == 0 & !contains_vector){
   print(paste("Site",site,"contains no soil inputs.", sep = " "))
 }
 
@@ -208,12 +214,15 @@ soil.types<-c(treatments,treatments_vector)#c("soils.17sand.13clay","soils.68san
 rgroup_data_all_sites<-unique(rgroup_data$Site)
 rgroup_data_all_sites_vectors<-rgroup_data_all_sites[grepl(",",rgroup_data_all_sites)]
 
+contains_vector <- FALSE
+
 if(any(grepl(",",rgroup_data_all_sites))==TRUE)
 {
   for(j in rgroup_data_all_sites_vectors)
   {
     if(grepl(site,j))
     {
+      contains_vector <- TRUE
       rgroup_data_site<-rgroup_data[rgroup_data$Site==j,]
       treatments_vector<-unique(rgroup_data_site$treatment)
       for(i in treatments_vector)
@@ -229,7 +238,7 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
 rgroup_data_site<-rgroup_data[rgroup_data$Site==site | rgroup_data$Site=="all",]
 
 #print a warning if there are no rgroup inputs for this site.
-if(nrow(rgroup_data_site) == 0){
+if(nrow(rgroup_data_site) == 0 & !contains_vector){
   print(paste("Site",site,"contains no rgroup inputs.", sep = " "))
 }
 
@@ -301,6 +310,7 @@ setwd("..")
 remove(graz_intensity.current)
 remove(dist.freq.current)
 remove(graz.freq.current)
+remove(contains_vector)
 # variables related to rgroup
 remove(rgroup_data_site)
 remove(treatments)
