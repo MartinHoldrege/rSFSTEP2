@@ -14,3 +14,5 @@ a new clone of the updated repository.
 
 
 The ReadMe.txt contains instructions to run rSFSTEP2
+
+See syntax_inputs.txt in the inputs folder for a description of the input options and how to specify site-specific and fixed inputs
