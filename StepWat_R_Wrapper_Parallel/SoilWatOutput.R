@@ -19,6 +19,7 @@ tempsw2_daily_slyrs$GCM<-GCM[g]
 
 if(GCM[g]=="Current")
 {
+    tempsw2_daily_slyrs$species<-sp
     tempsw2_daily_slyrs$soilType<-soil
     tempsw2_daily_slyrs$dist_flag<-dist.graz.flag
     if(dist.graz.flag==T)
@@ -36,6 +37,7 @@ if(GCM[g]=="Current")
     tempsw2_daily_slyrs$YEARS<-rep("NONE",length(tempsw2_daily_slyrs$site))  
 }else
 {
+    tempsw2_daily_slyrs$species<-sp
     tempsw2_daily_slyrs$soilType<-soil
     tempsw2_daily_slyrs$dist_flag<-dist.graz.flag
     
@@ -63,6 +65,7 @@ tempsw2_daily$GCM<-GCM[g]
 
 if(GCM[g]=="Current")
 {
+    tempsw2_daily$species<-sp
     tempsw2_daily$soilType<-soil
     tempsw2_daily$dist_flag<-dist.graz.flag
     if(dist.graz.flag==T)
@@ -80,6 +83,7 @@ if(GCM[g]=="Current")
     	tempsw2_daily$YEARS<-rep("NONE",length(tempsw2_daily$site))
 }else
 {
+    tempsw2_daily$species<-sp
     tempsw2_daily$soilType<-soil
     tempsw2_daily$dist_flag<-dist.graz.flag
     
@@ -111,6 +115,7 @@ tempsw2_monthly_slyrs$GCM<-GCM[g]
 
 if(GCM[g]=="Current")
 {
+    tempsw2_monthly_slyrs$species<-sp
     tempsw2_monthly_slyrs$soilType<-soil
     tempsw2_monthly_slyrs$dist_flag<-dist.graz.flag
     if(dist.graz.flag==T)
@@ -128,6 +133,7 @@ if(GCM[g]=="Current")
     	tempsw2_monthly_slyrs$YEARS<-rep("NONE",length(tempsw2_monthly_slyrs$site))
 }else
 {
+    tempsw2_monthly_slyrs$species<-sp
     tempsw2_monthly_slyrs$soilType<-soil
     tempsw2_monthly_slyrs$dist_flag<-dist.graz.flag
     
@@ -152,6 +158,7 @@ tempsw2_monthly$GCM<-GCM[g]
 
 if(GCM[g]=="Current")
 {
+    tempsw2_monthly$species<-sp
     tempsw2_monthly$soilType<-soil
     tempsw2_monthly$dist_flag<-dist.graz.flag
     if(dist.graz.flag==T)
@@ -169,6 +176,7 @@ if(GCM[g]=="Current")
     	tempsw2_monthly$YEARS<-rep("NONE",length(tempsw2_monthly$site))
 }else
 {
+    tempsw2_monthly$species<-sp
     tempsw2_monthly$soilType<-soil
     tempsw2_monthly$dist_flag<-dist.graz.flag
     
@@ -200,6 +208,7 @@ tempsw2_yearly_slyrs$GCM<-GCM[g]
 
 if(GCM[g]=="Current")
 {
+    tempsw2_yearly_slyrs$species<-sp
     tempsw2_yearly_slyrs$soilType<-soil
     tempsw2_yearly_slyrs$dist_flag<-dist.graz.flag
     if(dist.graz.flag==T)
@@ -217,6 +226,7 @@ if(GCM[g]=="Current")
     	tempsw2_yearly_slyrs$YEARS<-rep("NONE",length(tempsw2_yearly_slyrs$site))
 }else
 {
+    tempsw2_yearly_slyrs$species<-sp
     tempsw2_yearly_slyrs$soilType<-soil
     tempsw2_yearly_slyrs$dist_flag<-dist.graz.flag
     
@@ -241,6 +251,7 @@ tempsw2_yearly$GCM<-GCM[g]
 
 if(GCM[g]=="Current")
 {
+    tempsw2_yearly$species<-sp
     tempsw2_yearly$soilType<-soil
     tempsw2_yearly$dist_flag<-dist.graz.flag
     if(dist.graz.flag==T)
@@ -258,6 +269,7 @@ if(GCM[g]=="Current")
     	tempsw2_yearly$YEARS<-rep("NONE",length(tempsw2_yearly$site))
 }else
 {
+    tempsw2_yearly$species<-sp
     tempsw2_yearly$soilType<-soil
     tempsw2_yearly$dist_flag<-dist.graz.flag
     
@@ -289,7 +301,8 @@ tempbmass$GCM<-GCM[g]
 
 if(GCM[g]=="Current")
 {
-   tempbmass$soilType<-soil
+    tempbmass$species<-sp
+    tempbmass$soilType<-soil
     tempbmass$dist_flag<-dist.graz.flag
     if(dist.graz.flag==T)
     {
@@ -306,6 +319,7 @@ if(GCM[g]=="Current")
     	tempbmass$YEARS<-rep("NONE",length(tempbmass$site))   
 }else
 {
+    tempbmass$species<-sp
     tempbmass$soilType<-soil
     tempbmass$dist_flag<-dist.graz.flag
     
@@ -329,6 +343,7 @@ tempmort$GCM<-GCM[g]
 
 if(GCM[g]=="Current")
 {
+    tempmort$species<-sp
     tempmort$soilType<-soil
     tempmort$dist_flag<-dist.graz.flag
     if(dist.graz.flag==T)
@@ -346,6 +361,7 @@ if(GCM[g]=="Current")
     	tempmort$YEARS<-rep("NONE",length(tempmort$site))
 }else
 {
+    tempmort$species <- sp
     tempmort$soilType<-soil
     tempmort$dist_flag<-dist.graz.flag
     
