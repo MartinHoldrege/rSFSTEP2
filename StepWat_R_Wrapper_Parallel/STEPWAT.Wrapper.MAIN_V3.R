@@ -116,7 +116,7 @@ if(nrow(species_data_site) == 0 & !contains_vector){
 #Get all treatments associated with the site
 treatments_species<-unique(species_data_site$treatment)
 
-#Write file for each treatment - the site-specific parameters and/or fixed parameters for "all" sites if requested
+#Write a file for each treatment - the site-specific parameters and/or fixed parameters for "all" sites if requested
 for(i in treatments_species)
 {
   #Get data for a specific treatment
@@ -125,7 +125,7 @@ for(i in treatments_species)
  #Remove Site and treatment columns
   df <- subset(df, select = -c(1,2) )
   
-  #Write the species.in file
+  #Write the species.in file to the STEPWAT_DIST folder
   write.table(df, file = paste0("species_",i,"_",site,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
 }
 
@@ -149,45 +149,44 @@ for (i in species.filenames)
 #######################################################################################
 #SOILS INPUTS
 
-#Get all sites specified in the csv apart from all
+#Get all sites specified in the csv
 soil_data_all_sites<-unique(soil_data$Site)
 
-#Get all multiple sites separated by comma
+#Get the subset of sites that will be run with a fixed set of inputs, denoted with x,y
 soil_data_all_sites_vectors<-soil_data_all_sites[grepl(",",soil_data_all_sites)]
 
 contains_vector <- FALSE
 
-#Service multiple sites separated by comma first if any
+#Generate a soils.in file for the site for the x,y option first
 if(any(grepl(",",soil_data_all_sites))==TRUE)
 {
   for(j in soil_data_all_sites_vectors)
   {
-    #If current site in soil_data_all_sites_vectors generate the soils.in file for it
     if(grepl(site,j))
     {
       contains_vector <- TRUE
-      #Get all columns of csv where site matches the site under inspection
+      #Subset the soils data for the site in question
       soil_data_site<-soil_data[soil_data$Site==j,]
-      #Get all soil treatments pertaining to the site
+      #Get all soil treatments for the site in question
       treatments_vector<-unique(soil_data_site$soil_treatment)
-      #For each treatment specific to the site under inspection generate a soils.in file
+      
+      #For each treatment for the site in question generate a soils.in file
       for(i in treatments_vector)
       {
-        #Get all columns of csv
         df=soil_data_site[soil_data_site$soil_treatment==i,]
-        #Get rid of first two columns
+        #Get rid of Site and treatment columns
         df <- subset(df, select = -c(1,2) )
-        #Generate the file
+        #Write the soils.in file to the STEPWAT_DIST folder
         write.table(df, file = paste0("soils_",i,"_vector_",site,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
       }
     }
   }
 }
 
-#Service soils data for the current site or for "all"
+#Get site-specific species parameters for the site or the fixed parameters used for "all" sites
 soil_data_site<-soil_data[soil_data$Site==site | soil_data$Site=="all",]
 
-#print a warning if there are no soil inputs for this site.
+#print a warning if there are no soil inputs for this site
 if(nrow(soil_data_site) == 0 & !contains_vector){
   print(paste("Site",site,"contains no soil inputs.", sep = " "))
 }
@@ -195,13 +194,14 @@ if(nrow(soil_data_site) == 0 & !contains_vector){
 #Get all treatments pertaining to site or "all"
 treatments<-unique(soil_data_site$soil_treatment)
 
+#Write a file for each treatment - the site-specific parameters and/or fixed parameters for "all" sites if requested
 for(i in treatments)
 {
-  #For each treatment grab the soils data for the current site or "all"
+  #Get data for a specific treatment
   df=soil_data_site[soil_data_site$soil_treatment==i,]
-  #Drop first two columns
+  #Remove Site and treatment columns
   df <- subset(df, select = -c(1,2) )
-  #Write the soils file
+  #Write the soils.in file to the STEPWAT_DIST folder
   write.table(df, file = paste0("soils_",i,"_",site,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
 }
 
@@ -211,17 +211,21 @@ treatments<- paste("soils_",treatments,"_",site, sep="")
 treatments_vector<-as.character(treatments_vector)
 treatments_vector <- paste("soils_",treatments_vector, "_vector_",site, sep="")
 
-#Soil types are specified here, in accordance with the files added to STEPWAT_DIST folder
-soil.types<-c(treatments,treatments_vector)#c("soils.17sand.13clay","soils.68sand.10clay") #KS: uncommented to test overhaul of inputs
+#Store all of the treatment-site combinations in soil.types
+soil.types<-c(treatments,treatments_vector)
 
 #######################################################################################
 #RGROUP INPUTS (including fire and grazing)
 
+#Get all sites specified in the csv
 rgroup_data_all_sites<-unique(rgroup_data$Site)
+
+#Get the subset of sites that will be run with a fixed set of inputs, denoted with x,y
 rgroup_data_all_sites_vectors<-rgroup_data_all_sites[grepl(",",rgroup_data_all_sites)]
 
 contains_vector <- FALSE
 
+#Generate a rgroup.in file for the site for the x,y option first
 if(any(grepl(",",rgroup_data_all_sites))==TRUE)
 {
   for(j in rgroup_data_all_sites_vectors)
@@ -229,53 +233,66 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
     if(grepl(site,j))
     {
       contains_vector <- TRUE
+      #Subset the rgroup data for the site in question
       rgroup_data_site<-rgroup_data[rgroup_data$Site==j,]
+      #Get all rgroup treatments for the site in question
       treatments_vector<-unique(rgroup_data_site$treatment)
+      
+      #For each treatment for the site in question generate a rgroup.in file
       for(i in treatments_vector)
       {
         df=rgroup_data_site[rgroup_data_site$treatment==i,]
-        df <- subset(df, select = -c(1,2) )
+        #Get rid of Site and treatment columns
+        df <- subset(df, select = -c(1,2))
+        #Write the rgroup.in file to the STEPWAT_DIST folder
         write.table(df, file = paste0(i,"_vector",".in"),row.names=FALSE,col.names = FALSE,sep="\t")
       }
     }
   }
 }
 
+#Get site-specific rgroup parameters for the site or the fixed parameters used for "all" sites
 rgroup_data_site<-rgroup_data[rgroup_data$Site==site | rgroup_data$Site=="all",]
 
-#print a warning if there are no rgroup inputs for this site.
+#print a warning if there are no rgroup inputs for this site
 if(nrow(rgroup_data_site) == 0 & !contains_vector){
   print(paste("Site",site,"contains no rgroup inputs.", sep = " "))
 }
 
+#Get all treatments pertaining to site or "all"
 treatments<-unique(rgroup_data_site$treatment)
 
-#Specify kill frequency
+#Create fire frequency object
 dist.freq<-vector(mode="double", length=0)
 
-#Specify grazing frequency
+#Create grazing frequency object
 graz.freq<-vector(mode="double", length=0)
 
-#Set grazing intensity
+#Create grazing intensity object
 graz_intensity<-vector(mode="character", length=0)
 
+#For each treatment for the site in question generate a rgroup.in file
 for(i in treatments)
 {
   df=rgroup_data_site[rgroup_data_site$treatment==i,]
+  #Get rid of Site and treatment columns
   df <- subset(df, select = -c(1,2) )
   
+  #Populate the dist.freq vector with fire frequency inputs
   temp<-df['killfrq']
   temp<-unique(temp)
   temp<-as.numeric(temp)
   dist.freq.current<-temp
   dist.freq<-c(dist.freq,temp)
   
+  #Populate the graz.freq vector with grazing frequency inputs
   temp<-df['grazing_frq']
   temp<-unique(temp)
   temp<-as.numeric(temp)
   graz.freq.current<-temp
   graz.freq<-c(graz.freq,temp)
   
+  #Populate the graz_intensity vector with grazing intensity inputs
   temp<-df['proportion_grazing']
   temp<-unique(temp)
   temp<-max(temp)
@@ -293,6 +310,8 @@ for(i in treatments)
   }
   graz_intensity.current<-temp
   graz_intensity<-c(graz_intensity,temp)
+  
+  #Write the rgroup.in file to the STEPWAT_DIST folder
   write.table(df, file = paste0("rgroup.","freq",dist.freq.current,".graz",".",graz.freq.current,".",graz_intensity.current,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
 }
 
@@ -300,9 +319,11 @@ dist.freq<-unique(dist.freq)
 graz.freq<-unique(graz.freq)
 graz_intensity<-unique(graz_intensity)
 
+#Store the files names in the rgroup_files variable
 rgroup_files<-list.files(path=".",pattern = "rgroup")
 rgroup_files<-rgroup_files[rgroup_files!="rgroup_template.in"]
 
+#Append rgroup_template.in withing STEPWAT_DIST to all the created files and save with a unique filename
 for (i in rgroup_files)
 {
   system(paste("cat ","rgroup_template.in >>",i,sep=""))
