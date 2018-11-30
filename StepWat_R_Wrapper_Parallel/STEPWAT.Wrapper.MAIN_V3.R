@@ -131,9 +131,17 @@ for(i in treatments_species)
 
 #Create file names for all site-treatment combinations
 treatments_species<-as.character(treatments_species)
-treatments_species<-paste("species_",treatments_species,sep="")
+#Only paste in 'species_' if there is already a name present. Otherwise, if there are no treatments,
+#we would generate a file called 'species__.in' which would crash the program.
+if(length(treatments_species) > 0){
+  treatments_species<-paste("species_",treatments_species,sep="")
+}
 treatments_vector_species<-as.character(treatments_vector_species)
-treatments_vector_species <- paste("species_",treatments_vector_species, "_vector", sep="")
+#Only paste in 'species_' if there is already a name present. Otherwise, if there are no treatments,
+#we would generate a file called 'species__.in' which would crash the program.
+if(length(treatments_vector_species) > 0){
+  treatments_vector_species <- paste("species_",treatments_vector_species, "_vector", sep="")
+}
 
 #Store the files names in the species.filenames variable and all of the treatments-site combinations in species
 species<-c(treatments_species,treatments_vector_species)
@@ -205,11 +213,19 @@ for(i in treatments)
   write.table(df, file = paste0("soils_",i,"_",site,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
 }
 
-#Compile name of all soil files generated above
-treatments<-as.character(treatments)
-treatments<- paste("soils_",treatments,"_",site, sep="")
+#Create file names for all site-treatment combinations
+treatments<-as.character(treatments_species)
+#Only paste in 'soils_' if there is already a name present. Otherwise, if there are no treatments,
+#we would generate a file called 'soils__.in' which would crash the program.
+if(length(treatments) > 0){
+  treatments<-paste("species_",treatments,sep="")
+}
 treatments_vector<-as.character(treatments_vector)
-treatments_vector <- paste("soils_",treatments_vector, "_vector_",site, sep="")
+#Only paste in 'soils_' if there is already a name present. Otherwise, if there are no treatments,
+#we would generate a file called 'soils__.in' which would crash the program.
+if(length(treatments_vector_species) > 0){
+  treatments_vector <- paste("species_",treatments_vector, "_vector", sep="")
+}
 
 #Store all of the treatment-site combinations in soil.types
 soil.types<-c(treatments,treatments_vector)
