@@ -214,21 +214,22 @@ for(i in treatments)
 }
 
 #Create file names for all site-treatment combinations
-treatments<-as.character(treatments_species)
+treatments<-as.character(treatments)
 #Only paste in 'soils_' if there is already a name present. Otherwise, if there are no treatments,
 #we would generate a file called 'soils__.in' which would crash the program.
 if(length(treatments) > 0){
-  treatments<-paste("species_",treatments,sep="")
+  treatments<-paste("soils_",treatments, "_", site, sep="")
 }
 treatments_vector<-as.character(treatments_vector)
 #Only paste in 'soils_' if there is already a name present. Otherwise, if there are no treatments,
 #we would generate a file called 'soils__.in' which would crash the program.
-if(length(treatments_vector_species) > 0){
-  treatments_vector <- paste("species_",treatments_vector, "_vector", sep="")
+if(length(treatments_vector) > 0){
+  treatments_vector <- paste("soils_",treatments_vector, "_vector_", site, sep="")
 }
 
 #Store all of the treatment-site combinations in soil.types
 soil.types<-c(treatments,treatments_vector)
+
 
 #######################################################################################
 #RGROUP INPUTS (including fire and grazing)
