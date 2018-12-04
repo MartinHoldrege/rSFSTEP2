@@ -241,6 +241,7 @@ rgroup_data_all_sites<-unique(rgroup_data$Site)
 rgroup_data_all_sites_vectors<-rgroup_data_all_sites[grepl(",",rgroup_data_all_sites)]
 
 contains_vector <- FALSE
+rgroups <- c()
 
 #Generate a rgroup.in file for the site for the x,y option first
 if(any(grepl(",",rgroup_data_all_sites))==TRUE)
@@ -261,8 +262,34 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
         df=rgroup_data_site[rgroup_data_site$treatment==i,]
         #Get rid of Site and treatment columns
         df <- subset(df, select = -c(1,2))
-        #Write the rgroup.in file to the STEPWAT_DIST folder
-        write.table(df, file = paste0(i,"_vector",".in"),row.names=FALSE,col.names = FALSE,sep="\t")
+        
+        #Populate the dist.freq vector with fire frequency inputs
+        temp<-df['killfrq']
+        temp<-unique(temp)
+        temp<-as.numeric(temp)
+        dist.freq.current<-temp
+        
+        #Populate the graz.freq vector with grazing frequency inputs
+        temp<-df['grazing_frq']
+        temp<-unique(temp)
+        temp<-as.numeric(temp)
+        graz.freq.current<-temp
+        
+        #If grazing is ocurring we need to know the level.
+        if(graz.freq.current != 0){
+          #Populate the graz_intensity vector with grazing intensity inputs
+          temp<-df['proportion_grazing']
+          temp<-unique(temp)
+          temp<-max(temp)
+        } else {
+          temp="0"
+        }
+        graz_intensity.current<-temp
+        
+        rgroups <- c(rgroups, paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i))
+        
+        write.table(df, file = paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+        
       }
     }
   }
@@ -279,15 +306,6 @@ if(nrow(rgroup_data_site) == 0 & !contains_vector){
 #Get all treatments pertaining to site or "all"
 treatments<-unique(rgroup_data_site$treatment)
 
-#Create fire frequency object
-dist.freq<-vector(mode="double", length=0)
-
-#Create grazing frequency object
-graz.freq<-vector(mode="double", length=0)
-
-#Create grazing intensity object
-graz_intensity<-vector(mode="character", length=0)
-
 #For each treatment for the site in question generate a rgroup.in file
 for(i in treatments)
 {
@@ -300,41 +318,29 @@ for(i in treatments)
   temp<-unique(temp)
   temp<-as.numeric(temp)
   dist.freq.current<-temp
-  dist.freq<-c(dist.freq,temp)
   
   #Populate the graz.freq vector with grazing frequency inputs
   temp<-df['grazing_frq']
   temp<-unique(temp)
   temp<-as.numeric(temp)
   graz.freq.current<-temp
-  graz.freq<-c(graz.freq,temp)
   
-  #Populate the graz_intensity vector with grazing intensity inputs
-  temp<-df['proportion_grazing']
-  temp<-unique(temp)
-  temp<-max(temp)
-  temp<-as.numeric(temp)
-  if(temp==0.24)
-  {
-    temp="lowgraz"
-  }else if(temp==0.41)
-  {
-    temp="modgraz"
-    
-  }else if(temp==0.58)
-  {
-    temp="highgraz"
+  #If grazing is ocurring we need to know the level.
+  if(graz.freq.current != 0){
+    #Populate the graz_intensity vector with grazing intensity inputs
+    temp<-df['proportion_grazing']
+    temp<-unique(temp)
+    temp<-max(temp)
+  } else {
+    temp="0"
   }
   graz_intensity.current<-temp
-  graz_intensity<-c(graz_intensity,temp)
+  
+  rgroups <- c(rgroups, paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i))
   
   #Write the rgroup.in file to the STEPWAT_DIST folder
-  write.table(df, file = paste0("rgroup.","freq",dist.freq.current,".graz",".",graz.freq.current,".",graz_intensity.current,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+  write.table(df, file = paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
 }
-
-dist.freq<-unique(dist.freq)
-graz.freq<-unique(graz.freq)
-graz_intensity<-unique(graz_intensity)
 
 #Store the files names in the rgroup_files variable
 rgroup_files<-list.files(path=".",pattern = "rgroup")
