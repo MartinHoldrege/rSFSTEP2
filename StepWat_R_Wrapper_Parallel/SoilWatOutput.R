@@ -13,6 +13,7 @@ tempsw2_daily<-data.frame(read.csv(name.sw2.daily.csv))
 #write master daily file for soil-layer variables
 tempsw2_daily_slyrs$site<-sites[1]
 tempsw2_daily_slyrs$GCM<-GCM[g]
+tempsw2_daily_slyrs$Rgrp_treatment<-treatmentName
 
 #tempsw2_daily_slyrs<-tempsw2_daily_slyrs[order(tempsw2_daily_slyrs$DOY),]
 #tempsw2_daily_slyrs<-tempsw2_daily_slyrs[order(tempsw2_daily_slyrs$YEAR),]
@@ -40,6 +41,7 @@ if(GCM[g]=="Current")
 #write master daily file for non-soil layer files
 tempsw2_daily$site<-sites[1]
 tempsw2_daily$GCM<-GCM[g]
+tempsw2_daily$Rgrp_treatment<-treatmentName
 
 #tempsw2_daily<-tempsw2_daily[order(tempsw2_daily$DOY),]
 #tempsw2_daily<-tempsw2_daily[order(tempsw2_daily$YEAR),]
@@ -74,6 +76,7 @@ tempsw2_monthly<-data.frame(read.csv(name.sw2.monthly.csv))
 #write master monthly file for soil-layer variables
 tempsw2_monthly_slyrs$site<-sites[1]
 tempsw2_monthly_slyrs$GCM<-GCM[g]
+tempsw2_monthly_slyrs$Rgrp_treatment<-treatmentName
 
 if(GCM[g]=="Current")
 {
@@ -98,6 +101,7 @@ if(GCM[g]=="Current")
 #write master monthly file for non-soil layer files
 tempsw2_monthly$site<-sites[1]
 tempsw2_monthly$GCM<-GCM[g]
+tempsw2_monthly$Rgrp_treatment<-treatmentName
 
 if(GCM[g]=="Current")
 {
@@ -129,6 +133,7 @@ tempsw2_yearly<-data.frame(read.csv(name.sw2.yearly.csv))
 #write master yearly file for soil-layer variables
 tempsw2_yearly_slyrs$site<-sites[1]
 tempsw2_yearly_slyrs$GCM<-GCM[g]
+tempsw2_yearly_slyrs$Rgrp_treatment<-treatmentName
 
 if(GCM[g]=="Current")
 {
@@ -153,6 +158,7 @@ if(GCM[g]=="Current")
 #write master yearly file for non-soil layer files
 tempsw2_yearly$site<-sites[1]
 tempsw2_yearly$GCM<-GCM[g]
+tempsw2_yearly$Rgrp_treatment<-treatmentName
 
 if(GCM[g]=="Current")
 {
@@ -184,6 +190,7 @@ tempmort<-data.frame(read.csv(name.mort.csv))
 
 tempbmass$site<-sites[1]
 tempbmass$GCM<-GCM[g]
+tempbmass$Rgrp_treatment<-treatmentName
 
 if(GCM[g]=="Current")
 {
@@ -207,6 +214,7 @@ if(GCM[g]=="Current")
 
 tempmort$site<-sites[1]
 tempmort$GCM<-GCM[g]
+tempmort$Rgrp_treatment<-treatmentName
 
 if(GCM[g]=="Current")
 {
