@@ -197,8 +197,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               setwd("Output")
               
               #Identify the name of the biomass output file
-              name.bmass.csv<-paste("bmassavg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-              name.mort.csv<-paste("mortavg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+              name.bmass.csv<-paste("bmassavg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+              name.mort.csv<-paste("mortavg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
               
               #Rename the bmassavg.csv
               system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
@@ -209,8 +209,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               
               #Daily SOILWAT2 output
               #Identify the name of the sw daily output files
-              name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-              name.sw2.daily.csv<-paste("sw2_daily_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+              name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+              name.sw2.daily.csv<-paste("sw2_daily_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
               
               #Rename the daily SOILWAT2 output files
               system(paste("mv sw2_daily_slyrs_agg.csv ",name.sw2.daily.slyrs.csv,sep=""))
@@ -218,8 +218,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               
               #Monthly SOILWAT2 output
               #Identify the name of the sw monthly output files
-              name.sw2.monthly.slyrs.csv<-paste("sw2_monthly_slyrs_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-              name.sw2.monthly.csv<-paste("sw2_monthly_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+              name.sw2.monthly.slyrs.csv<-paste("sw2_monthly_slyrs_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+              name.sw2.monthly.csv<-paste("sw2_monthly_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
               
               #Rename the monthly SOILWAT2 output files
               system(paste("mv sw2_monthly_slyrs_agg.csv ",name.sw2.monthly.slyrs.csv,sep=""))
@@ -227,8 +227,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               
               #Yearly SOILWAT2 output
               #Identify the name of the sw yearly output files
-              name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-              name.sw2.yearly.csv<-paste("sw2_yearly_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+              name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+              name.sw2.yearly.csv<-paste("sw2_yearly_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
               
               #Rename the yearly SOILWAT2 output files
               system(paste("mv sw2_yearly_slyrs_agg.csv ",name.sw2.yearly.slyrs.csv,sep=""))
