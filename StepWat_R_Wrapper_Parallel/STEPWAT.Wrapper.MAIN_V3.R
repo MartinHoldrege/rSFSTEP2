@@ -86,7 +86,7 @@ if(any(grepl(",",species_data_all_sites))==TRUE)
       treatments_vector_species<-unique(species_data_site$treatment)
       
       setwd("STEPWAT_DIST")
-     
+      
       #Iterate through each treatment
       for(i in treatments_vector_species)
       {
@@ -97,7 +97,7 @@ if(any(grepl(",",species_data_all_sites))==TRUE)
         df <- subset(df, select = -c(1,2))
         
         #Write the species.in file to the STEPWAT_DIST folder
-        write.table(df, file = paste0("species_",i,"_vector_",site,".in"),quote = FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+        write.table(df, file = paste0("species_",i,"_",site,".in"),quote = FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
       }
     }
   }
@@ -119,8 +119,8 @@ for(i in treatments_species)
 {
   #Get data for a specific treatment
   df=species_data_site[species_data_site$treatment==i,]
- 
- #Remove Site and treatment columns
+  
+  #Remove Site and treatment columns
   df <- subset(df, select = -c(1,2) )
   
   #Write the species.in file to the STEPWAT_DIST folder
@@ -138,7 +138,7 @@ treatments_vector_species<-as.character(treatments_vector_species)
 #Only paste in 'species_' if there is already a name present. Otherwise, if there are no treatments,
 #we would generate a file called 'species__.in' which would crash the program.
 if(length(treatments_vector_species) > 0){
-  treatments_vector_species <- paste("species_",treatments_vector_species, "_vector", sep="")
+  treatments_vector_species <- paste("species_",treatments_vector_species, sep="")
 }
 
 #Store the files names in the species.filenames variable and all of the treatments-site combinations in species
@@ -183,7 +183,7 @@ if(any(grepl(",",soil_data_all_sites))==TRUE)
         #Get rid of Site and treatment columns
         df <- subset(df, select = -c(1,2) )
         #Write the soils.in file to the STEPWAT_DIST folder
-        write.table(df, file = paste0("soils_",i,"_vector_",site,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
+        write.table(df, file = paste0("soils_",i,"_",site,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
       }
     }
   }
@@ -222,7 +222,7 @@ treatments_vector<-as.character(treatments_vector)
 #Only paste in 'soils_' if there is already a name present. Otherwise, if there are no treatments,
 #we would generate a file called 'soils__.in' which would crash the program.
 if(length(treatments_vector) > 0){
-  treatments_vector <- paste("soils_",treatments_vector, "_vector_", site, sep="")
+  treatments_vector <- paste("soils_",treatments_vector, "_", site, sep="")
 }
 
 #Store all of the treatment-site combinations in soil.types
@@ -515,8 +515,6 @@ GCM<-c("Current","CanESM2","CESM1-CAM5","CSIRO-Mk3-6-0","FGOALS-g2","FGOALS-s2",
 #Set RCPs
 RCP<-c("RCP45","RCP85")
 
-#Disturbance Flag, turn to "F" if not using disturbances (grazing,fire)
-dist.graz.flag<-T
 #Disturbance folder
 dist.directory<-paste(source.dir,"STEPWAT_DIST/",sep="")
 
