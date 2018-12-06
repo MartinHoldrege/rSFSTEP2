@@ -113,7 +113,7 @@ if(GCM[g]=="Current")
   tempsw2_monthly$species<-sp
   tempsw2_monthly$soilType<-soil
   tempsw2_monthly$dist_freq<-dst
-  tempsw2_monthly$graz_freq<-graz.freq
+  tempsw2_monthly$graz_freq<-grz
   tempsw2_monthly$intensity<-intensity
   tempsw2_monthly$RCP<-r
   tempsw2_monthly$YEARS<-y
