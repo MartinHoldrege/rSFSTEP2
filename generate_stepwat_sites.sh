@@ -1,6 +1,6 @@
 #!/bin/bash
 #./generate_stepwat_sites.sh <wrapper_folder_to_copy> <number_of_sites> <number_of_scenario>
-siteid=(1) #add site ids here
+siteid=(1 2) #add site ids here
 
 
 cd StepWat_R_Wrapper_Parallel
