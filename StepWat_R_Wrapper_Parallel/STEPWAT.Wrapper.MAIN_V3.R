@@ -284,8 +284,24 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
         }
         graz_intensity.current<-temp
         
+        # If any of the inputs contain a decimal like "0.24" this code will remove the "0." and leave the "24"
+        # this is necessary for functionallity in wrapper.file
+        dist.freq.current <- toString(dist.freq.current)
+        graz.freq.current <- toString(graz.freq.current)
+        graz_intensity.current <- toString(graz_intensity.current)
+  
+        dist.freq.current <- strsplit(dist.freq.current,"\\.")
+        graz.freq.current <- strsplit(graz.freq.current,"\\.")
+        graz_intensity.current <- strsplit(graz_intensity.current,"\\.")
+        
+        dist.freq.current <- dist.freq.current[[1]][length(dist.freq.current[[1]])]
+        graz.freq.current <- graz.freq.current[[1]][length(graz.freq.current[[1]])]
+        graz_intensity.current <- graz_intensity.current[[1]][length(graz_intensity.current[[1]])]
+        
+        # Now add the file name to the list of file names
         rgroups <- c(rgroups, paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i))
         
+        # write the file
         write.table(df, file = paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
         
       }
@@ -334,9 +350,24 @@ for(i in treatments)
   }
   graz_intensity.current<-temp
   
-  rgroups <- c(rgroups, paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i))
+  # If any of the inputs contain a decimal like "0.24" this code will remove the "0." and leave the "24"
+  # this is necessary for functionallity in wrapper.file
+  dist.freq.current <- toString(dist.freq.current)
+  graz.freq.current <- toString(graz.freq.current)
+  graz_intensity.current <- toString(graz_intensity.current)
   
-  #Write the rgroup.in file to the STEPWAT_DIST folder
+  dist.freq.current <- strsplit(dist.freq.current,"\\.")
+  graz.freq.current <- strsplit(graz.freq.current,"\\.")
+  graz_intensity.current <- strsplit(graz_intensity.current,"\\.")
+        
+  dist.freq.current <- dist.freq.current[[1]][length(dist.freq.current[[1]])]
+  graz.freq.current <- graz.freq.current[[1]][length(graz.freq.current[[1]])]
+  graz_intensity.current <- graz_intensity.current[[1]][length(graz_intensity.current[[1]])]
+        
+  # Now add the file name to the list of file names
+  rgroups <- c(rgroups, paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i))
+        
+  # write the file
   write.table(df, file = paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
 }
 
