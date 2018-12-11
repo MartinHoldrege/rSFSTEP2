@@ -67,6 +67,9 @@ setwd(source.dir)
 #Get all sites listed in the CSV
 species_data_all_sites<-unique(species_data$Site)
 
+# Move to the dist directory, where we will write our .in files
+setwd("STEPWAT_DIST")
+treatments_vector_species <- c()
 contains_vector <- FALSE
 
 if(any(grepl(",",species_data_all_sites))==TRUE)
@@ -84,9 +87,7 @@ if(any(grepl(",",species_data_all_sites))==TRUE)
       
       #List all treatments associated with the multiple sites
       treatments_vector_species<-unique(species_data_site$treatment)
-      
-      setwd("STEPWAT_DIST")
-      
+
       #Iterate through each treatment
       for(i in treatments_vector_species)
       {
@@ -161,6 +162,7 @@ soil_data_all_sites<-unique(soil_data$Site)
 #Get the subset of sites that will be run with a fixed set of inputs, denoted with x,y
 soil_data_all_sites_vectors<-soil_data_all_sites[grepl(",",soil_data_all_sites)]
 
+treatments_vector <- c()
 contains_vector <- FALSE
 
 #Generate a soils.in file for the site for the x,y option first
