@@ -66,6 +66,8 @@ setwd(source.dir)
 #SPECIES INPUTS
 #Get all sites listed in the CSV
 species_data_all_sites<-unique(species_data$Site)
+#Get all sites for which fixed parameters for a subest of sites are specified
+species_data_all_sites_vectors<-species_data_all_sites[grepl(",",species_data_all_sites)]
 
 # Move to the dist directory, where we will write our .in files
 setwd("STEPWAT_DIST")
@@ -74,8 +76,7 @@ contains_vector <- FALSE
 
 if(any(grepl(",",species_data_all_sites))==TRUE)
 {
-  #Get all sites for which fixed parameters for a subest of sites are specified
-  species_data_all_sites_vectors<-species_data_all_sites[grepl(",",species_data_all_sites)]
+  
   
   #Iterate through each site that matches this criteria
   for(j in species_data_all_sites_vectors)
