@@ -1,10 +1,6 @@
-#The Burke-Lauenroth Laboratory 
-#STEPWAT R Wrapper
-#Markov script for STEPWAT_R_WRAPPER
-#Script for Markov generator
+#Markov script that generates two site-specific files (mkv_covar.in and mkv_prob.in) required by the markov weather generator in SOILWAT2
 
 #Set up system for parallel processing
-library(doParallel)
 registerDoParallel(proc_count)
 
   #Loop through all sites

@@ -1,8 +1,5 @@
-#The Burke-Lauenroth Laboratory 
-#SoilWatOutput.R
-#Script to rename the columns of the compiled csv files, and push them to a sqlite database.
+#Script that populates all "total" files for a site into a SQLite database for that site
 
-library(plyr)
 library(RSQLite)
 tickon<-proc.time()
 
@@ -16,22 +13,17 @@ source.dir<-"nopath/"
 output_database<-paste(source.dir,"Output_site_",notassigned,".sqlite",sep="")
 db <- dbConnect(SQLite(), output_database)
 
-setwd(source.dir)
-
-directory<-source.dir
-setwd(directory)
   for (g in 1:GCM)
   {      
     #set working directory to where the biomass and mortality output files are
-    setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
+    setwd(paste(source.dir,"/Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
     
     #read in output files
     total_bmass=read.csv('total_bmass.csv',header=T)
     total_mort=read.csv('total_mort.csv',header=T)
 
-	setwd(directory)
     #change working directory to where SOILWAT output files are
-	setwd(paste(directory,"/Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output/sw_output",sep=""))
+	setwd(paste(source.dir,"/Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output/sw_output",sep=""))
     
   	total_sw2_yearly_slyrs=read.csv('total_sw2_yearly_slyrs.csv',header=T)
     total_sw2_yearly=read.csv('total_sw2_yearly.csv',header=T)
@@ -59,7 +51,5 @@ setwd(directory)
     dbWriteTable(db, "total_mort", total_mort,append=T) 
   }
   
-setwd(source.dir)
-
 tickoff<-proc.time()-tickon
 print(tickoff)

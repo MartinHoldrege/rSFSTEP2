@@ -1,12 +1,7 @@
-#The Burke-Lauenroth Laboratory 
-#STEPWAT R Wrapper
-#Wrapper script to to loop through and run STEPWAT2 for all of the sites and GCM/PERIOD/RCP combinations
+#Wrapper script to to loop through and run STEPWAT2 for each site for all combinations of climate scenarios (GCM/PERIOD/RCP), disturbances (fire, grazing), and species, rgroup, and soil conditions 
 
-#Load libraries
-library(doParallel)
+#Set up system for parallel processing
 registerDoParallel(proc_count)
-library(plyr)
-library(RSQLite)
 
 setwd(directory)
 
@@ -15,7 +10,7 @@ s<-site[1]
       
       setwd(dist.directory)
       
-      #Copy in the relevant species.in file for each site, as specified in the STEPWAT.Wrapper.MAIN_V3.R
+      #Copy in the relevant species.in file for each site, as specified in the Main.R
       #If you don't want to use replicated species.in files for each site, simply comment out the below.
       if(species!="species")
       {
@@ -26,7 +21,7 @@ s<-site[1]
       }
       setwd(directory)      
     
-   	 #Copy in the soils.in file that is specified by the user in STEPWAT_DIST
+   	 #Copy in the soils.in file that is specified by the user in TreatmentFiles
      for(soil in soil.types){
       setwd(dist.directory)
       soil.type.name<-paste0(soil,".in")
@@ -180,7 +175,7 @@ s<-site[1]
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
         }
         
-        #If GCM is not current, then repeat the above steps for all GCMs, RCPs and time periods as specified in STEPWAT.Wrapper.MAIN_V3.R 
+        #If GCM is not current, then repeat the above steps for all GCMs, RCPs and time periods as specified in Main.R 
            } else if (GCM[g]!="Current"){
         
           for (y in YEARS) { # loop through all the time periods 50 or 90

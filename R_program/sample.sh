@@ -17,7 +17,6 @@
 #SBATCH --mem=128000
 
 #Load Required Modules
-
 module load intel/18.0.1
 module load gcc/7.3.0
 module load swset/2018.05

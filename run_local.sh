@@ -3,8 +3,8 @@
 
 #!/bin/bash
 for ((i=1;i<=$1;i++));do (
-        cd StepWat_R_Wrapper_$i
-        Rscript STEPWAT.Wrapper.MAIN_V3.R
+        cd R_program_$i
+        Rscript Main.R
 	wait
         cd ..)&
 done

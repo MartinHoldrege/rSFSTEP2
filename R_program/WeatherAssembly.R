@@ -1,7 +1,4 @@
-#The Burke-Lauenroth Laboratory 
-#STEPWAT R Wrapper
-#Assembly script for STEPWAT Wrapper
-#Script to assemble data from the list (produced by the query script),according to interval and type
+#Script to assemble weather data from the sw_weatherList, according to the desired interval and type specified in the Main.R file
 
 if (INT==30)
 {
