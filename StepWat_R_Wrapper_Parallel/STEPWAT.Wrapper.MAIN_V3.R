@@ -88,7 +88,7 @@ if(any(grepl(",",species_data_all_sites))==TRUE)
       
       #List all treatments associated with the multiple sites
       treatments_vector_species<-unique(species_data_site$treatment)
-
+      
       #Iterate through each treatment
       for(i in treatments_vector_species)
       {
@@ -99,7 +99,7 @@ if(any(grepl(",",species_data_all_sites))==TRUE)
         df <- subset(df, select = -c(1,2))
         
         #Write the species.in file to the STEPWAT_DIST folder
-        write.table(df, file = paste0("species_",i,"_",site,".in"),quote = FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+        write.table(df, file = paste0("species_",i,".in"),quote = FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
       }
     }
   }
@@ -126,7 +126,7 @@ for(i in treatments_species)
   df <- subset(df, select = -c(1,2) )
   
   #Write the species.in file to the STEPWAT_DIST folder
-  write.table(df, file = paste0("species_",i,"_",site,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+  write.table(df, file = paste0("species_",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
 }
 
 #Create file names for all site-treatment combinations
@@ -145,8 +145,7 @@ if(length(treatments_vector_species) > 0){
 
 #Store the files names in the species.filenames variable and all of the treatments-site combinations in species
 species<-c(treatments_species,treatments_vector_species)
-species.filenames<-paste(species,"_",site,".in",sep="")
-species<-paste(species,"_",site,sep="")
+species.filenames<-paste(species,".in",sep="")
 
 #Append species_template.in withing STEPWAT_DIST to all the created files and save with a unique filename
 for (i in species.filenames)
@@ -186,7 +185,7 @@ if(any(grepl(",",soil_data_all_sites))==TRUE)
         #Get rid of Site and treatment columns
         df <- subset(df, select = -c(1,2) )
         #Write the soils.in file to the STEPWAT_DIST folder
-        write.table(df, file = paste0("soils_",i,"_",site,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
+        write.table(df, file = paste0("soils_",i,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
       }
     }
   }
@@ -211,7 +210,7 @@ for(i in treatments)
   #Remove Site and treatment columns
   df <- subset(df, select = -c(1,2) )
   #Write the soils.in file to the STEPWAT_DIST folder
-  write.table(df, file = paste0("soils_",i,"_",site,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
+  write.table(df, file = paste0("soils_",i,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
 }
 
 #Create file names for all site-treatment combinations
@@ -219,13 +218,13 @@ treatments<-as.character(treatments)
 #Only paste in 'soils_' if there is already a name present. Otherwise, if there are no treatments,
 #we would generate a file called 'soils__.in' which would crash the program.
 if(length(treatments) > 0){
-  treatments<-paste("soils_",treatments, "_", site, sep="")
+  treatments<-paste("soils_",treatments, sep="")
 }
 treatments_vector<-as.character(treatments_vector)
 #Only paste in 'soils_' if there is already a name present. Otherwise, if there are no treatments,
 #we would generate a file called 'soils__.in' which would crash the program.
 if(length(treatments_vector) > 0){
-  treatments_vector <- paste("soils_",treatments_vector, "_", site, sep="")
+  treatments_vector <- paste("soils_",treatments_vector, sep="")
 }
 
 #Store all of the treatment-site combinations in soil.types
