@@ -39,7 +39,7 @@ assemble.file<-paste(source.dir,"Weather.Assembly.Choices_V2.R", sep="")
 markov.file<-paste(source.dir,"Markov.Weather_V2.R",sep="")
 
 #Vegetation script (to estimate relative abundance of functional groups based on climate relationships)
-vegetation.file <- file.path(source.dir, "rSFSTEP2_Vegetation.R")
+vegetation.file <- file.path(source.dir, "Vegetation.R")
 
 #Wrapper script
 wrapper.file<-paste(source.dir,"StepWat.Wrapper.Code_V3.R", sep="")
