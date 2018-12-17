@@ -387,6 +387,11 @@ setwd("..")
 
 ########################### Garbage collection for species, rgroup, and soil requirements #######################
 # All of these variables were created in the species, soils, and rgroup sections. They will never be used again.
+# Removing them will defrag the memory enough to allow the program to complete on systems will smaller memory.
+# For more info on memory problems in rSFSTEP2, see issue #76 on github.
+# PROGRAMMER NOTE: If you add any aditional variables to the program, make sure you delete them as soon as they are
+# no longer necessary.
+
 # treatment vectors
 remove(graz_intensity.current)
 remove(dist.freq.current)

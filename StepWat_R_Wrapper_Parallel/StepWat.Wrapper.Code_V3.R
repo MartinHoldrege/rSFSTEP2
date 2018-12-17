@@ -13,7 +13,6 @@ setwd(directory)
 s<-site[1]
 foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
   
-  #If you don't want to use replicated species.in files for each site, simply comment out the below
   #Copy in the relevant species.in file for each site, as specified in the STEPWAT.Wrapper.MAIN_V3.R
   for(sp in species)
   {
