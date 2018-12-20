@@ -5,7 +5,7 @@ Three input files are held in the inputs folder:
 
 2) InputData_SoilLayers.csv --> contains soil depth and soil properties 
 
-3) InputData_Species.ccv --> contains species parameters (top table of species.in only)
+3) InputData_Species.csv --> contains species parameters (top table of species.in only)
 
 Input Options:
 For all of the above input files, the user can specify a variety of options that will utilize fixed (i.e. the same) values across all sites, fixed values across some sites, or site-specific (i.e. different) values for each site. The use of different inputs is requested by setting unique combinations of "Site" and "treatment".
