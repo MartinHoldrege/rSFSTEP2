@@ -1,4 +1,4 @@
-#Script to copy all Output_site_databases to a particular location on Teton or a local machine
+#Script to copy all Output_site_databases to a particular location
 #!/bin/bash
 site=51
 path=/project/sagebrush/kpalmqu1/sitedata/

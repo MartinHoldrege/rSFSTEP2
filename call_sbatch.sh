@@ -1,4 +1,4 @@
-#Bash script to submit all sites to Teton
+#Bash script to submit all sites to a super computer
 #To run this script: ./call_sbatch.sh <number_of_sites>
 #!/bin/bash
 
