@@ -72,6 +72,8 @@ species_data_all_sites_vectors<-species_data_all_sites[grepl(",",species_data_al
 # Move to the dist directory, where we will write our .in files
 setwd("STEPWAT_DIST")
 treatments_vector_species <- c()
+# This boolean will become TRUE if this site is includes in a list of comma separated sites in input. 
+# Used to determine if any input was generated from the .csv files.
 contains_vector <- FALSE
 
 if(any(grepl(",",species_data_all_sites))==TRUE)
@@ -147,7 +149,7 @@ if(length(treatments_vector_species) > 0){
 species<-c(treatments_species,treatments_vector_species)
 species.filenames<-paste(species,".in",sep="")
 
-#Append species_template.in withing STEPWAT_DIST to all the created files and save with a unique filename
+#Append species_template.in within STEPWAT_DIST to all the created files and save with a unique filename
 for (i in species.filenames)
 {
   system(paste("cat ","species_template.in>>",i,sep=""))
@@ -163,6 +165,8 @@ soil_data_all_sites<-unique(soil_data$Site)
 soil_data_all_sites_vectors<-soil_data_all_sites[grepl(",",soil_data_all_sites)]
 
 treatments_vector <- c()
+# This boolean will become TRUE if this site is includes in a list of comma separated sites in input. 
+# Used to determine if any input was generated from the .csv files.
 contains_vector <- FALSE
 
 #Generate a soils.in file for the site for the x,y option first
@@ -265,22 +269,19 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
         
         #Populate the dist.freq vector with fire frequency inputs
         temp<-df['killfrq']
-        temp<-unique(temp)
-        temp<-as.numeric(temp)
+        temp<-as.numeric(unique(temp))
         dist.freq.current<-temp
         
         #Populate the graz.freq vector with grazing frequency inputs
         temp<-df['grazing_frq']
-        temp<-unique(temp)
-        temp<-as.numeric(temp)
+        temp<-as.numeric(unique(temp))
         graz.freq.current<-temp
         
         #If grazing is ocurring we need to know the level.
         if(graz.freq.current != 0){
           #Populate the graz_intensity vector with grazing intensity inputs
           temp<-df['proportion_grazing']
-          temp<-unique(temp)
-          temp<-max(temp)
+          temp<-max(unique(temp))
         } else {
           temp="0"
         }
@@ -331,22 +332,19 @@ for(i in treatments)
   
   #Populate the dist.freq vector with fire frequency inputs
   temp<-df['killfrq']
-  temp<-unique(temp)
-  temp<-as.numeric(temp)
+  temp<-as.numeric(unique(temp))
   dist.freq.current<-temp
   
   #Populate the graz.freq vector with grazing frequency inputs
   temp<-df['grazing_frq']
-  temp<-unique(temp)
-  temp<-as.numeric(temp)
+  temp<-as.numeric(unique(temp))
   graz.freq.current<-temp
   
   #If grazing is ocurring we need to know the level.
   if(graz.freq.current != 0){
     #Populate the graz_intensity vector with grazing intensity inputs
     temp<-df['proportion_grazing']
-    temp<-unique(temp)
-    temp<-max(temp)
+    temp<-max(unique(temp))
   } else {
     temp="0"
   }
