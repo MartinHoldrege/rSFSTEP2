@@ -277,7 +277,7 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
         temp<-as.numeric(unique(temp))
         graz.freq.current<-temp
         
-        #If grazing is ocurring we need to know the level.
+        #If grazing is ocurring we need to know the intensity.
         if(graz.freq.current != 0){
           #Populate the graz_intensity vector with grazing intensity inputs
           temp<-df['proportion_grazing']
@@ -304,7 +304,7 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
         # Now add the file name to the list of file names
         rgroups <- c(rgroups, paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i))
         
-        # write the file
+        # Write the rgroup.in file to the STEPWAT_DIST folder
         write.table(df, file = paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
         
       }
@@ -340,7 +340,7 @@ for(i in treatments)
   temp<-as.numeric(unique(temp))
   graz.freq.current<-temp
   
-  #If grazing is ocurring we need to know the level.
+  #If grazing is ocurring we need to know the intensity.
   if(graz.freq.current != 0){
     #Populate the graz_intensity vector with grazing intensity inputs
     temp<-df['proportion_grazing']
@@ -367,7 +367,7 @@ for(i in treatments)
   # Now add the file name to the list of file names
   rgroups <- c(rgroups, paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i))
         
-  # write the file
+  # Write the rgoup.in file to the STEPWAT_DIST directory
   write.table(df, file = paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
 }
 
@@ -375,7 +375,7 @@ for(i in treatments)
 rgroup_files<-list.files(path=".",pattern = "rgroup")
 rgroup_files<-rgroup_files[rgroup_files!="rgroup_template.in"]
 
-#Append rgroup_template.in withing STEPWAT_DIST to all the created files and save with a unique filename
+#Append rgroup_template.in within STEPWAT_DIST to all the created files and save with a unique filename
 for (i in rgroup_files)
 {
   system(paste("cat ","rgroup_template.in >>",i,sep=""))
