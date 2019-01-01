@@ -13,89 +13,57 @@ tempsw2_daily<-data.frame(read.csv(name.sw2.daily.csv))
 #write master daily file for soil-layer variables
 tempsw2_daily_slyrs$site<-sites[1]
 tempsw2_daily_slyrs$GCM<-GCM[g]
+tempsw2_daily_slyrs$Rgrp_treatment<-treatmentName
 
 #tempsw2_daily_slyrs<-tempsw2_daily_slyrs[order(tempsw2_daily_slyrs$DOY),]
 #tempsw2_daily_slyrs<-tempsw2_daily_slyrs[order(tempsw2_daily_slyrs$YEAR),]
 
 if(GCM[g]=="Current")
 {
-    tempsw2_daily_slyrs$soilType<-soil
-    tempsw2_daily_slyrs$dist_flag<-dist.graz.flag
-    if(dist.graz.flag==T)
-    {
-        tempsw2_daily_slyrs$dist_freq<-dst
-        tempsw2_daily_slyrs$graz_freq<-graz.freq
-        tempsw2_daily_slyrs$intensity<-intensity
-    }else
-    {
-        tempsw2_daily_slyrs$dist_freq<-NA
-        tempsw2_daily_slyrs$graz_freq<-NA
-        tempsw2_daily_slyrs$intensity<-NA
-    }
-    tempsw2_daily_slyrs$RCP<-rep("NONE",length(tempsw2_daily_slyrs$site))
-    tempsw2_daily_slyrs$YEARS<-rep("NONE",length(tempsw2_daily_slyrs$site))  
+  tempsw2_daily_slyrs$species<-sp
+  tempsw2_daily_slyrs$soilType<-soil
+  tempsw2_daily_slyrs$dist_freq<-dst
+  tempsw2_daily_slyrs$graz_freq<-grz
+  tempsw2_daily_slyrs$intensity<-intensity
+  tempsw2_daily_slyrs$RCP<-rep("NONE",length(tempsw2_daily_slyrs$site))
+  tempsw2_daily_slyrs$YEARS<-rep("NONE",length(tempsw2_daily_slyrs$site))  
 }else
 {
-    tempsw2_daily_slyrs$soilType<-soil
-    tempsw2_daily_slyrs$dist_flag<-dist.graz.flag
-    
-    if(dist.graz.flag==T)
-    {
-        tempsw2_daily_slyrs$dist_freq<-dst
-        tempsw2_daily_slyrs$graz_freq<-graz.freq
-        tempsw2_daily_slyrs$intensity<-intensity
-    }else
-    {
-        tempsw2_daily_slyrs$dist_freq<-NA
-        tempsw2_daily_slyrs$graz_freq<-NA
-        tempsw2_daily_slyrs$intensity<-NA
-    }
-    tempsw2_daily_slyrs$RCP<-r
-    tempsw2_daily_slyrs$YEARS<-y  
+  tempsw2_daily_slyrs$species<-sp
+  tempsw2_daily_slyrs$soilType<-soil
+  tempsw2_daily_slyrs$dist_freq<-dst
+  tempsw2_daily_slyrs$graz_freq<-grz
+  tempsw2_daily_slyrs$intensity<-intensity
+  tempsw2_daily_slyrs$RCP<-r
+  tempsw2_daily_slyrs$YEARS<-y  
 }
 
 #write master daily file for non-soil layer files
 tempsw2_daily$site<-sites[1]
 tempsw2_daily$GCM<-GCM[g]
+tempsw2_daily$Rgrp_treatment<-treatmentName
 
 #tempsw2_daily<-tempsw2_daily[order(tempsw2_daily$DOY),]
 #tempsw2_daily<-tempsw2_daily[order(tempsw2_daily$YEAR),]
 
 if(GCM[g]=="Current")
 {
-    tempsw2_daily$soilType<-soil
-    tempsw2_daily$dist_flag<-dist.graz.flag
-    if(dist.graz.flag==T)
-    {
-       tempsw2_daily$dist_freq<-dst
-       tempsw2_daily$graz_freq<-graz.freq
-       tempsw2_daily$intensity<-intensity
-    }else
-    {
-        tempsw2_daily$dist_freq<-NA
-        tempsw2_daily$graz_freq<-NA
-        tempsw2_daily$intensity<-NA
-    }
-        tempsw2_daily$RCP<-rep("NONE",length(tempsw2_daily$site))
-    	tempsw2_daily$YEARS<-rep("NONE",length(tempsw2_daily$site))
+  tempsw2_daily$species<-sp
+  tempsw2_daily$soilType<-soil
+  tempsw2_daily$dist_freq<-dst
+  tempsw2_daily$graz_freq<-grz
+  tempsw2_daily$intensity<-intensity
+  tempsw2_daily$RCP<-rep("NONE",length(tempsw2_daily$site))
+  tempsw2_daily$YEARS<-rep("NONE",length(tempsw2_daily$site))
 }else
 {
-    tempsw2_daily$soilType<-soil
-    tempsw2_daily$dist_flag<-dist.graz.flag
-    
-    if(dist.graz.flag==T)
-    {
-       tempsw2_daily$dist_freq<-dst
-       tempsw2_daily$graz_freq<-graz.freq
-       tempsw2_daily$intensity<-intensity
-    }else
-    {
-        tempsw2_daily$dist_freq<-NA
-        tempsw2_daily$graz_freq<-NA
-        tempsw2_daily$intensity<-NA
-    }
-        tempsw2_daily$RCP<-r
-    	tempsw2_daily$YEARS<-y
+  tempsw2_daily$species<-sp
+  tempsw2_daily$soilType<-soil
+  tempsw2_daily$dist_freq<-dst
+  tempsw2_daily$graz_freq<-grz
+  tempsw2_daily$intensity<-intensity
+  tempsw2_daily$RCP<-r
+  tempsw2_daily$YEARS<-y
 }
 
 write.table(tempsw2_daily_slyrs, "total_sw2_daily_slyrs.csv",sep=",",col.names=!file.exists("total_sw2_daily_slyrs.csv"),row.names=F,quote = F,append=T)
@@ -108,83 +76,51 @@ tempsw2_monthly<-data.frame(read.csv(name.sw2.monthly.csv))
 #write master monthly file for soil-layer variables
 tempsw2_monthly_slyrs$site<-sites[1]
 tempsw2_monthly_slyrs$GCM<-GCM[g]
+tempsw2_monthly_slyrs$Rgrp_treatment<-treatmentName
 
 if(GCM[g]=="Current")
 {
-    tempsw2_monthly_slyrs$soilType<-soil
-    tempsw2_monthly_slyrs$dist_flag<-dist.graz.flag
-    if(dist.graz.flag==T)
-    {
-        tempsw2_monthly_slyrs$dist_freq<-dst
-        tempsw2_monthly_slyrs$graz_freq<-graz.freq
-        tempsw2_monthly_slyrs$intensity<-intensity
-    }else
-    {
-        tempsw2_monthly_slyrs$dist_freq<-NA
-        tempsw2_monthly_slyrs$graz_freq<-NA
-        tempsw2_monthly_slyrs$intensity<-NA
-    }
-        tempsw2_monthly_slyrs$RCP<-rep("NONE",length(tempsw2_monthly_slyrs$site))
-    	tempsw2_monthly_slyrs$YEARS<-rep("NONE",length(tempsw2_monthly_slyrs$site))
+  tempsw2_monthly_slyrs$species<-sp
+  tempsw2_monthly_slyrs$soilType<-soil
+  tempsw2_monthly_slyrs$dist_freq<-dst
+  tempsw2_monthly_slyrs$graz_freq<-grz
+  tempsw2_monthly_slyrs$intensity<-intensity
+  tempsw2_monthly_slyrs$RCP<-rep("NONE",length(tempsw2_monthly_slyrs$site))
+  tempsw2_monthly_slyrs$YEARS<-rep("NONE",length(tempsw2_monthly_slyrs$site))
 }else
 {
-    tempsw2_monthly_slyrs$soilType<-soil
-    tempsw2_monthly_slyrs$dist_flag<-dist.graz.flag
-    
-    if(dist.graz.flag==T)
-    {
-        tempsw2_monthly_slyrs$dist_freq<-dst
-        tempsw2_monthly_slyrs$graz_freq<-graz.freq
-        tempsw2_monthly_slyrs$intensity<-intensity
-    }else
-    {
-        tempsw2_monthly_slyrs$dist_freq<-NA
-        tempsw2_monthly_slyrs$graz_freq<-NA
-        tempsw2_monthly_slyrs$intensity<-NA
-    }
-        tempsw2_monthly_slyrs$RCP<-r
-    	tempsw2_monthly_slyrs$YEARS<-y
+  tempsw2_monthly_slyrs$species<-sp
+  tempsw2_monthly_slyrs$soilType<-soil
+  tempsw2_monthly_slyrs$dist_freq<-dst
+  tempsw2_monthly_slyrs$graz_freq<-grz
+  tempsw2_monthly_slyrs$intensity<-intensity
+  tempsw2_monthly_slyrs$RCP<-r
+  tempsw2_monthly_slyrs$YEARS<-y
 }
 
 #write master monthly file for non-soil layer files
 tempsw2_monthly$site<-sites[1]
 tempsw2_monthly$GCM<-GCM[g]
+tempsw2_monthly$Rgrp_treatment<-treatmentName
 
 if(GCM[g]=="Current")
 {
-    tempsw2_monthly$soilType<-soil
-    tempsw2_monthly$dist_flag<-dist.graz.flag
-    if(dist.graz.flag==T)
-    {
-       tempsw2_monthly$dist_freq<-dst
-       tempsw2_monthly$graz_freq<-graz.freq
-       tempsw2_monthly$intensity<-intensity
-    }else
-    {
-        tempsw2_monthly$dist_freq<-NA
-        tempsw2_monthly$graz_freq<-NA
-        tempsw2_monthly$intensity<-NA
-    }
-        tempsw2_monthly$RCP<-rep("NONE",length(tempsw2_monthly$site))
-    	tempsw2_monthly$YEARS<-rep("NONE",length(tempsw2_monthly$site))
+  tempsw2_monthly$species<-sp
+  tempsw2_monthly$soilType<-soil
+  tempsw2_monthly$dist_freq<-dst
+  tempsw2_monthly$graz_freq<-grz
+  tempsw2_monthly$intensity<-intensity
+  tempsw2_monthly$RCP<-rep("NONE",length(tempsw2_monthly$site))
+  tempsw2_monthly$YEARS<-rep("NONE",length(tempsw2_monthly$site))
 }else
 {
-    tempsw2_monthly$soilType<-soil
-    tempsw2_monthly$dist_flag<-dist.graz.flag
-    
-    if(dist.graz.flag==T)
-    {
-       tempsw2_monthly$dist_freq<-dst
-       tempsw2_monthly$graz_freq<-graz.freq
-       tempsw2_monthly$intensity<-intensity
-    }else
-    {
-        tempsw2_monthly$dist_freq<-NA
-        tempsw2_monthly$graz_freq<-NA
-        tempsw2_monthly$intensity<-NA
-    }
-        tempsw2_monthly$RCP<-r
-    	tempsw2_monthly$YEARS<-y
+  tempsw2_monthly$species<-sp
+  tempsw2_monthly$soilType<-soil
+  tempsw2_monthly$dist_freq<-dst
+  tempsw2_monthly$graz_freq<-grz
+  tempsw2_monthly$intensity<-intensity
+  tempsw2_monthly$RCP<-r
+  tempsw2_monthly$YEARS<-y
 }
 
 write.table(tempsw2_monthly_slyrs, "total_sw2_monthly_slyrs.csv",sep=",",col.names=!file.exists("total_sw2_monthly_slyrs.csv"),row.names=F,quote = F,append=T)
@@ -197,83 +133,51 @@ tempsw2_yearly<-data.frame(read.csv(name.sw2.yearly.csv))
 #write master yearly file for soil-layer variables
 tempsw2_yearly_slyrs$site<-sites[1]
 tempsw2_yearly_slyrs$GCM<-GCM[g]
+tempsw2_yearly_slyrs$Rgrp_treatment<-treatmentName
 
 if(GCM[g]=="Current")
 {
-    tempsw2_yearly_slyrs$soilType<-soil
-    tempsw2_yearly_slyrs$dist_flag<-dist.graz.flag
-    if(dist.graz.flag==T)
-    {
-        tempsw2_yearly_slyrs$dist_freq<-dst
-        tempsw2_yearly_slyrs$graz_freq<-graz.freq
-        tempsw2_yearly_slyrs$intensity<-intensity
-    }else
-    {
-        tempsw2_yearly_slyrs$dist_freq<-NA
-        tempsw2_yearly_slyrs$graz_freq<-NA
-        tempsw2_yearly_slyrs$intensity<-NA
-    }
-        tempsw2_yearly_slyrs$RCP<-rep("NONE",length(tempsw2_yearly_slyrs$site))
-    	tempsw2_yearly_slyrs$YEARS<-rep("NONE",length(tempsw2_yearly_slyrs$site))
+  tempsw2_yearly_slyrs$species<-sp
+  tempsw2_yearly_slyrs$soilType<-soil
+  tempsw2_yearly_slyrs$dist_freq<-dst
+  tempsw2_yearly_slyrs$graz_freq<-grz
+  tempsw2_yearly_slyrs$intensity<-intensity
+  tempsw2_yearly_slyrs$RCP<-rep("NONE",length(tempsw2_yearly_slyrs$site))
+  tempsw2_yearly_slyrs$YEARS<-rep("NONE",length(tempsw2_yearly_slyrs$site))
 }else
 {
-    tempsw2_yearly_slyrs$soilType<-soil
-    tempsw2_yearly_slyrs$dist_flag<-dist.graz.flag
-    
-    if(dist.graz.flag==T)
-    {
-        tempsw2_yearly_slyrs$dist_freq<-dst
-        tempsw2_yearly_slyrs$graz_freq<-graz.freq
-        tempsw2_yearly_slyrs$intensity<-intensity
-    }else
-    {
-        tempsw2_yearly_slyrs$dist_freq<-NA
-        tempsw2_yearly_slyrs$graz_freq<-NA
-        tempsw2_yearly_slyrs$intensity<-NA
-    }
-        tempsw2_yearly_slyrs$RCP<-r
-    	tempsw2_yearly_slyrs$YEARS<-y
+  tempsw2_yearly_slyrs$species<-sp
+  tempsw2_yearly_slyrs$soilType<-soil
+  tempsw2_yearly_slyrs$dist_freq<-dst
+  tempsw2_yearly_slyrs$graz_freq<-grz
+  tempsw2_yearly_slyrs$intensity<-intensity
+  tempsw2_yearly_slyrs$RCP<-r
+  tempsw2_yearly_slyrs$YEARS<-y
 }
 
 #write master yearly file for non-soil layer files
 tempsw2_yearly$site<-sites[1]
 tempsw2_yearly$GCM<-GCM[g]
+tempsw2_yearly$Rgrp_treatment<-treatmentName
 
 if(GCM[g]=="Current")
 {
-    tempsw2_yearly$soilType<-soil
-    tempsw2_yearly$dist_flag<-dist.graz.flag
-    if(dist.graz.flag==T)
-    {
-       tempsw2_yearly$dist_freq<-dst
-       tempsw2_yearly$graz_freq<-graz.freq
-       tempsw2_yearly$intensity<-intensity
-    }else
-    {
-        tempsw2_yearly$dist_freq<-NA
-        tempsw2_yearly$graz_freq<-NA
-        tempsw2_yearly$intensity<-NA
-    }
-        tempsw2_yearly$RCP<-rep("NONE",length(tempsw2_yearly$site))
-    	tempsw2_yearly$YEARS<-rep("NONE",length(tempsw2_yearly$site))
+  tempsw2_yearly$species<-sp
+  tempsw2_yearly$soilType<-soil
+  tempsw2_yearly$dist_freq<-dst
+  tempsw2_yearly$graz_freq<-grz
+  tempsw2_yearly$intensity<-intensity
+  tempsw2_yearly$RCP<-rep("NONE",length(tempsw2_yearly$site))
+  tempsw2_yearly$YEARS<-rep("NONE",length(tempsw2_yearly$site))
 }else
 {
-    tempsw2_yearly$soilType<-soil
-    tempsw2_yearly$dist_flag<-dist.graz.flag
-    
-    if(dist.graz.flag==T)
-    {
-       tempsw2_yearly$dist_freq<-dst
-       tempsw2_yearly$graz_freq<-graz.freq
-       tempsw2_yearly$intensity<-intensity
-    }else
-    {
-        tempsw2_yearly$dist_freq<-NA
-        tempsw2_yearly$graz_freq<-NA
-        tempsw2_yearly$intensity<-NA
-    }
-        tempsw2_yearly$RCP<-r
-    	tempsw2_yearly$YEARS<-y
+  tempsw2_yearly$species<-sp
+  tempsw2_yearly$soilType<-soil
+  tempsw2_yearly$dist_freq<-dst
+  tempsw2_yearly$graz_freq<-grz
+  tempsw2_yearly$intensity<-intensity
+  tempsw2_yearly$RCP<-r
+  tempsw2_yearly$YEARS<-y
 }
 
 write.table(tempsw2_yearly_slyrs, "total_sw2_yearly_slyrs.csv",sep=",",col.names=!file.exists("total_sw2_yearly_slyrs.csv"),row.names=F,quote = F,append=T)
@@ -286,82 +190,50 @@ tempmort<-data.frame(read.csv(name.mort.csv))
 
 tempbmass$site<-sites[1]
 tempbmass$GCM<-GCM[g]
+tempbmass$Rgrp_treatment<-treatmentName
 
 if(GCM[g]=="Current")
 {
-   tempbmass$soilType<-soil
-    tempbmass$dist_flag<-dist.graz.flag
-    if(dist.graz.flag==T)
-    {
-        tempbmass$dist_freq<-dst
-        tempbmass$graz_freq<-graz.freq
-        tempbmass$intensity<-intensity
-    }else
-    {
-        tempbmass$dist_freq<-NA
-        tempbmass$graz_freq<-NA
-        tempbmass$intensity<-NA
-    }
-        tempbmass$RCP<-rep("NONE",length(tempbmass$site))
-    	tempbmass$YEARS<-rep("NONE",length(tempbmass$site))   
+  tempbmass$species<-sp
+  tempbmass$soilType<-soil
+  tempbmass$dist_freq<-dst
+  tempbmass$graz_freq<-grz
+  tempbmass$intensity<-intensity
+  tempbmass$RCP<-rep("NONE",length(tempbmass$site))
+  tempbmass$YEARS<-rep("NONE",length(tempbmass$site))   
 }else
 {
-    tempbmass$soilType<-soil
-    tempbmass$dist_flag<-dist.graz.flag
-    
-    if(dist.graz.flag==T)
-    {
-        tempbmass$dist_freq<-dst
-        tempbmass$graz_freq<-graz.freq
-        tempbmass$intensity<-intensity
-    }else
-    {
-        tempbmass$dist_freq<-NA
-        tempbmass$graz_freq<-NA
-        tempbmass$intensity<-NA
-    }
-        tempbmass$RCP<-r
-    	tempbmass$YEARS<-y
+  tempbmass$species<-sp
+  tempbmass$soilType<-soil
+  tempbmass$dist_freq<-dst
+  tempbmass$graz_freq<-grz
+  tempbmass$intensity<-intensity
+  tempbmass$RCP<-r
+  tempbmass$YEARS<-y
 }
 
 tempmort$site<-sites[1]
 tempmort$GCM<-GCM[g]
+tempmort$Rgrp_treatment<-treatmentName
 
 if(GCM[g]=="Current")
 {
-    tempmort$soilType<-soil
-    tempmort$dist_flag<-dist.graz.flag
-    if(dist.graz.flag==T)
-    {
-        tempmort$dist_freq<-dst
-        tempmort$graz_freq<-graz.freq
-        tempmort$intensity<-intensity
-    }else
-    {
-        tempmort$dist_freq<-NA
-        tempmort$graz_freq<-NA
-        tempmort$intensity<-NA
-    }
-        tempmort$RCP<-rep("NONE",length(tempmort$site))
-    	tempmort$YEARS<-rep("NONE",length(tempmort$site))
+  tempmort$species<-sp
+  tempmort$soilType<-soil
+  tempmort$dist_freq<-dst
+  tempmort$graz_freq<-grz
+  tempmort$intensity<-intensity
+  tempmort$RCP<-rep("NONE",length(tempmort$site))
+  tempmort$YEARS<-rep("NONE",length(tempmort$site))
 }else
 {
-    tempmort$soilType<-soil
-    tempmort$dist_flag<-dist.graz.flag
-    
-    if(dist.graz.flag==T)
-    {
-        tempmort$dist_freq<-dst
-        tempmort$graz_freq<-graz.freq
-        tempmort$intensity<-intensity
-    }else
-    {
-        tempmort$dist_freq<-NA
-        tempmort$graz_freq<-NA
-        tempmort$intensity<-NA
-    }
-        tempmort$RCP<-r
-    	tempmort$YEARS<-y
+  tempmort$species <- sp
+  tempmort$soilType<-soil
+  tempmort$dist_freq<-dst
+  tempmort$graz_freq<-grz
+  tempmort$intensity<-intensity
+  tempmort$RCP<-r
+  tempmort$YEARS<-y
 }
 
 write.table(tempbmass, "total_bmass.csv",sep=",",col.names=!file.exists("total_bmass.csv"),row.names=F,quote = F,append=T)

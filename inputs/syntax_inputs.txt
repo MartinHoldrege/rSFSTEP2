@@ -1,0 +1,23 @@
+#This file describes the functionality of inputs within rSFSTEP2 and the options that exist for specifying inputs
+
+Three input files are held in the inputs folder:
+1) InputData_Rgroup.csv --> contains rgroup parameters, along with parameters for fire and grazing (top table of rgroup.in only)
+
+2) InputData_SoilLayers.csv --> contains soil depth and soil properties 
+
+3) InputData_Species.csv --> contains species parameters (top table of species.in only)
+
+Input Options:
+For all of the above input files, the user can specify a variety of options that will utilize fixed (i.e. the same) values across all sites, fixed values across some sites, or site-specific (i.e. different) values for each site. The use of different inputs is requested by setting unique combinations of "Site" and "treatment".
+
+The three options:
+1) For fixed inputs for all sites: set "all" in the Site column and a unique identifier to label that set of parameters in the treatment column. The default is fixedn, where n is a number that uniquely identifies that set of fixed inputs (in this cased n=1, so fixed1). However, any unique identifier can be specified. That unique identifier will be used to label output files and added as a column in the output SQLite tables.
+
+2) For fixed inputs for a subset of sites: set the Site column to x,y,...,z where x, y and z correspond to the site IDS of the subset of sites. The default is 1,2, which means that those inputs will be utilized for sites 1 and 2 only. However, this functionality can be used across more than 2 sites. Like 1), the user needs to also set a unique identifier in the treatment column - fixed2 is the default, but any unique identifier can be utilized.
+
+3) For site-specific inputs (where each site is run with its own unique input parameters): set the site ID for each site you want to run in the Site column and set a unique identifier in the treatment column. The recommendation and default identifier is "specific", which denotes that the output for that site was generated using site-specific parameters.
+
+Notes and considerations: 
+1) These options are not mutually exclusive and can be utilized simultaneously. 
+2) If no inputs are specified for a site, the code will fail.
+3) The species and rgroups specified in the csv files needs to match the species and rgroups listed in the rgroup_template.in and species_template.in files within the STEPWAT_DIST folder.
