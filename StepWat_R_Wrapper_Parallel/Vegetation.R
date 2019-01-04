@@ -47,12 +47,27 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
   temp_clim <- rSOILWAT2::calc_SiteClimate(
     weatherList = sw_weatherList[[1]][[1]], do_C4vars = TRUE, do_Cheatgrass_ClimVars = TRUE,
     latitude = site_latitude[1])
+  
+  # variables used to determine annual grasses (cheatgrass) relative abundance
+  prec7 <- as.numeric(temp_clim$Cheatgrass_ClimVars["Month7th_PPT_mm"])
+  tmin2 <- as.numeric(temp_clim$Cheatgrass_ClimVars["MeanTemp_ofDriestQuarter_C"])
+  
+  # set annuals fraction. Equation derived from raw data in Brummer et al. 2016
+  if(prec7 > 30 | tmin2 < -13){
+    annuals_fraction <- 0.0
+  } else {
+    annuals_fraction <- 0.6732229 - 0.0254591 * prec7 + 0.0538173 * tmin2 - 0.0021601 * prec7 * tmin2
+    #extra check to make sure the annuals fraction is non-negative
+    if(annuals_fraction < 0){
+      annuals_fraction = 0;
+    }
+  }
 
   temp_veg <- rSOILWAT2::estimate_PotNatVeg_composition(
     MAP_mm = 10 * temp_clim[["MAP_cm"]], MAT_C = temp_clim[["MAT_C"]],
     mean_monthly_ppt_mm = 10 * temp_clim[["meanMonthlyPPTcm"]],
     mean_monthly_Temp_C = temp_clim[["meanMonthlyTempC"]],
-    dailyC4vars = temp_clim[["dailyC4vars"]])
+    dailyC4vars = temp_clim[["dailyC4vars"]], Annuals_Fraction = annuals_fraction)
 
   # Result container
   res <- array(NA,
@@ -72,12 +87,27 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
       temp_clim <- rSOILWAT2::calc_SiteClimate(
         weatherList = sw_weatherList[[n_sites]][[k_scen]], do_C4vars = TRUE, do_Cheatgrass_ClimVars = TRUE,
         latitude = site_latitude[n_sites])
+      
+      # variables used to determine annual grasses (cheatgrass) relative abundance
+      prec7 <- as.numeric(temp_clim$Cheatgrass_ClimVars["Month7th_PPT_mm"])
+      tmin2 <- as.numeric(temp_clim$Cheatgrass_ClimVars["MeanTemp_ofDriestQuarter_C"])
+      
+      # set annuals fraction. Equation derived from raw data in Brummer et al. 2016
+      if(prec7 > 30 | tmin2 < -13){
+        annuals_fraction <- 0.0
+      } else {
+        annuals_fraction <- 0.6732229 - 0.0254591 * prec7 + 0.0538173 * tmin2 - 0.0021601 * prec7 * tmin2
+        #extra check to make sure the annuals fraction is non-negative
+        if(annuals_fraction < 0){
+          annuals_fraction = 0;
+        }
+      }
 
       temp_veg <- rSOILWAT2::estimate_PotNatVeg_composition(
         MAP_mm = 10 * temp_clim[["MAP_cm"]], MAT_C = temp_clim[["MAT_C"]],
         mean_monthly_ppt_mm = 10 * temp_clim[["meanMonthlyPPTcm"]],
         mean_monthly_Temp_C = temp_clim[["meanMonthlyTempC"]],
-        dailyC4vars = temp_clim[["dailyC4vars"]])
+        dailyC4vars = temp_clim[["dailyC4vars"]], Annuals_Fraction = annuals_fraction)
 
       res[n_sites, k_scen, ] <- temp_veg[["Rel_Abundance_L0"]]
     }
