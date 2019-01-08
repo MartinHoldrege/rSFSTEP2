@@ -559,6 +559,8 @@ Grasses_C4 <- c("p.cool.grass")
 Grasses_Annuals <- c("a.cool.grass", "a.warm.grass")
 Trees <- c()
 
+# These vectors store the space parameters already in the rgroup file.
+# They are needed in case one functional type has two rgroup entries.
 shrub_space <- c()
 forb_space <- c()
 succulent_space <- c()
@@ -570,16 +572,20 @@ tree_space <- c()
 # move to dist folder so we can begin adjusting space
 setwd("../STEPWAT_DIST")
 
+# will store the new rgroup files temporarily
 new_rgroup_files <- c()
 
-#for all rgroup files requested in inputs
+# Loop through all of the rgroup files defined in inputs
 for(rg in rgroups){
   #read the start of the file (where space is defined)
   rgrp <- readLines(con <- paste0(rg,".in"), n = 10)
+  # split the file along tabs. This produces a 2d array of entries where rows are lines of the original file
+  # and columns are the entries of each line
   rgrp <- strsplit(rgrp, "\t")
   
-  #for all rgroups defined
+  # Loop through each line from rgroup.in file
   for(l in 1:length(rgrp)){
+    # add the space parameters of each line to the vector of their corresponding functional type.
     if(is.element(rgrp[[l]][1], Shrubs)){ # if this rgroup is a shrub
       shrub_space <- c(shrub_space, rgrp[[l]][2]) #add this entry to the shrubs
     } else if(is.element(rgrp[[l]][1], Forbs)){ # if this rgroup is a forb
@@ -610,8 +616,12 @@ for(rg in rgroups){
   for(i in 1:length(relVegAbund[,1,1])){
     # make a data frame, which is easier to work with
     total_space <- data.frame(relVegAbund[i,,])
+    
     #for every row of space parameters
     for(j in 1:nrow(total_space)){
+      # If there is one entry in rgroup.in for the given functional type, this will do nothing.
+      # if there are two or more entries for one functional type this equation will use the 
+      # space defined in inputs to partition the new space values proportionally to each rgroup.
       temp_shrubs <- total_space$Shrubs[j] * shrub_space / sum(shrub_space)
       temp_forb <- total_space$Forbs[j] * forb_space / sum(forb_space)
       temp_succulent <- total_space$Succulents[j] * succulent_space / sum(succulent_space)
@@ -620,32 +630,36 @@ for(rg in rgroups){
       temp_annuals <- total_space$Grasses_Annuals[j] * annuals_space / sum(annuals_space)
       temp_trees <- total_space$Trees[j] * tree_space / sum(tree_space)
       
-      #for all rgroups defined
+      #for each line of the rgroup.in file
       for(l in 1:length(rgrp)){
+        # replace the old space parameters with the new values. NOTE: the order of the vectors matters. If there are two shrubs defined
+        # temp_shrubs[1] is the first entry and temp_shrubs[2] is the second entry.
         if(is.element(rgrp[[l]][1], Shrubs)){ # if this rgroup is a shrub
-          rgrp[[l]][2] <- temp_shrubs[1] #add this entry to the shrubs
-          temp_shrubs <- temp_shrubs[2:length(temp_shrubs)] 
+          rgrp[[l]][2] <- temp_shrubs[1] # Replace with new space parameter.
+          temp_shrubs <- temp_shrubs[2:length(temp_shrubs)] #remove the used entry from the temp vector.
         } else if(is.element(rgrp[[l]][1], Forbs)){ # if this rgroup is a forb
-          rgrp[[l]][2] <- temp_forb[1] #add this entry to the forbs
-          temp_forb <- temp_forb[2:length(temp_forb)] 
+          rgrp[[l]][2] <- temp_forb[1] # Replace with new space parameter.
+          temp_forb <- temp_forb[2:length(temp_forb)] #remove the used entry from the temp vector.
         } else if(is.element(rgrp[[l]][1], Succulents)){ # if this rgroup is a succulent
-          rgrp[[l]][2] <- temp_succulent[1] #add this entry to the succulents
+          rgrp[[l]][2] <- temp_succulent[1] # Replace with new space parameter.
           temp_succulent <- temp_succulent[2:length(temp_succulent)] 
         } else if(is.element(rgrp[[l]][1], Grasses_C3)){ # if this rgroup is a c3 grass
-          rgrp[[l]][2] <- temp_c3[1] #add this entry to the c3 grasses
-          temp_c3 <- temp_c3[2:length(temp_c3)] 
+          rgrp[[l]][2] <- temp_c3[1] # Replace with new space parameter.
+          temp_c3 <- temp_c3[2:length(temp_c3)] #remove the used entry from the temp vector.
         } else if(is.element(rgrp[[l]][1], Grasses_C4)){ # if this rgroup is a c4 grass
-          rgrp[[l]][2] <- temp_c4[1] #add this entry to the c4 grasses
-          temp_c4 <- temp_c4[2:length(temp_c4)] 
+          rgrp[[l]][2] <- temp_c4[1] # Replace with new space parameter.
+          temp_c4 <- temp_c4[2:length(temp_c4)] #remove the used entry from the temp vector.
         } else if(is.element(rgrp[[l]][1], Grasses_Annuals)){ # if this rgroup is an annual grass
-          rgrp[[l]][2] <- temp_annuals[1] #add this entry to the annual grasses
-          temp_annuals <- temp_annuals[2:length(temp_annuals)] 
+          rgrp[[l]][2] <- temp_annuals[1] # Replace with new space parameter.
+          temp_annuals <- temp_annuals[2:length(temp_annuals)] #remove the used entry from the temp vector.
         } else if(is.element(rgrp[[l]][1], Trees)){ # if this rgroup is a tree
-          rgrp[[l]][2] <- temp_trees[1] #add this entry to the trees
-          temp_trees <- temp_trees[2:length(temp_trees)] 
+          rgrp[[l]][2] <- temp_trees[1] # Replace with new space parameter.
+          temp_trees <- temp_trees[2:length(temp_trees)] #remove the used entry from the temp vector.
         }
       }
       
+      # the new rgroup file is now stored in a 2d array. We need to stitch back together the entries, 
+      # with tabs between columns and newline characters between rows
       readjusted_space <- ""
       for(y in 1:length(rgrp)){
         readjusted_space <- paste0(readjusted_space, rgrp[[y]][1])
@@ -655,8 +669,10 @@ for(rg in rgroups){
         readjusted_space <- paste0(readjusted_space, "\n")
       }
       
+      # create the new file, using the old file's name with ".readjustedij" appended on the end.
       newFileName <- paste0(rg,".readjusted",i,j)
       writeLines(readjusted_space, paste0(newFileName, ".in"), sep = "")
+      # concatinate the template to the new file.
       system(paste("cat ","rgroup_template.in >>", paste0(newFileName, ".in"),sep=""))
       
       new_rgroup_files <- c(new_rgroup_files, newFileName)
