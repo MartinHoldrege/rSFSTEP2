@@ -688,6 +688,32 @@ if(rescale_space){
 
   # add the new files to rgroups so they can be run
   rgroups <- c(rgroups, new_rgroup_files)
+  
+  # Remove all of the variables created in this section.
+  remove(Shrubs)
+  remove(Forbs)
+  remove(Succulents)
+  remove(Grasses_C3)
+  remove(Grasses_C4)
+  remove(Grasses_Annuals)
+  remove(Trees)
+  remove(shrub_space)
+  remove(forb_space)
+  remove(succulent_space)
+  remove(c3_space)
+  remove(c4_space)
+  remove(annuals_space)
+  remove(tree_space)
+  remove(new_rgroup_files)
+  remove(rgrp)
+  remove(temp_shrubs)
+  remove(temp_forb)
+  remove(temp_succulent)
+  remove(temp_c3)
+  remove(temp_c4)
+  remove(temp_annuals)
+  remove(temp_trees)
+  remove(readjusted_space)
 } # end if(rescale_space)
 
 ############################# Vegetation Code ##############################
