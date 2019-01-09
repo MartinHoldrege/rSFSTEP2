@@ -669,7 +669,7 @@ if(rescale_space){
         readjusted_space <- ""
         for(y in 1:length(rgrp)){
           readjusted_space <- paste0(readjusted_space, rgrp[[y]][1])
-          for(x in 1:length(rgrp[[1]])){
+          for(x in 2:length(rgrp[[1]])){
             readjusted_space <- paste0(readjusted_space, "\t", rgrp[[y]][x])
           }
           readjusted_space <- paste0(readjusted_space, "\n")
