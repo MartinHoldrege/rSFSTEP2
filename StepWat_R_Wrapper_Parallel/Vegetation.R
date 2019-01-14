@@ -50,7 +50,7 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
   
   # variables used to determine annual grasses (cheatgrass) relative abundance
   prec7 <- as.numeric(temp_clim$Cheatgrass_ClimVars["Month7th_PPT_mm"])
-  tmin2 <- as.numeric(temp_clim$Cheatgrass_ClimVars["MeanTemp_ofDriestQuarter_C"])
+  tmin2 <- as.numeric(temp_clim$Cheatgrass_ClimVars["MinTemp_of2ndMonth_C"])
   
   # set annuals fraction. Equation derived from raw data in Brummer et al. 2016
   if(prec7 > 30 | tmin2 < -13){
@@ -90,7 +90,7 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
       
       # variables used to determine annual grasses (cheatgrass) relative abundance
       prec7 <- as.numeric(temp_clim$Cheatgrass_ClimVars["Month7th_PPT_mm"])
-      tmin2 <- as.numeric(temp_clim$Cheatgrass_ClimVars["MeanTemp_ofDriestQuarter_C"])
+      tmin2 <- as.numeric(temp_clim$Cheatgrass_ClimVars["MinTemp_of2ndMonth_C"])
       
       # set annuals fraction. Equation derived from raw data in Brummer et al. 2016
       if(prec7 > 30 | tmin2 < -13){
