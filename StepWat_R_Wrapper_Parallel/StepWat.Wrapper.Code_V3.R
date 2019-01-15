@@ -69,7 +69,12 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           dst <- temp[[1]][3]
           grz <- temp[[1]][5]
           intensity <- temp[[1]][6]
-          treatmentName<- temp[[1]][7]
+          treatmentName <- temp[[1]][7]
+          if(length(temp[[1]] == 8)){ # if space was readjusted for this site
+            spaceReadjustment <- temp[[1]][8] # append readjustedj to the file name to denote readjusted space parameter
+          } else {
+            spaceReadjustment <- "input"  # append input to denote space parameters come directly from inputs
+          }
           
           # Make sure this file exists.
           if(!file.exists(dist.graz.name)){
@@ -90,8 +95,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           setwd("Output")
           
           #Identify the name of the biomass output file
-          name.bmass.csv<-paste("bmassavg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-          name.mort.csv<-paste("mortavg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+          name.bmass.csv<-paste("bmassavg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,spaceReadjustment,"csv",sep=".")
+          name.mort.csv<-paste("mortavg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,spaceReadjustment,"csv",sep=".")
           
           #Rename the bmassavg.csv
           system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
@@ -102,8 +107,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           
           #Daily SOILWAT2 output
           #Identify the name of the sw daily output files
-          name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-          name.sw2.daily.csv<-paste("sw2_daily_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+          name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,spaceReadjustment,"csv",sep=".")
+          name.sw2.daily.csv<-paste("sw2_daily_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,spaceReadjustment,"csv",sep=".")
           
           #Rename the daily SOILWAT2 output files
           system(paste("mv sw2_daily_slyrs_agg.csv ",name.sw2.daily.slyrs.csv,sep=""))
@@ -111,8 +116,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           
           #Monthly SOILWAT2 output
           #Identify the name of the sw monthly output files
-          name.sw2.monthly.slyrs.csv<-paste("sw2_monthly_slyrs_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-          name.sw2.monthly.csv<-paste("sw2_monthly_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+          name.sw2.monthly.slyrs.csv<-paste("sw2_monthly_slyrs_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,spaceReadjustment,"csv",sep=".")
+          name.sw2.monthly.csv<-paste("sw2_monthly_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,spaceReadjustment,"csv",sep=".")
           
           #Rename the monthly SOILWAT2 output files
           system(paste("mv sw2_monthly_slyrs_agg.csv ",name.sw2.monthly.slyrs.csv,sep=""))
@@ -120,8 +125,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           
           #Yearly SOILWAT2 output
           #Identify the name of the sw yearly output files
-          name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-          name.sw2.yearly.csv<-paste("sw2_yearly_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+          name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,spaceReadjustment,"csv",sep=".")
+          name.sw2.yearly.csv<-paste("sw2_yearly_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,spaceReadjustment,"csv",sep=".")
           
           #Rename the yearly SOILWAT2 output files
           system(paste("mv sw2_yearly_slyrs_agg.csv ",name.sw2.yearly.slyrs.csv,sep=""))
@@ -176,6 +181,11 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               grz <- temp[[1]][5]
               intensity <- temp[[1]][6]
               treatmentName<- temp[[1]][7]
+              if(length(temp[[1]] == 8)){ # if space was readjusted for this site
+                spaceReadjustment <- temp[[1]][8] # append readjustedj to the file name to denote readjusted space parameter
+              } else {
+                spaceReadjustment <- "input"  # append input to denote space parameters come directly from inputs
+              }
               
               # Make sure this file exists.
               if(!file.exists(dist.graz.name)){
@@ -196,8 +206,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               setwd("Output")
               
               #Identify the name of the biomass output file
-              name.bmass.csv<-paste("bmassavg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-              name.mort.csv<-paste("mortavg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+              name.bmass.csv<-paste("bmassavg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,spaceReadjustment,"csv",sep=".")
+              name.mort.csv<-paste("mortavg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,spaceReadjustment,"csv",sep=".")
               
               #Rename the bmassavg.csv
               system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
@@ -208,8 +218,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               
               #Daily SOILWAT2 output
               #Identify the name of the sw daily output files
-              name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-              name.sw2.daily.csv<-paste("sw2_daily_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+              name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,spaceReadjustment,"csv",sep=".")
+              name.sw2.daily.csv<-paste("sw2_daily_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,spaceReadjustment,"csv",sep=".")
               
               #Rename the daily SOILWAT2 output files
               system(paste("mv sw2_daily_slyrs_agg.csv ",name.sw2.daily.slyrs.csv,sep=""))
@@ -217,8 +227,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               
               #Monthly SOILWAT2 output
               #Identify the name of the sw monthly output files
-              name.sw2.monthly.slyrs.csv<-paste("sw2_monthly_slyrs_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-              name.sw2.monthly.csv<-paste("sw2_monthly_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+              name.sw2.monthly.slyrs.csv<-paste("sw2_monthly_slyrs_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,spaceReadjustment,"csv",sep=".")
+              name.sw2.monthly.csv<-paste("sw2_monthly_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,spaceReadjustment,"csv",sep=".")
               
               #Rename the monthly SOILWAT2 output files
               system(paste("mv sw2_monthly_slyrs_agg.csv ",name.sw2.monthly.slyrs.csv,sep=""))
@@ -226,8 +236,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               
               #Yearly SOILWAT2 output
               #Identify the name of the sw yearly output files
-              name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-              name.sw2.yearly.csv<-paste("sw2_yearly_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+              name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,spaceReadjustment,"csv",sep=".")
+              name.sw2.yearly.csv<-paste("sw2_yearly_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,spaceReadjustment,"csv",sep=".")
               
               #Rename the yearly SOILWAT2 output files
               system(paste("mv sw2_yearly_slyrs_agg.csv ",name.sw2.yearly.slyrs.csv,sep=""))
