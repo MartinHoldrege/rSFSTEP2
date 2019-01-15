@@ -661,8 +661,8 @@ if(rescale_space){
           readjusted_space <- paste0(readjusted_space, "\n")
         }
       
-        # create the new file, using the old file's name with ".readjustedij" appended on the end.
-        newFileName <- paste0(rg,".readjusted",i,j)
+        # create the new file, using the old file's name with ".readjustedj" appended on the end.
+        newFileName <- paste0(rg,".readjusted",j)
         writeLines(readjusted_space, paste0(newFileName, ".in"), sep = "")
         # concatinate the template to the new file.
         system(paste("cat ","rgroup_template.in >>", paste0(newFileName, ".in"),sep=""))
