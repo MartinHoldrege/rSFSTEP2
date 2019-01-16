@@ -61,6 +61,14 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
         # Loop through all rgroup files. Note that rgroups contains the file name without ".in"
         for (rg in rgroups) {
           setwd(paste0(dist.directory))
+          
+          # names(rg) specifies if this rgroup.in file should be used for this climate scenario. 
+          # "Inputs" specifies inputs directly from the csv files.
+          # "Current" specifies files that have readjusted space parameters for current conditions.
+          if(names(rg) != "Inputs" & names(rg) != "Current"){
+            next
+          }
+          
           # rg + ".in" = the file name
           dist.graz.name<-paste0(rg,".in")
           
@@ -76,10 +84,6 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
             spaceReadjustment <- "input"  # append input to denote space parameters come directly from inputs
           }
           
-          # Make sure this file exists.
-          if(!file.exists(dist.graz.name)){
-            next
-          }
           system(paste0("cp ",dist.graz.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))
           
           setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))
@@ -172,6 +176,14 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
             # Loop through all rgroup files. Note that rgroups contains the file name without ".in"
             for (rg in rgroups) {
               setwd(paste0(dist.directory))
+              
+              # names(rg) specifies if this rgroup.in file should be used for this climate scenario. 
+              # "Inputs" specifies inputs directly from the csv files.
+              # Otherwise, names(rg) must match the current year-rcp-scenario in order to proceed.
+              if(names(rg) != "Inputs" & names(rg) != paste("hybrid-delta-3mod", y, r, GCM[g], sep = ".")){
+                next
+              }
+              
               # rg + ".in" = the file name
               dist.graz.name<-paste0(rg,".in")
               
@@ -186,11 +198,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               } else {
                 spaceReadjustment <- "input"  # append input to denote space parameters come directly from inputs
               }
-              
-              # Make sure this file exists.
-              if(!file.exists(dist.graz.name)){
-                next
-              }
+
               system(paste0("cp ",dist.graz.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))
               
               setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))

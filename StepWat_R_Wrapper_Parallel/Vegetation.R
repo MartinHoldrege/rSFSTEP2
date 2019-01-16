@@ -73,7 +73,7 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
   res <- array(NA,
     dim = c(n_sites, n_climate.conditions,
       length(temp_veg[["Rel_Abundance_L0"]])),
-    dimnames = list(names(sw_weatherList), names(sw_weatherList[[1]]),
+    dimnames = list(names(sw_weatherList), climate.conditions,
       names(temp_veg[["Rel_Abundance_L0"]])))
   res[1, 1, ] <- temp_veg[["Rel_Abundance_L0"]]
 

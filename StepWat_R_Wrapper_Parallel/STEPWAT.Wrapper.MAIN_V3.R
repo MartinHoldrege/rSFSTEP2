@@ -381,6 +381,9 @@ for(i in treatments)
   write.table(df, file = paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
 }
 
+# adding names to the vector will help us determine what climate scenario applies to what rgroup.in file
+names(rgroups) <- rep_len("Inputs", length(rgroups))
+
 #Store the files names in the rgroup_files variable
 rgroup_files<-list.files(path=".",pattern = "rgroup")
 rgroup_files<-rgroup_files[rgroup_files!="rgroup_template.in"]
@@ -482,7 +485,6 @@ sites<-c(notassigned)
 source(query.file)
 
 # these variables are no longer needed
-remove(climate.conditions)
 remove(query.file)
 remove(database)
 
@@ -663,6 +665,8 @@ if(rescale_space){
       
         # create the new file, using the old file's name with ".readjustedj" appended on the end.
         newFileName <- paste0(rg,".readjusted",j)
+        # give this file an identifier that will be used to determine under what climate scenario it should be run.
+        names(newFileName) <- climate.conditions[j]
         writeLines(readjusted_space, paste0(newFileName, ".in"), sep = "")
         # concatinate the template to the new file.
         system(paste("cat ","rgroup_template.in >>", paste0(newFileName, ".in"),sep=""))
