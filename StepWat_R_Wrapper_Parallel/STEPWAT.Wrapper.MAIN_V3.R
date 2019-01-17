@@ -567,11 +567,6 @@ if(rescale_space){
   Grasses_Annuals <- c("a.cool.grass", "a.warm.grass")
   Trees <- c()
 
-  # These vectors store the space parameters already in the rgroup file.
-  # They are needed in case one functional type has two rgroup entries.
-  shrub_space <- c(); forb_space <- c(); succulent_space <- c(); c3_space <- c()
-  c4_space <- c(); annuals_space <- c(); tree_space <- c()
-
   # move to dist folder so we can begin adjusting space
   setwd("../STEPWAT_DIST")
 
@@ -585,6 +580,11 @@ if(rescale_space){
     # split the file along tabs. This produces a 2d array of entries where rows are lines of the original file
     # and columns are the entries of each line
     rgrp <- strsplit(rgrp, "\t")
+    
+    # These vectors store the space parameters already in the rgroup file.
+    # They are needed in case one functional type has two rgroup entries.
+    shrub_space <- c(); forb_space <- c(); succulent_space <- c(); c3_space <- c()
+    c4_space <- c(); annuals_space <- c(); tree_space <- c()
   
     # Loop through each line from rgroup.in file
     for(l in 1:length(rgrp)){
