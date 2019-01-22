@@ -78,10 +78,10 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           grz <- temp[[1]][5]
           intensity <- temp[[1]][6]
           treatmentName <- temp[[1]][7]
-          if(length(temp[[1]] == 8)){ # if space was readjusted for this site
-            spaceReadjustment <- temp[[1]][8] # append readjustedj to the file name to denote readjusted space parameter
+          if(names(rg) == "Inputs"){ # if space was NOT readjusted for this site
+            spaceReadjustment <- "input"       # append input to denote space parameters come directly from inputs
           } else {
-            spaceReadjustment <- "input"  # append input to denote space parameters come directly from inputs
+            spaceReadjustment <- "readjusted"  # append readjusted to the file name to denote readjusted space parameter
           }
           
           system(paste0("cp ",dist.graz.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))
@@ -193,10 +193,10 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               grz <- temp[[1]][5]
               intensity <- temp[[1]][6]
               treatmentName<- temp[[1]][7]
-              if(length(temp[[1]] == 8)){ # if space was readjusted for this site
-                spaceReadjustment <- temp[[1]][8] # append readjustedj to the file name to denote readjusted space parameter
+              if(names(rg) == "Inputs"){ # if space was NOT readjusted for this site
+                spaceReadjustment <- "input"       # append input to denote space parameters come directly from inputs
               } else {
-                spaceReadjustment <- "input"  # append input to denote space parameters come directly from inputs
+                spaceReadjustment <- "readjusted"  # append readjusted to the file name to denote readjusted space parameter
               }
 
               system(paste0("cp ",dist.graz.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))
