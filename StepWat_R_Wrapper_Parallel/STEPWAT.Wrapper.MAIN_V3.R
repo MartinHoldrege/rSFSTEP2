@@ -664,7 +664,7 @@ if(rescale_space){
         }
       
         # create the new file, using the old file's name with ".readjustedj" appended on the end.
-        newFileName <- paste0(rg,".readjusted",j)
+        newFileName <- paste0(rg,".",climate.conditions[j])
         # give this file an identifier that will be used to determine under what climate scenario it should be run.
         names(newFileName) <- climate.conditions[j]
         writeLines(readjusted_space, paste0(newFileName, ".in"), sep = "")
