@@ -45,7 +45,7 @@ s<-site[1]
         #Copy the weather data into the randomdata folder, commenting out creation of weather.in files as default so rSFSTEP2
         #uses only weather data generated from the markov weather generator but retain this code if one wants to create and copy 30 years of 
         #weather.in files into the weather folder
-        if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
+        if (TYPE=="basic") {
           #Copy the weather data into the randomdata folder
           system(paste("cp -a ",weath.read,"/. ",weather.dir2,sep=""))
         } 
@@ -201,7 +201,7 @@ s<-site[1]
             weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
             
             #Copy the weather data into the randomdata folder,commenting out creation of weather.in files as default
-            if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
+            if (TYPE=="basic") {
             #Copy the weather data into the randomdata folder
             system(paste("cp -a ",weath.read,"/. ",weather.dir2,sep=""))
             } 
