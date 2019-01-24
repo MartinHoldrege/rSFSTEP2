@@ -674,10 +674,13 @@ if(rescale_space){
         new_rgroup_files <- c(new_rgroup_files, newFileName)
       }
     }
+    
+    #now that we have readjusted space, we can remove the original file.
+    system(paste0("rm ", rg, ".in"))
   }
-
-  # add the new files to rgroups so they can be run
-  rgroups <- c(rgroups, new_rgroup_files)
+  
+  #replace rgroup files with the new readjusted files
+  rgroups <- new_rgroup_files
   
   # Remove all of the variables created in this section.
   remove(Shrubs)
