@@ -29,7 +29,7 @@ db_loc<-""
 rescale_space <- TRUE
 
 #Database location, edit the name of the weather database accordingly
-database_name<-"dbWeatherData_Sagebrush_KP.v3.2.0.sqlite"
+database_name<-"dbWeatherData.VicSites.v3.2.0.sqlite3"
 database<-file.path(db_loc,database_name)
  
 #Query script (Loads data from the database into a list)
