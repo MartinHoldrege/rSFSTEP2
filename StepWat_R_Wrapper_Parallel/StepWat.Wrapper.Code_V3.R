@@ -59,7 +59,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
         system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir,sep=""))
         
         # Loop through all rgroup files. Note that rgroups contains the file name without ".in"
-        for (rg in rgroups) {
+        for (rg_index in 1:length(rgroups)) {
+          rg <- rgroups[rg_index]
           setwd(paste0(dist.directory))
           
           # names(rg) specifies if this rgroup.in file should be used for this climate scenario. 
@@ -169,7 +170,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
             system(paste("cp ",weath.read,"/mkv_prob.in ",weather.dir,sep=""))
             
             # Loop through all rgroup files. Note that rgroups contains the file name without ".in"
-            for (rg in rgroups) {
+            for (rg_index in 1:length(rgroups)) {
+              rg <- rgroups[rg_index]
               setwd(paste0(dist.directory))
               
               # names(rg) specifies if this rgroup.in file should be used for this climate scenario. 
