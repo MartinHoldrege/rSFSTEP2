@@ -177,7 +177,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               # names(rg) specifies if this rgroup.in file should be used for this climate scenario. 
               # "Inputs" specifies inputs directly from the csv files.
               # Otherwise, names(rg) must match the current year-rcp-scenario in order to proceed.
-              if(names(rg) != "Inputs" & names(rg) != paste("hybrid-delta-3mod", y, r, GCM[g], sep = ".")){
+              if(names(rg) != "Inputs" & names(rg) != paste("hybrid-delta-3mod", y, r, GCM[g], sep = ".") & names(rg) != paste("hybrid-delta", y, r, GCM[g], sep = ".")){
                 next
               }
               
