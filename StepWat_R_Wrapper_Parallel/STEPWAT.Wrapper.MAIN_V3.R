@@ -656,6 +656,10 @@ if(rescale_space){
         # with tabs between columns and newline characters between rows
         readjusted_space <- ""
         for(y in 1:length(rgrp)){
+          #if space equals 0 for this type, we need to set the "on" column to false. This will turn off the type.
+          if(rgrp[[y]][2] == 0){
+            rgrp[[y]][9] <- 0   # rgrp[[y]][9] is the "on" column
+          }
           readjusted_space <- paste0(readjusted_space, rgrp[[y]][1])
           for(x in 2:length(rgrp[[1]])){
             readjusted_space <- paste0(readjusted_space, "\t", rgrp[[y]][x])
