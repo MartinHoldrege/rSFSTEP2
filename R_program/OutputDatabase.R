@@ -31,16 +31,16 @@ db <- dbConnect(SQLite(), output_database)
     total_sw2_daily_slyrs<-read.csv('total_sw2_daily_slyrs.csv',header=T)
     total_sw2_daily<-read.csv('total_sw2_daily.csv',header=T)    
     
-    #calculate aggregated daily mean and sd - need to get the columns after data - site, GCM, soilType, dist_flag, dist_freq, graz_freq, intensity, RCP, YEARS
+    #calculate aggregated daily mean and sd - need to get the columns after data - site, GCM, Rgrp_treatment, species, soilType, dist_freq, graz_freq, intensity, RCP, YEARS
 	length=length(total_sw2_daily_slyrs[2,])-10
 
-	total_sw2_daily_slyrs_aggregated=aggregate(total_sw2_daily_slyrs[,c(3:length)],by=list(total_sw2_daily_slyrs$Day,total_sw2_daily_slyrs$site,total_sw2_daily_slyrs$GCM, total_sw2_daily_slyrs$soilType,total_sw2_daily_slyrs$dist_flag,total_sw2_daily_slyrs$dist_freq,total_sw2_daily_slyrs$graz_freq,total_sw2_daily_slyrs$intensity,total_sw2_daily_slyrs$RCP,total_sw2_daily_slyrs$YEARS),mean)
- 	names(total_sw2_daily_slyrs_aggregated)[1:10]=c("Day","site","GCM","soilType","dist_flag","dist_freq","graz_freq","intensity","RCP","YEARS")
+	total_sw2_daily_slyrs_aggregated=aggregate(total_sw2_daily_slyrs[,c(3:length)],by=list(total_sw2_daily_slyrs$Day,total_sw2_daily_slyrs$site,total_sw2_daily_slyrs$GCM,total_sw2_daily_slyrs$Rgrp_treatment,total_sw2_daily_slyrs$species, total_sw2_daily_slyrs$soilType,total_sw2_daily_slyrs$dist_freq,total_sw2_daily_slyrs$graz_freq,total_sw2_daily_slyrs$intensity,total_sw2_daily_slyrs$RCP,total_sw2_daily_slyrs$YEARS),mean)
+ 	names(total_sw2_daily_slyrs_aggregated)[1:11]=c("Day","site","GCM","Rgrp_treatment","species","soilType","dist_freq","graz_freq","intensity","RCP","YEARS")
     
 	length=length(total_sw2_daily[2,])-10
 
-	total_sw2_daily_aggregated=aggregate(total_sw2_daily[,c(3:length)],by=list(total_sw2_daily$Day,total_sw2_daily$site,total_sw2_daily$GCM, total_sw2_daily$soilType,total_sw2_daily$dist_flag,total_sw2_daily$dist_freq,total_sw2_daily$graz_freq,total_sw2_daily$intensity,total_sw2_daily$RCP,total_sw2_daily$YEARS),mean)
- 	names(total_sw2_daily_aggregated)[1:10]=c("Day","site","GCM","soilType","dist_flag","dist_freq","graz_freq","intensity","RCP","YEARS")
+	total_sw2_daily_aggregated=aggregate(total_sw2_daily[,c(3:length)],by=list(total_sw2_daily$Day,total_sw2_daily$site,total_sw2_daily$GCM,total_sw2_daily$Rgrp_treatment,total_sw2_daily$species, total_sw2_daily$soilType,total_sw2_daily$dist_freq,total_sw2_daily$graz_freq,total_sw2_daily$intensity,total_sw2_daily$RCP,total_sw2_daily$YEARS),mean)
+ 	names(total_sw2_daily_aggregated)[1:11]=c("Day","site","GCM","Rgrp_treatment","species","soilType","dist_freq","graz_freq","intensity","RCP","YEARS")
 
     #write all tables to the SQLite database
     dbWriteTable(db, "total_sw2_daily_slyrs",total_sw2_daily_slyrs_aggregated, 	append=T)

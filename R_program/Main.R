@@ -1,14 +1,16 @@
-#Main R Script that initiates the R program and sources all downstream functionality held in .R files.
+#The Burke-Lauenroth Laboratory 
+#STEPWAT R Wrapper
+#Main R Script for STEPWAT_R_WRAPPER
 
 #Load Required Packages
 library(DBI)
 library(RSQLite)
 library(rSOILWAT2)
-library(doParallel)
 
 #Load source files and directories in the environment
+#Note: Change number of processors and output database location according to your system
 
-#Number of cores, the user must change the number of processors accordingly
+#Number of cores
 proc_count<-6
 
 #Source directory, the source.directory will be filled in automatically when rSFSTEP2 runs
@@ -16,13 +18,13 @@ source.dir<-"nopath"
 source.dir<-paste(source.dir,"/", sep="")
 setwd(source.dir)
 
-#Path to the weather database, which needs to be set by the user
+#Set database and inputs location
 db_loc<-""
 
 #Database location, edit the name of the weather database accordingly
-database_name=""
+database_name<-"dbWeatherData_Sagebrush_KP.v3.2.0.sqlite"
 database<-file.path(db_loc,database_name)
-
+ 
 #Weather query script (Loads weather data from the weather database for all climate scenarios into a list for each site)
 query.file<-paste(source.dir,"WeatherQuery.R", sep="")
 
@@ -42,30 +44,388 @@ output.file<-paste(source.dir,"AppendTreatments.R", sep="")
 tick_on<-proc.time()
 
 #rSFSTEP2 will automatically populate the site string with the sites specified in generate_stepwat_sites.sh
-site<-c(sitefolderid)
+site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10)
 
-#This code is used in the circumstance when you want to use different species.in parameters for different sites
-#In this case, we have three different species.in files which are found in the TreatmentFiles folder. The below strings
-#correspond to which sites we want to use each species.in file for. 
-species1<-c(21,80,144,150,244,291,374,409,411,542,320,384,391,413,501,592,687,733,758,761,781,787,798,816,824,828,866,868,869,876,879)
-species2<-c(609,676,729,730,778,792,809,818,826,829,854,857,862)
-species3<-c(163,211,221,230,264,283,341,354,365,380,387,497,524,543,566,581,608,175,178,217,319,335,369,498,595,659,4,7,14,15,23,79)
-species<-"species"
+#######################################################################################
+#Set working directory to location with inputs
+setwd(db_loc)
+
+#Read in all input data
+#species-specific parameters
+species_data <- read.csv("InputData_Species.csv", header=TRUE, sep=",")
+
+#soils properties for multiple soil layers
+soil_data <- read.csv("InputData_SoilLayers.csv", header=TRUE, sep=",")
+
+#functional type (rgroup) specific parameters
+rgroup_data <- read.csv("InputData_Rgroup.csv", header=TRUE, sep=",")
+
+#Set working directory to source directory
+setwd(source.dir)
+
+#SPECIES INPUTS
+#Get all sites listed in the CSV
+species_data_all_sites<-unique(species_data$Site)
+#Get all sites for which fixed parameters for a subest of sites are specified
+species_data_all_sites_vectors<-species_data_all_sites[grepl(",",species_data_all_sites)]
+
+# Move to the dist directory, where we will write our .in files
+setwd("STEPWAT_DIST")
+treatments_vector_species <- c()
+# This boolean will become TRUE if this site is includes in a list of comma separated sites in input. 
+# Used to determine if any input was generated from the .csv files.
+contains_vector <- FALSE
+
+if(any(grepl(",",species_data_all_sites))==TRUE)
+{
+  #Iterate through each site that matches this criteria
+  for(j in species_data_all_sites_vectors)
+  {
+    if(grepl(site,j))
+    {
+      contains_vector <- TRUE
+      species_data_site<-species_data[species_data$Site==j,]
+      
+      #List all treatments associated with the multiple sites
+      treatments_vector_species<-unique(species_data_site$treatment)
+      
+      #Iterate through each treatment
+      for(i in treatments_vector_species)
+      {
+        #Get data for the specific treatment
+        df=species_data_site[species_data_site$treatment==i,]
+        
+        #Get rid of site and treatment columns
+        df <- subset(df, select = -c(1,2))
+        
+        #Write the species.in file to the STEPWAT_DIST folder
+        write.table(df, file = paste0("species_",i,".in"),quote = FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+      }
+    }
+  }
+}
+
+#Get site-specific species parameters for the site or the fixed parameters used for "all" sites
+species_data_site<-species_data[species_data$Site==site | species_data$Site=="all",]
+
+#print a warning if there are no species inputs for this site.
+if(nrow(species_data_site) == 0 & !contains_vector){
+  print(paste("Site",site,"contains no species inputs.", sep = " "))
+}
+
+#Get all treatments associated with the site
+treatments_species<-unique(species_data_site$treatment)
+
+#Write a file for each treatment - the site-specific parameters and/or fixed parameters for "all" sites if requested
+for(i in treatments_species)
+{
+  #Get data for a specific treatment
+  df=species_data_site[species_data_site$treatment==i,]
+  
+  #Remove Site and treatment columns
+  df <- subset(df, select = -c(1,2) )
+  
+  #Write the species.in file to the STEPWAT_DIST folder
+  write.table(df, file = paste0("species_",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+}
+
+#Create file names for all site-treatment combinations
+treatments_species<-as.character(treatments_species)
+#Only paste in 'species_' if there is already a name present. Otherwise, if there are no treatments,
+#we would generate a file called 'species__.in' which would crash the program.
+if(length(treatments_species) > 0){
+  treatments_species<-paste("species_",treatments_species,sep="")
+}
+treatments_vector_species<-as.character(treatments_vector_species)
+#Only paste in 'species_' if there is already a name present. Otherwise, if there are no treatments,
+#we would generate a file called 'species__.in' which would crash the program.
+if(length(treatments_vector_species) > 0){
+  treatments_vector_species <- paste("species_",treatments_vector_species, sep="")
+}
+
+#Store the files names in the species.filenames variable and all of the treatments-site combinations in species
+species<-c(treatments_species,treatments_vector_species)
+species.filenames<-paste(species,".in",sep="")
+
+#Append species_template.in within STEPWAT_DIST to all the created files and save with a unique filename
+for (i in species.filenames)
+{
+  system(paste("cat ","species_template.in>>",i,sep=""))
+}
+
+#######################################################################################
+#SOILS INPUTS
+
+#Get all sites specified in the csv
+soil_data_all_sites<-unique(soil_data$Site)
+
+#Get the subset of sites that will be run with a fixed set of inputs, denoted with x,y
+soil_data_all_sites_vectors<-soil_data_all_sites[grepl(",",soil_data_all_sites)]
+
+treatments_vector <- c()
+# This boolean will become TRUE if this site is includes in a list of comma separated sites in input. 
+# Used to determine if any input was generated from the .csv files.
+contains_vector <- FALSE
+
+#Generate a soils.in file for the site for the x,y option first
+if(any(grepl(",",soil_data_all_sites))==TRUE)
+{
+  for(j in soil_data_all_sites_vectors)
+  {
+    if(grepl(site,j))
+    {
+      contains_vector <- TRUE
+      #Subset the soils data for the site in question
+      soil_data_site<-soil_data[soil_data$Site==j,]
+      #Get all soil treatments for the site in question
+      treatments_vector<-unique(soil_data_site$soil_treatment)
+      
+      #For each treatment for the site in question generate a soils.in file
+      for(i in treatments_vector)
+      {
+        df=soil_data_site[soil_data_site$soil_treatment==i,]
+        #Get rid of Site and treatment columns
+        df <- subset(df, select = -c(1,2) )
+        #Write the soils.in file to the STEPWAT_DIST folder
+        write.table(df, file = paste0("soils_",i,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
+      }
+    }
+  }
+}
+
+#Get site-specific species parameters for the site or the fixed parameters used for "all" sites
+soil_data_site<-soil_data[soil_data$Site==site | soil_data$Site=="all",]
+
+#print a warning if there are no soil inputs for this site
+if(nrow(soil_data_site) == 0 & !contains_vector){
+  print(paste("Site",site,"contains no soil inputs.", sep = " "))
+}
+
+#Get all treatments pertaining to site or "all"
+treatments<-unique(soil_data_site$soil_treatment)
+
+#Write a file for each treatment - the site-specific parameters and/or fixed parameters for "all" sites if requested
+for(i in treatments)
+{
+  #Get data for a specific treatment
+  df=soil_data_site[soil_data_site$soil_treatment==i,]
+  #Remove Site and treatment columns
+  df <- subset(df, select = -c(1,2) )
+  #Write the soils.in file to the STEPWAT_DIST folder
+  write.table(df, file = paste0("soils_",i,".in"),row.names=FALSE,col.names = FALSE,sep="\t")
+}
+
+#Create file names for all site-treatment combinations
+treatments<-as.character(treatments)
+#Only paste in 'soils_' if there is already a name present. Otherwise, if there are no treatments,
+#we would generate a file called 'soils__.in' which would crash the program.
+if(length(treatments) > 0){
+  treatments<-paste("soils_",treatments, sep="")
+}
+treatments_vector<-as.character(treatments_vector)
+#Only paste in 'soils_' if there is already a name present. Otherwise, if there are no treatments,
+#we would generate a file called 'soils__.in' which would crash the program.
+if(length(treatments_vector) > 0){
+  treatments_vector <- paste("soils_",treatments_vector, sep="")
+}
+
+#Store all of the treatment-site combinations in soil.types
+soil.types<-c(treatments,treatments_vector)
+
+
+#######################################################################################
+#RGROUP INPUTS (including fire and grazing)
+
+#Get all sites specified in the csv
+rgroup_data_all_sites<-unique(rgroup_data$Site)
+
+#Get the subset of sites that will be run with a fixed set of inputs, denoted with x,y
+rgroup_data_all_sites_vectors<-rgroup_data_all_sites[grepl(",",rgroup_data_all_sites)]
+
+contains_vector <- FALSE
+rgroups <- c()
+
+#Generate a rgroup.in file for the site for the x,y option first
+if(any(grepl(",",rgroup_data_all_sites))==TRUE)
+{
+  for(j in rgroup_data_all_sites_vectors)
+  {
+    if(grepl(site,j))
+    {
+      contains_vector <- TRUE
+      #Subset the rgroup data for the site in question
+      rgroup_data_site<-rgroup_data[rgroup_data$Site==j,]
+      #Get all rgroup treatments for the site in question
+      treatments_vector<-unique(rgroup_data_site$treatment)
+      
+      #For each treatment for the site in question generate a rgroup.in file
+      for(i in treatments_vector)
+      {
+        df=rgroup_data_site[rgroup_data_site$treatment==i,]
+        #Get rid of Site and treatment columns
+        df <- subset(df, select = -c(1,2))
+        
+        #Populate the dist.freq vector with fire frequency inputs
+        temp<-df['killfrq']
+        temp<-as.numeric(unique(temp))
+        dist.freq.current<-temp
+        
+        #Populate the graz.freq vector with grazing frequency inputs
+        temp<-df['grazing_frq']
+        temp<-as.numeric(unique(temp))
+        graz.freq.current<-temp
+        
+        #If grazing is ocurring we need to know the intensity.
+        if(graz.freq.current != 0){
+          #Populate the graz_intensity vector with grazing intensity inputs
+          temp<-df['proportion_grazing']
+          temp<-max(unique(temp))
+        } else {
+          temp="0"
+        }
+        graz_intensity.current<-temp
+        
+        # If any of the inputs contain a decimal like "0.24" this code will remove the "0." and leave the "24"
+        # this is necessary for functionallity in wrapper.file
+        dist.freq.current <- toString(dist.freq.current)
+        graz.freq.current <- toString(graz.freq.current)
+        graz_intensity.current <- toString(graz_intensity.current)
+  
+        dist.freq.current <- strsplit(dist.freq.current,"\\.")
+        graz.freq.current <- strsplit(graz.freq.current,"\\.")
+        graz_intensity.current <- strsplit(graz_intensity.current,"\\.")
+        
+        dist.freq.current <- dist.freq.current[[1]][length(dist.freq.current[[1]])]
+        graz.freq.current <- graz.freq.current[[1]][length(graz.freq.current[[1]])]
+        graz_intensity.current <- graz_intensity.current[[1]][length(graz_intensity.current[[1]])]
+        
+        # Now add the file name to the list of file names
+        rgroups <- c(rgroups, paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i))
+        
+        # Write the rgroup.in file to the STEPWAT_DIST folder
+        write.table(df, file = paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+        
+      }
+    }
+  }
+}
+
+#Get site-specific rgroup parameters for the site or the fixed parameters used for "all" sites
+rgroup_data_site<-rgroup_data[rgroup_data$Site==site | rgroup_data$Site=="all",]
+
+#print a warning if there are no rgroup inputs for this site
+if(nrow(rgroup_data_site) == 0 & !contains_vector){
+  print(paste("Site",site,"contains no rgroup inputs.", sep = " "))
+}
+
+#Get all treatments pertaining to site or "all"
+treatments<-unique(rgroup_data_site$treatment)
+
+#For each treatment for the site in question generate a rgroup.in file
+for(i in treatments)
+{
+  df=rgroup_data_site[rgroup_data_site$treatment==i,]
+  #Get rid of Site and treatment columns
+  df <- subset(df, select = -c(1,2) )
+  
+  #Populate the dist.freq vector with fire frequency inputs
+  temp<-df['killfrq']
+  temp<-as.numeric(unique(temp))
+  dist.freq.current<-temp
+  
+  #Populate the graz.freq vector with grazing frequency inputs
+  temp<-df['grazing_frq']
+  temp<-as.numeric(unique(temp))
+  graz.freq.current<-temp
+  
+  #If grazing is ocurring we need to know the intensity.
+  if(graz.freq.current != 0){
+    #Populate the graz_intensity vector with grazing intensity inputs
+    temp<-df['proportion_grazing']
+    temp<-max(unique(temp))
+  } else {
+    temp="0"
+  }
+  graz_intensity.current<-temp
+  
+  # If any of the inputs contain a decimal like "0.24" this code will remove the "0." and leave the "24"
+  # this is necessary for functionallity in wrapper.file
+  dist.freq.current <- toString(dist.freq.current)
+  graz.freq.current <- toString(graz.freq.current)
+  graz_intensity.current <- toString(graz_intensity.current)
+  
+  dist.freq.current <- strsplit(dist.freq.current,"\\.")
+  graz.freq.current <- strsplit(graz.freq.current,"\\.")
+  graz_intensity.current <- strsplit(graz_intensity.current,"\\.")
+        
+  dist.freq.current <- dist.freq.current[[1]][length(dist.freq.current[[1]])]
+  graz.freq.current <- graz.freq.current[[1]][length(graz.freq.current[[1]])]
+  graz_intensity.current <- graz_intensity.current[[1]][length(graz_intensity.current[[1]])]
+        
+  # Now add the file name to the list of file names
+  rgroups <- c(rgroups, paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i))
+        
+  # Write the rgoup.in file to the STEPWAT_DIST directory
+  write.table(df, file = paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+}
+
+#Store the files names in the rgroup_files variable
+rgroup_files<-list.files(path=".",pattern = "rgroup")
+rgroup_files<-rgroup_files[rgroup_files!="rgroup_template.in"]
+
+#Append rgroup_template.in within STEPWAT_DIST to all the created files and save with a unique filename
+for (i in rgroup_files)
+{
+  system(paste("cat ","rgroup_template.in >>",i,sep=""))
+}
+
+setwd("..")
+
+########################### Garbage collection for species, rgroup, and soil requirements #######################
+# All of these variables were created in the species, soils, and rgroup sections. They will never be used again.
+# Removing them will defrag the memory enough to allow the program to complete on systems will smaller memory.
+# For more info on memory problems in rSFSTEP2, see issue #76 on github.
+# PROGRAMMER NOTE: If you add any aditional variables to the program, make sure you delete them as soon as they are
+# no longer necessary.
+
+# treatment vectors
+remove(graz_intensity.current)
+remove(dist.freq.current)
+remove(graz.freq.current)
+remove(contains_vector)
+# variables related to rgroup
+remove(rgroup_data_site)
+remove(treatments)
+remove(df)
+remove(treatments_vector)
+remove(rgroup_data)
+remove(rgroup_data_all_sites)
+remove(rgroup_data_all_sites_vectors)
+remove(rgroup_files)
+# variables related to soil
+remove(soil_data)
+remove(soil_data_all_sites)
+remove(soil_data_all_sites_vectors)
+remove(soil_data_site)
+#variables related to species
+remove(db_loc)
+remove(species_data_site)
+remove(species_data_all_sites_vectors)
+remove(species_data)
+remove(treatments_vector_species)
+remove(treatments_species)
+remove(species.filenames)
 
 ################################ Weather Query Code ###################################
 
-#Setup parameters for the weather extraction (time periods (Current, Future), scenarios (RCP.GCMs)) 
+#Setup parameters for the weather aquisition (years, scenarios, timeperiod, GCMs) 
 simstartyr <- 1979
 endyr <- 2010
 climate.ambient <- "Current"
 
 #Specify the RCP/GCM combinations
-#Default settings for testing rSFSTEP2, which represents a single GCM and two RCPs
-climate.conditions <- c(climate.ambient,  "RCP45.CanESM2", "RCP85.CanESM2")
-
-#All climate conditions typically utilized in complete simulation runs, uncomment for simulation runs
-#climate.conditions <- c(climate.ambient,  "RCP45.CanESM2", "RCP45.CESM1-CAM5", "RCP45.CSIRO-Mk3-6-0", "RCP45.FGOALS-g2", "RCP45.FGOALS-s2", "RCP45.GISS-E2-R", "RCP45.HadGEM2-CC", "RCP45.HadGEM2-ES", "RCP45.inmcm4", "RCP45.IPSL-CM5A-MR", "RCP45.MIROC5", "RCP45.MIROC-ESM","RCP45.MRI-CGCM3", "RCP85.CanESM2", "RCP85.CESM1-CAM5", "RCP85.CSIRO-Mk3-6-0", "RCP85.FGOALS-g2","RCP85.FGOALS-s2","RCP85.GISS-E2-R","RCP85.HadGEM2-CC","RCP85.HadGEM2-ES","RCP85.inmcm4","RCP85.IPSL-CM5A-MR","RCP85.MIROC5","RCP85.MIROC-ESM","RCP85.MRI-CGCM3")
-
+climate.conditions <- c(climate.ambient,  "RCP45.CanESM2", "RCP45.CESM1-CAM5", "RCP45.CSIRO-Mk3-6-0", "RCP45.FGOALS-g2", "RCP45.FGOALS-s2", "RCP45.GISS-E2-R", "RCP45.HadGEM2-CC", "RCP45.HadGEM2-ES",
+                        "RCP45.inmcm4", "RCP45.IPSL-CM5A-MR", "RCP45.MIROC5", "RCP45.MIROC-ESM","RCP45.MRI-CGCM3", "RCP85.CanESM2", "RCP85.CESM1-CAM5", "RCP85.CSIRO-Mk3-6-0", "RCP85.FGOALS-g2","RCP85.FGOALS-s2","RCP85.GISS-E2-R","RCP85.HadGEM2-CC","RCP85.HadGEM2-ES","RCP85.inmcm4","RCP85.IPSL-CM5A-MR","RCP85.MIROC5","RCP85.MIROC-ESM","RCP85.MRI-CGCM3")
 #Store climate conditons
 #List of all future and current scenarios putting "Current" first	
 temp <- climate.conditions[!grepl(climate.ambient, climate.conditions)] #make sure 'climate.ambient' is first entry
@@ -79,7 +439,7 @@ if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
     
     #Downscaling method
     downscaling.method <- c("hybrid-delta-3mod")
-    temp <- paste0(deltaFutureToSimStart_yr, "yrs.", rep(temp, each=length(deltaFutureToSimStart_yr)))
+    temp <- paste0(deltaFutureToSimStart_yr, "yrs.", rep(temp, each=length(deltaFutureToSimStart_yr)))	#add (multiple) deltaFutureToSimStart_yr
     
     #Set Years
     YEARS<-c("d50yrs","d90yrs")
@@ -88,134 +448,111 @@ if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
   {
     #Difference between start and end year(if you want 2030-2060 use 50; if you want 2070-2100 use 90 below)
     deltaFutureToSimStart_yr <- c(50,90)
-    
+   
     #Downscaling method
     downscaling.method <- c("hybrid-delta")
    
-    temp <- paste0(deltaFutureToSimStart_yr, "years.", rep(temp, each=length(deltaFutureToSimStart_yr)))
+    temp <- paste0(deltaFutureToSimStart_yr, "years.", rep(temp, each=length(deltaFutureToSimStart_yr)))	#add (multiple) deltaFutureToSimStart_yr
     #Set Years
+    #use with KP weather database
     YEARS<-c("50years","90years")
   }
-temp <- paste0(downscaling.method, ".", rep(temp, each=length(downscaling.method))) #add (multiple) downscaling.method
 }
-
+temp <- paste0(downscaling.method, ".", rep(temp, each=length(downscaling.method))) #add (multiple) downscaling.method
 climate.conditions <-  c("Current",temp)
 temp<-c("Current",temp)
+
 
 #Vector of sites, the code needs to be run on, this will be populated by rSFSTEP2
 sites<-c(notassigned) 
 
-#Source the weather query code
+#Source the code in query script
 source(query.file)
+
+# these variables are no longer needed
+remove(climate.conditions)
+remove(query.file)
+remove(database)
 
 ############################### End Weather Query Code ################################
 
 ############################### Weather Assembly Code #################################
 
-#This script re-assembles the necessary weather data that was extracted during the weather query step based on user specifications
-#If the user wants to exclusively utilize randomly generated weather data from the markov weather generator, no settings should be changed here
-
+#This script assembles the necessary weather data that was extracted during the weather query step
+site<-c(site)
 #Set output directories
 weather.dir<-source.dir
 setwd(weather.dir)
-
-#Create the WeatherFiles folder in which to place weath.in files and/or markov files (mkv_covar.in, mkv_prob.in)
-dir.create("WeatherFiles", showWarnings = FALSE)
-assembly_output<-paste(source.dir,"WeatherFiles/",sep="")
+#Create a new folder called StepWat.Weather.Markov.Test in which to put the weather files and markov files
+dir.create("StepWat.Weather.Markov.Test", showWarnings = FALSE)
+assembly_output<-paste(source.dir,"StepWat.Weather.Markov.Test/",sep="")
 setwd(assembly_output)
 
 #Number of scenarios (GCM X RCP X Periods run)
 H<-length(temp)
 
-#Starting year for which weath.in files will be written
+#Parameters for weather assembly script
 AssemblyStartYear<-1980
-
-#Number of years for which weath.in files will be written 
+# Number of years (in one section)
+K<-30
+# Interval Size
 INT<-30
+# Final number of years wanted
+FIN<-30
+#Resampling time
+RE<-FIN/INT
 
-#### TYPE ##########################################
-# choose between "basic" (for 1,5,10,30 year) or "markov". If using the "markov" option, the appropriate flag needs to be set in weathersetup.in in STEPWAT2 (this is the default)
-
-#Set TYPE: TYPE="basic" will write both weath.in files and the markov weather files to the WeatherFiles folder. In this case, the weath.in files will be used initially to force STEPWAT2, thereafter randomly generated weather will be used based on the markov files.
-#TYPE="markov" will write just the two markov files to WeatherFiles and only randomly generated weather will be used to run STEPWAT2 simulations. This is the preferred and default option.
+#### Type ##########################################
+# choose between "basic" (for 1,5,10,30 year); "back" (for 5 year non-driest back-to-back);
+#         OR "drought" (for 5 year non-driest back-to-back and only once in 20 years); or "markov"
+#         (for markov code output) !!!! if using Markov remember to flag it in weathersetup.in !!!!
+#Set Type, TYPE="basic" is for both basic and markov. TYPE="markov" is for only markov.
 TYPE<-"markov"
 
-#Source the weather assembly script
+#Source the code in assembly script
 source(assemble.file)
 
 ############################### End Weather Assembly Code ################################
 
-############################# MARKOV Weather File Generation Code ##############################
-#This code generates two site-specific files necessary for the Markov Weather Generator in SOILWAT2. mk_covar.in
-#and mk_prob.in. These files are generated based on the site-specific and scenario-specific weather data for each site that is extracted during the previous step.
+############################# MARKOV Weather Generator Code ##############################
+#This code generates two site-specific files necessary for the Markov Weather Generator built into STEPWAT. mk_covar.in
+#and mk_prob.in. These files are based on the weather data for each site that is extracted during the previous step.
+site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10) 
 
-#Change directory to the folder specific to this site within WeatherFiles
+#Change directory to output directory of assemble script
 setwd(assembly_output)
-
-#Number of years of historical or future weather data that will be utilized to generate mkv_covar.in and mkv_prob.in 
+# number of years 
 yr<-30 
 
-#Source markov script
+#Source the code in markov script
 source(markov.file)
 
-############################# End MARKOV Weather File Generation Code ##############################
+#These variables are no longer needed
+remove(assemble.file)
+remove(markov.file)
+remove(temp)
+
+############################# End MARKOV Weather Generator Code ##############################
 
 ############### Run Wrapper Code ############################################################
 
-########### Set climate scenarios, disturbance regimes, and soil types for each STEPWAT2 should be executed ###############
+########### Set parameters ###############################################
 
-#This code utilizes different species parameters for different sites, default here is 3 unique sets of species parameters held in 3 separate species.in files in the TreatmentFiles folder
-if(is.element(sites,species1))
-{
-    species<-"species1.in"
-} else if (is.element(sites,species2)) {
-    species<-"species2.in"
-} else {	species<-"species3.in" }
+#This will be populated by rSFSTEP2
+site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10) 
 
 #Directory stores working directory
 directory<-source.dir
 
-#Set GCMs, must match GCMs set in climate.conditions above
-#Default settings for testing rSFSTEP2, which represents a subset of potential GCMs
-GCM<-c("Current","CanESM2")
-
-#All GCM options typically utilized in complete simulation runs, uncomment for simulation runs
-#GCM<-c("Current","CanESM2","CESM1-CAM5","CSIRO-Mk3-6-0","FGOALS-g2","FGOALS-s2","GISS-E2-R","HadGEM2-CC","HadGEM2-ES","inmcm4", "IPSL-CM5A-MR", "MIROC5", "MIROC-ESM", "MRI-CGCM3")
-
-#Set RCPs, must match RCPs set in climate.conditions above
+#Set GCMs
+GCM<-c("Current","CanESM2","CESM1-CAM5","CSIRO-Mk3-6-0","FGOALS-g2","FGOALS-s2","GISS-E2-R","HadGEM2-CC","HadGEM2-ES","inmcm4", "IPSL-CM5A-MR", "MIROC5", "MIROC-ESM", "MRI-CGCM3")
+#Set RCPs
 RCP<-c("RCP45","RCP85")
 
-#Disturbance flag, turn to "F" if not using disturbances (grazing,fire)
-dist.graz.flag<-T
+#Disturbance folder
+dist.directory<-paste(source.dir,"STEPWAT_DIST/",sep="")
 
-#Set the path to the TreatmentFiles folder where disturbance inputs (held in rgroup.in), species inputs (held in species.in), and soil inputs (held in soils.in) are specified
-dist.directory<-paste(source.dir,"TreatmentFiles/",sep="")
-
-#Specify fire return interval (FRI). If not simulating fire but do want grazing set 'dist.freq<-0'
-#Default settings for testing rSFSTEP2, which represents a single FRI
-dist.freq<-c(50)
-
-#All FRI options typically utilized in complete simulation runs, uncomment for simulation runs
-#dist.freq<-c(0,10,50)
-
-#Specify grazing frequency. If no grazing set to 0, if grazing on, set to 1, if both wanted set to c(0,1)
-graz.freq<-c(1)
-
-#Set grazing intensity, these correspond to the files in the TreatmentFiles folder 
-#Default settings for testing rSFSTEP2, which represents a single grazing treatment
-graz_intensity<-c("lowgraz")
-
-#All grazing intensity options typically utilized in complete simulation runs, uncomment for simulation runs
-#graz_intensity<-c("lowgraz","modgraz","highgraz")
-
-#Set soil types, these correspond to the files in the TreatmentFiles folder 
-#Default settings for testing rSFSTEP2, which represents a single soil treatment
-soil.types<-c("soils.17sand.13clay")
-
-#All soil options typically utilized in complete simulation runs, uncomment for simulation runs
-#soil.types<-c("soils.17sand.13clay","soils.68sand.10clay")
-
-#Source the wrapper script, run the STEPWAT2 code for each combination of disturbances, soils, species, and climate scenarios
+#Source the code in wrapper script, run the STEPWAT2 code for each combination of disturbances, soils, climate scenarios
 source(wrapper.file)
 
 ################ End Wrapper Code ########################################################

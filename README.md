@@ -49,3 +49,6 @@ Contributors are encouraged, however, to update local clones to [point to the ne
 ```
 git remote set-url origin https://github.com/Burke-Lauenroth-Lab/rSFSTEP2.git
 ```
+
+
+See syntax_inputs.txt in the inputs folder for a description of the input options and how to specify site-specific and fixed inputs

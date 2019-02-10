@@ -69,4 +69,4 @@ temp <- lapply(fname_dbs, function(fdb) {
   con <- dbConnect_OutputDB(fdb)
   temp <- add_index(con)
   DBI::dbDisconnect(con)
-})
+}

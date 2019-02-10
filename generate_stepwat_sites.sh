@@ -1,6 +1,6 @@
 #!/bin/bash
 #./generate_stepwat_sites.sh <R_program> <number_of_sites> <number_of_scenario>
-siteid=(1) #add site ids here
+siteid=(1 2) #add site ids here
 
 
 cd R_program
