@@ -11,9 +11,11 @@ library(RSQLite)
 setwd(directory)
 
 s<-site[1]
-foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
-  
-  #Copy in the relevant species.in file for each site, as specified in the STEPWAT.Wrapper.MAIN_V3.R
+  foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
+      
+      setwd(dist.directory)
+      
+      #Copy in the relevant species.in file for each site, as specified in the Main.R
   for(sp in species)
   {
     setwd(dist.directory)
@@ -25,7 +27,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
     
     setwd(directory)      
     
-    #Copy in the soils.in file that is specified by the user in STEPWAT_DIST
+   	 #Copy in the soils.in file that is specified by the user in TreatmentFiles
     for(soil in soil.types){
       setwd(dist.directory)
       soil.type.name<-paste0(soil,".in")
@@ -49,7 +51,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
         #Copy the weather data into the randomdata folder, commenting out creation of weather.in files as default so rSFSTEP2
         #uses only weather data generated from the markov weather generator but retain this code if one wants to create and copy 30 years of 
         #weather.in files into the weather folder
-        if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
+        if (TYPE=="basic") {
           #Copy the weather data into the randomdata folder
           system(paste("cp -a ",weath.read,"/. ",weather.dir2,sep=""))
         } 
@@ -133,7 +135,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           #this will print out which treatment was just completed
           print(paste0("rgroup treatment ", treatmentName, " done."))
         }
-        #If GCM is not current, then repeat the above steps for all GCMs, RCPs and time periods as specified in STEPWAT.Wrapper.MAIN_V3.R 
+        #If GCM is not current, then repeat the above steps for all GCMs, RCPs and time periods as specified in Main.R 
       } else if (GCM[g]!="Current"){
         
         for (y in YEARS) { # loop through all the time periods 50 or 90
@@ -156,7 +158,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
             weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
             
             #Copy the weather data into the randomdata folder,commenting out creation of weather.in files as default
-            if (TYPE=="basic" || TYPE=="drought" || TYPE=="back") {
+            if (TYPE=="basic") {
               #Copy the weather data into the randomdata folder
               system(paste("cp -a ",weath.read,"/. ",weather.dir2,sep=""))
             } 

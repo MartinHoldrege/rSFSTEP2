@@ -25,20 +25,20 @@ db_loc<-""
 database_name<-"dbWeatherData_Sagebrush_KP.v3.2.0.sqlite"
 database<-file.path(db_loc,database_name)
  
-#Query script (Loads data from the database into a list)
-query.file<-paste(source.dir,"RSoilWat31.Weather.Data.Query_V2.R", sep="")
+#Weather query script (Loads weather data from the weather database for all climate scenarios into a list for each site)
+query.file<-paste(source.dir,"WeatherQuery.R", sep="")
 
-#Assembly script (Assemble data with respect to years and conditions)
-assemble.file<-paste(source.dir,"Weather.Assembly.Choices_V2.R", sep="")
+#Weather assembly script (Assembles weather data with respect to years and conditions)
+assemble.file<-paste(source.dir,"WeatherAssembly.R", sep="")
 
-#Markov script (To generate cov and prob files)
-markov.file<-paste(source.dir,"Markov.Weather_V2.R",sep="")
+#Markov script (Generates site-specific markov files used for weather generation in SOILWAT2)
+markov.file<-paste(source.dir,"MarkovWeatherFileGenerator.R",sep="")
 
-#Wrapper script
-wrapper.file<-paste(source.dir,"StepWat.Wrapper.Code_V3.R", sep="")
+#Wrapper script (Executes STEPWAT2 for all climate-disturbance-input parameter combinations)
+wrapper.file<-paste(source.dir,"CallSTEPWAT2.R", sep="")
 
-#Output script
-output.file<-paste(source.dir,"SoilWatOutput.R", sep="")
+#Output script (Combines individual output files into a master output file for each site)
+output.file<-paste(source.dir,"AppendTreatments.R", sep="")
 
 #Start timing for timing statistics
 tick_on<-proc.time()
@@ -78,8 +78,6 @@ contains_vector <- FALSE
 
 if(any(grepl(",",species_data_all_sites))==TRUE)
 {
-  
-  
   #Iterate through each site that matches this criteria
   for(j in species_data_all_sites_vectors)
   {

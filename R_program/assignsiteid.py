@@ -1,7 +1,7 @@
 import sys
 import argparse
 
-f = open('STEPWAT.Wrapper.MAIN_V3.R','r')
+f = open('Main.R','r')
 filedata = f.read()
 f.close()
 
@@ -17,7 +17,7 @@ newdata = filedata.replace("notassigned",str(parsed.number[0]))
 filedata = newdata
 newdata = filedata.replace("sitefolderid",str(parsed.number[1]))
 
-fileout='STEPWAT.Wrapper.MAIN_V3.R'
+fileout='Main.R'
 f = open(fileout,'w')
 f.write(newdata)
 f.close()
@@ -25,7 +25,7 @@ f.close()
 f = open('sample.sh','r')
 filedata = f.read()
 f.close()
-tempstring=str(parsed.location[0])+"/"+"STEPWAT.Wrapper.MAIN_V3.R"
+tempstring=str(parsed.location[0])+"/"+"Main.R"
 newdata = filedata.replace("notassigned",tempstring)
 filedata = newdata
 newdata = filedata.replace("noid",str(parsed.number[0]))
@@ -34,7 +34,7 @@ f = open(fileout,'w')
 f.write(newdata)
 f.close()
 
-f = open('makedatabase.R','r')
+f = open('OutputDatabase.R','r')
 filedata = f.read()
 f.close()
 newdata = filedata.replace("nopath",str(parsed.location[0]))
@@ -44,7 +44,7 @@ newdata = filedata.replace("notassigned",str(parsed.number[0]))
 filedata = newdata
 newdata = filedata.replace("sitefolderid",str(parsed.number[1]))
 
-fileout='makedatabase.R'
+fileout='OutputDatabase.R'
 f = open(fileout,'w')
 f.write(newdata)
 f.close()
