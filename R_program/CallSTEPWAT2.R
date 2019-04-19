@@ -86,7 +86,7 @@ s<-site[1]
           #Change directory to the executable directory
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
           #Run stepwat2
-          system("./stepwat -f  files.in -s -o")
+          system("./stepwat -f  files.in -o")
           
           #Change directory to "Output" folder
           setwd("Output")
@@ -192,7 +192,7 @@ s<-site[1]
               #Change directory to the executable directory
               setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
               #Run stepwat2
-              system("./stepwat -f  files.in -s -o")
+              system("./stepwat -f  files.in -o")
               
               #Change directory to "Output" folder
               setwd("Output")
