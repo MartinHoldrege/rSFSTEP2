@@ -6,16 +6,17 @@ registerDoParallel(proc_count)
 
   #Loop through all sites
   #load a particular site
-  site<-site[1] 
+  site<-site[1]
   s<-1
 
   foreach (h = 1:H) %dopar%
     { #h = number of GCM X RCP X Times (scenarios)
     scen<-temp[h] #load a particular scenario
 
-    res <- rSOILWAT2::dbW_estimate_WeatherGenerator_coefficients(sw_weatherList[[s]][[h]])
+    res <- rSOILWAT2::dbW_estimate_WGen_coefs(sw_weatherList[[s]][[h]]
+      na.rm = TRUE)
 
-    print_mkv_files(DF = res[["DF"]], DF_covar = res[["DF_covar"]],
+    print_mkv_files(mkv_doy = res[["mkv_doy"]], mkv_woy = res[["mkv_woy"]],
       path = file.path(assembly_output, paste0("Site", "_", site, "_", scen)))
  }
 
