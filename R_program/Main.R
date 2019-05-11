@@ -276,7 +276,7 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
         df <- subset(df, select = -c(1,2))
         
         #Populate the dist.freq vector with fire frequency inputs
-        temp<-df['killfrq']
+        temp<-df['Prescribed_killfreq']
         temp<-as.numeric(unique(temp))
         dist.freq.current<-temp
         
@@ -339,7 +339,7 @@ for(i in treatments)
   df <- subset(df, select = -c(1,2) )
   
   #Populate the dist.freq vector with fire frequency inputs
-  temp<-df['killfrq']
+  temp<-df['Prescribed_killfreq']
   temp<-as.numeric(unique(temp))
   dist.freq.current<-temp
   
