@@ -17,7 +17,7 @@ registerDoParallel(proc_count)
       na.rm = TRUE)
 
     print_mkv_files(mkv_doy = res[["mkv_doy"]], mkv_woy = res[["mkv_woy"]],
-      path = file.path(assembly_output, paste0("Site", "_", site, "_", scen)))
+      path = file.path(assembly_output, paste0("Site","_",site,"/","Site", "_", site, "_", scen)))
  }
 
 #reset directory to project level
