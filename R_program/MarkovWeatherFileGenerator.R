@@ -13,7 +13,7 @@ registerDoParallel(proc_count)
     { #h = number of GCM X RCP X Times (scenarios)
     scen<-temp[h] #load a particular scenario
 
-    res <- rSOILWAT2::dbW_estimate_WGen_coefs(sw_weatherList[[s]][[h]]
+    res <- rSOILWAT2::dbW_estimate_WGen_coefs(sw_weatherList[[s]][[h]],
       na.rm = TRUE)
 
     print_mkv_files(mkv_doy = res[["mkv_doy"]], mkv_woy = res[["mkv_woy"]],
