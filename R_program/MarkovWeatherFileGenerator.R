@@ -1,6 +1,6 @@
 #Markov script that generates two site-specific files (mkv_covar.in and mkv_prob.in) required by the markov weather generator in SOILWAT2
 
-#Three options for imputation of missing values due to insufficient weather data within function dbW_estimate_WGen_coefs via argument imputation_type: no imputation ("none"), imputation via mean from values before and after the missing value ("meanX"), and imputation by last-observation-carried-forward ("locf"). See function dbW_estimate_WGen_coefs in rSOILWAT2 for additional details.
+#Three options for imputation of missing values due to insufficient weather data within function dbW_estimate_WGen_coefs via argument imputation_type: no imputation ("none"), imputation via mean using 5 values before and 5 values after the missing value ("mean"), and imputation by last-observation-carried-forward ("locf"). If the user wants to adjust the number of values used to calculate the mean, argument "imputation_span" must also be provided with an integer (ex: imputation_span = 3). See function dbW_estimate_WGen_coefs in rSOILWAT2 for additional details.
 
 #Set up system for parallel processing
 library(doParallel)
@@ -16,7 +16,7 @@ registerDoParallel(proc_count)
     scen<-temp[h] #load a particular scenario
     
     #Generate the necessary precipitation and temperature parameters for mkv_covar.in and mkv_prob.in based on historical weather data
-    res <- rSOILWAT2::dbW_estimate_WGen_coefs(sw_weatherList[[s]][[h]], imputation_type = "mean5",
+    res <- rSOILWAT2::dbW_estimate_WGen_coefs(sw_weatherList[[s]][[h]], imputation_type = "mean",
       na.rm = TRUE)
     
     #Write the mkv_covar.in and mkv_prob.in files
