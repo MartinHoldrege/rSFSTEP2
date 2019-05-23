@@ -10,11 +10,12 @@ On a super computer:
 1. Make sure all the scripts are executable (i.e. given executable permissions) prior to following the steps below: chmod +x nameoffile
 2. Copy the weather database to the rSFSTEP2 folders
 3. Set the location of the weather database in the Main.R script of the R_program folder (where it says set database location), along with the name of the weather database (where it says Provide the name of the database in quotes).
-4. Add site ids, you wish to run the wrapper on, to the siteid variable (third line from top) in the generate_stepwat_sites.sh script. Site 1 is present, as an example.
+4. Add site ids, you wish to run the wrapper on, to the siteid variable (third line from top) in the generate_rSFSTEP2_structure.sh script. Site 1 and 2 are present as examples.
 5. Edit jobname, accountname and the location of results.txt (last line) in the sample.sh script, located in the R_program folder. Adjust wall time and nodes/cpus required if necessary.
 6. Edit jobname and accountname in the outputdatabase.sh script, located in R_program folder.
-7. Run the generate_stepwat_sites.sh script.
-8. Run the call_sbatch.sh script.
+7. Run the cloneSTEPWAT2.sh script.
+8. Run the generate_rSFSTEP2_structure.sh script. The parameters are <R_program> <number_of_sites> <number_of_scenario>
+9. Run the call_sbatch.sh script.
 
 Once the sbatch tasks have been succesfully completed, follow the steps below to compile all output.csv files into a SQLite database:
 
@@ -28,9 +29,10 @@ On a local machine:
 1. Make sure all the scripts are executable (i.e. given executable permissions) prior to following the steps below: chmod +x nameoffile
 2. Copy the weather database to the rSFSTEP2 folder.
 3. Set the location of the weather database in the Main.R script of the R_program folder (where it says set database location), along with the name of the weather database (where it says Provide the name of the database in quotes).
-4. Add site ids, you wish to run the wrapper on, to the siteid variable (third line from top) in the generate_stepwat_sites.sh script. Site 1 is present, as an example.
-5. Run the generate_stepwat_sites.sh script.
-6. Run the run_local.sh script.
+4. Add site ids, you wish to run the wrapper on, to the siteid variable (third line from top) in the generate_rSFSTEP2_structure.sh script. Site 1 and 2 are present as examples.
+5. Run the cloneSTEPWAT2.sh script.
+6. Run the generate_rSFSTEP2_structure.sh script. The parameters are <R_program> <number_of_sites> <number_of_scenario>
+7. Run the run_local.sh script.
 
 Once the sbatch tasks have been succesfully completed, follow the steps below to compile all output.csv files into a SQLite database:
 
