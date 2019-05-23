@@ -1,4 +1,5 @@
 #Clones STEPWAT2, compiles it, and then removes any files that are not necessary for running rSFSTEP2
+#To run in a terminal: ./cloneSTEPWAT2.sh
 
 cd R_program
 #module load git/2.17.1
