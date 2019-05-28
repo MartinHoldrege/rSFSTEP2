@@ -484,8 +484,8 @@ site<-c(site)
 weather.dir<-source.dir
 setwd(weather.dir)
 #Create a new folder called StepWat.Weather.Markov.Test in which to put the weather files and markov files
-dir.create("StepWat.Weather.Markov.Test", showWarnings = FALSE)
-assembly_output<-paste(source.dir,"StepWat.Weather.Markov.Test/",sep="")
+dir.create("MarkovWeatherFiles", showWarnings = FALSE)
+assembly_output<-paste(source.dir,"MarkovWeatherFiles/",sep="")
 setwd(assembly_output)
 
 #Number of scenarios (GCM X RCP X Periods run)
