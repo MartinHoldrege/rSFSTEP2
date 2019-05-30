@@ -6,9 +6,6 @@
 library(doParallel)
 registerDoParallel(proc_count)
 
-  #Loop through all sites
-  #load a particular site
-  site<-site[1]
   s<-1
 
   foreach (h = 1:H) %dopar%

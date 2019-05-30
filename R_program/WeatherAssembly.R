@@ -5,9 +5,6 @@ if (INT==30)
   # Make sure we are in the assembly_output folder
   setwd(assembly_output)
   
-  # Grab our site
-  site<-site[1]
-  
   #Iterate through each scenario
   for(h in 1:H) 
   {

@@ -483,8 +483,6 @@ remove(database)
 
 ############################### Weather Assembly Code #################################
 
-#This script assembles the necessary weather data that was extracted during the weather query step
-site<-c(site)
 #Set output directories
 weather.dir<-source.dir
 setwd(weather.dir)
@@ -522,7 +520,6 @@ source(assemble.file)
 ############################# MARKOV Weather Generator Code ##############################
 #This code generates two site-specific files necessary for the Markov Weather Generator built into STEPWAT. mk_covar.in
 #and mk_prob.in. These files are based on the weather data for each site that is extracted during the previous step.
-site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10) 
 
 #Change directory to output directory of assemble script
 setwd(assembly_output)
