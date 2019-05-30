@@ -426,14 +426,16 @@ climate.ambient <- "Current"
 #Specify the RCP/GCM combinations
 climate.conditions <- c(climate.ambient,  "RCP45.CanESM2", "RCP45.CESM1-CAM5", "RCP45.CSIRO-Mk3-6-0", "RCP45.FGOALS-g2", "RCP45.FGOALS-s2", "RCP45.GISS-E2-R", "RCP45.HadGEM2-CC", "RCP45.HadGEM2-ES",
                         "RCP45.inmcm4", "RCP45.IPSL-CM5A-MR", "RCP45.MIROC5", "RCP45.MIROC-ESM","RCP45.MRI-CGCM3", "RCP85.CanESM2", "RCP85.CESM1-CAM5", "RCP85.CSIRO-Mk3-6-0", "RCP85.FGOALS-g2","RCP85.FGOALS-s2","RCP85.GISS-E2-R","RCP85.HadGEM2-CC","RCP85.HadGEM2-ES","RCP85.inmcm4","RCP85.IPSL-CM5A-MR","RCP85.MIROC5","RCP85.MIROC-ESM","RCP85.MRI-CGCM3")
-#Store climate conditons
-#List of all future and current scenarios putting "Current" first	
-temp <- climate.conditions[!grepl(climate.ambient, climate.conditions)] #make sure 'climate.ambient' is first entry
+
+# temp stores all climate conditions except climate.ambient
+temp <- climate.conditions[!grepl(climate.ambient, climate.conditions)]
+
+# If we are running future scenarios we need to append a downscaling method
 if(length(temp) > 0){
 
-#use with Vic weather database and all new weather databases
-if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
-{
+  #use with Vic weather database and all new weather databases
+  if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
+  {
     #Difference between start and end year(if you want 2030-2060 use 50; if you want 2070-2100 use 90 below)
     deltaFutureToSimStart_yr <- c("d50","d90")
     
@@ -457,8 +459,11 @@ if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
     #use with KP weather database
     YEARS<-c("50years","90years")
   }
+  
+  # prepend the downscaling method to all future conditions
+  temp <- paste0(downscaling.method, ".", rep(temp, each=length(downscaling.method))) #add (multiple) downscaling.method
 }
-temp <- paste0(downscaling.method, ".", rep(temp, each=length(downscaling.method))) #add (multiple) downscaling.method
+
 climate.conditions <-  c("Current",temp)
 temp<-c("Current",temp)
 
