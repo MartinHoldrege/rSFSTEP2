@@ -475,7 +475,6 @@ sites<-c(notassigned)
 source(query.file)
 
 # these variables are no longer needed
-remove(climate.conditions)
 remove(query.file)
 remove(database)
 
@@ -546,10 +545,23 @@ site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10)
 #Directory stores working directory
 directory<-source.dir
 
-#Set GCMs
-GCM<-c("Current","CanESM2","CESM1-CAM5","CSIRO-Mk3-6-0","FGOALS-g2","FGOALS-s2","GISS-E2-R","HadGEM2-CC","HadGEM2-ES","inmcm4", "IPSL-CM5A-MR", "MIROC5", "MIROC-ESM", "MRI-CGCM3")
-#Set RCPs
-RCP<-c("RCP45","RCP85")
+###################### Derive GCM and RCP information from climate.conditions #######################
+split <- strsplit(climate.conditions, "\\.")   # Split entries in climate.conditions on the period
+GCM <- c(); RCP <- c()       # Create our RCP and GCM vectors
+
+for(i in 1:length(split))    # For every GCM/RCP combination
+{
+  RCP[i] <- split[[i]][1]    # The first entry is the RCP
+  GCM[i] <- split[[i]][2]    # The second entry is the GCM
+}
+
+GCM <- unique(GCM)           # Remove any duplicates. This shouldn't happen for GCMs, but just to be safe.
+RCP <- unique(RCP)           # Remove any duplicates. This will most likely happen with RCPs.
+
+RCP <- RCP[!grepl("Current", RCP)]   # Since "Current" doesn't contain a period, it will appear in RCP
+GCM[is.na(GCM)] <- "Current"         # An NA value in GCM results from "Current" being parsed into RCP
+
+rm(split)                    # This variable is no longer needed.
 
 #Disturbance folder
 dist.directory<-paste(source.dir,"STEPWAT_DIST/",sep="")
