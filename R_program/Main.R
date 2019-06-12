@@ -427,6 +427,22 @@ climate.ambient <- "Current"
 climate.conditions <- c(climate.ambient,  "RCP45.CanESM2", "RCP45.CESM1-CAM5", "RCP45.CSIRO-Mk3-6-0", "RCP45.FGOALS-g2", "RCP45.FGOALS-s2", "RCP45.GISS-E2-R", "RCP45.HadGEM2-CC", "RCP45.HadGEM2-ES",
                         "RCP45.inmcm4", "RCP45.IPSL-CM5A-MR", "RCP45.MIROC5", "RCP45.MIROC-ESM","RCP45.MRI-CGCM3", "RCP85.CanESM2", "RCP85.CESM1-CAM5", "RCP85.CSIRO-Mk3-6-0", "RCP85.FGOALS-g2","RCP85.FGOALS-s2","RCP85.GISS-E2-R","RCP85.HadGEM2-CC","RCP85.HadGEM2-ES","RCP85.inmcm4","RCP85.IPSL-CM5A-MR","RCP85.MIROC5","RCP85.MIROC-ESM","RCP85.MRI-CGCM3")
 
+###################### Derive GCM and RCP information from climate.conditions #######################
+split <- strsplit(climate.conditions, "\\.")   # Split entries in climate.conditions on the period
+GCM <- c(); RCP <- c()       # Create our RCP and GCM vectors
+
+for(i in 1:length(split))    # For every GCM/RCP combination
+{
+  RCP[i] <- split[[i]][1]    # The first entry is the RCP
+  GCM[i] <- split[[i]][2]    # The second entry is the GCM
+}
+
+GCM <- unique(GCM)           # Remove any duplicates. This shouldn't happen for GCMs, but just to be safe.
+RCP <- unique(RCP)           # Remove any duplicates. This will most likely happen with RCPs.
+
+RCP <- RCP[!grepl("Current", RCP)]   # Since "Current" doesn't contain a period, it will appear in RCP
+GCM[is.na(GCM)] <- "Current"         # An NA value in GCM results from "Current" being parsed into RCP
+
 # temp stores all climate conditions except climate.ambient
 temp <- climate.conditions[!grepl(climate.ambient, climate.conditions)]
 
@@ -477,6 +493,7 @@ source(query.file)
 # these variables are no longer needed
 remove(query.file)
 remove(database)
+rm(split)
 
 ############################### End Weather Query Code ################################
 
@@ -544,24 +561,6 @@ site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10)
 
 #Directory stores working directory
 directory<-source.dir
-
-###################### Derive GCM and RCP information from climate.conditions #######################
-split <- strsplit(climate.conditions, "\\.")   # Split entries in climate.conditions on the period
-GCM <- c(); RCP <- c()       # Create our RCP and GCM vectors
-
-for(i in 1:length(split))    # For every GCM/RCP combination
-{
-  RCP[i] <- split[[i]][1]    # The first entry is the RCP
-  GCM[i] <- split[[i]][2]    # The second entry is the GCM
-}
-
-GCM <- unique(GCM)           # Remove any duplicates. This shouldn't happen for GCMs, but just to be safe.
-RCP <- unique(RCP)           # Remove any duplicates. This will most likely happen with RCPs.
-
-RCP <- RCP[!grepl("Current", RCP)]   # Since "Current" doesn't contain a period, it will appear in RCP
-GCM[is.na(GCM)] <- "Current"         # An NA value in GCM results from "Current" being parsed into RCP
-
-rm(split)                    # This variable is no longer needed.
 
 #Disturbance folder
 dist.directory<-paste(source.dir,"STEPWAT_DIST/",sep="")
