@@ -8,7 +8,7 @@ DBI, RSQLite, rSOILWAT2, doParallel
 On a super computer:
 --
 1. Make sure all the scripts are executable (i.e. given executable permissions) prior to following the steps below: chmod +x nameoffile
-2. Copy the weather data in the inputs folder within rSFSTEP2.
+2. Copy the weather database to the inputs folder within rSFSTEP2.
 3. Set the location of the weather database in the Main.R script of the R_program folder (where it says set database location), along with the name of the weather database (where it says Provide the name of the database in quotes).
 4. Add site ids, you wish to run the wrapper on, to the siteid variable (third line from top) in the generate_rSFSTEP2_structure.sh script. Site 1 and 2 are present as examples.
 5. Edit jobname, accountname and the location of results.txt (last line) in the sample.sh script, located in the R_program folder. Adjust wall time and nodes/cpus required if necessary.
@@ -27,7 +27,7 @@ Once the sbatch tasks have been succesfully completed, follow the steps below to
 On a local machine:
 --
 1. Make sure all the scripts are executable (i.e. given executable permissions) prior to following the steps below: chmod +x nameoffile
-2. Copy the weather data in the inputs folder within rSFSTEP2.
+2. Copy the weather database to the inputs folder within rSFSTEP2.
 3. Set the location of the weather database in the Main.R script of the R_program folder (where it says set database location), along with the name of the weather database (where it says Provide the name of the database in quotes).
 4. Add site ids, you wish to run the wrapper on, to the siteid variable (third line from top) in the generate_rSFSTEP2_structure.sh script. Site 1 and 2 are present as examples.
 5. Run the cloneSTEPWAT2.sh script.
