@@ -6,9 +6,6 @@
 library(doParallel)
 registerDoParallel(proc_count)
 
-  #Loop through all sites
-  #load a particular site
-  site<-site[1]
   s<-1
 
   foreach (h = 1:H) %dopar%
@@ -21,7 +18,7 @@ registerDoParallel(proc_count)
     
     #Write the mkv_covar.in and mkv_prob.in files
     print_mkv_files(mkv_doy = res[["mkv_doy"]], mkv_woy = res[["mkv_woy"]],
-      path = file.path(assembly_output, paste0("Site","_",site,"/","Site", "_", site, "_", scen)))
+      path = file.path(assembly_output, paste0("Site", "_", site, "_", scen)))
  }
 
 #reset directory to project level

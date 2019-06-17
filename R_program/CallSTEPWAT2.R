@@ -37,12 +37,12 @@ s<-site[1]
       system(paste0("mv ",soil.type.name," soils.in"))
       
       #Go to the weather directory
-      setwd(paste(assembly_output,"Site_",s,sep=""))
+      setwd(assembly_output)
       
       #If climate conditions = "Current", copy the current weather data files into the randomdata folder
       if (GCM[g]=="Current") {
         setwd(paste("Site_",s,"_",GCM[g],sep=""))
-        weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_",GCM[g],sep="")
+        weath.read<-paste(assembly_output,"Site_",s,"_",GCM[g],sep="")
         
         #Identify the directory the weather will be pasted into    
         weather.dir<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/",sep="")
@@ -141,16 +141,16 @@ s<-site[1]
         for (y in YEARS) { # loop through all the time periods 50 or 90
           for (r in RCP) { # loop through all the RCP
             #Go to the weather directory
-            setwd(paste(assembly_output,"Site_",s,sep=""))
+            setwd(assembly_output)
             
             #use with Vic weather database and all new weather databases
             if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
             {
               setwd(paste("Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep=""))
-              weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
+              weath.read<-paste(assembly_output,"Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
             } else {
               setwd(paste("Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep=""))
-              weath.read<-paste(assembly_output,"Site_",s,"/Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
+              weath.read<-paste(assembly_output,"Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
             }
             
             #Identify the directory the weather will be pasted into   
