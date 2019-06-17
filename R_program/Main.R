@@ -439,14 +439,32 @@ climate.ambient <- "Current"
 #Specify the RCP/GCM combinations
 climate.conditions <- c(climate.ambient,  "RCP45.CanESM2", "RCP45.CESM1-CAM5", "RCP45.CSIRO-Mk3-6-0", "RCP45.FGOALS-g2", "RCP45.FGOALS-s2", "RCP45.GISS-E2-R", "RCP45.HadGEM2-CC", "RCP45.HadGEM2-ES",
                         "RCP45.inmcm4", "RCP45.IPSL-CM5A-MR", "RCP45.MIROC5", "RCP45.MIROC-ESM","RCP45.MRI-CGCM3", "RCP85.CanESM2", "RCP85.CESM1-CAM5", "RCP85.CSIRO-Mk3-6-0", "RCP85.FGOALS-g2","RCP85.FGOALS-s2","RCP85.GISS-E2-R","RCP85.HadGEM2-CC","RCP85.HadGEM2-ES","RCP85.inmcm4","RCP85.IPSL-CM5A-MR","RCP85.MIROC5","RCP85.MIROC-ESM","RCP85.MRI-CGCM3")
-#Store climate conditons
-#List of all future and current scenarios putting "Current" first	
-temp <- climate.conditions[!grepl(climate.ambient, climate.conditions)] #make sure 'climate.ambient' is first entry
+
+###################### Derive GCM and RCP information from climate.conditions #######################
+split <- strsplit(climate.conditions, "\\.")   # Split entries in climate.conditions on the period
+GCM <- c(); RCP <- c()       # Create our RCP and GCM vectors
+
+for(i in 1:length(split))    # For every GCM/RCP combination
+{
+  RCP[i] <- split[[i]][1]    # The first entry is the RCP
+  GCM[i] <- split[[i]][2]    # The second entry is the GCM
+}
+
+GCM <- unique(GCM)           # Remove any duplicates. This shouldn't happen for GCMs, but just to be safe.
+RCP <- unique(RCP)           # Remove any duplicates. This will most likely happen with RCPs.
+
+RCP <- RCP[!grepl("Current", RCP)]   # Since "Current" doesn't contain a period, it will appear in RCP
+GCM[is.na(GCM)] <- "Current"         # An NA value in GCM results from "Current" being parsed into RCP
+
+# temp stores all climate conditions except climate.ambient
+temp <- climate.conditions[!grepl(climate.ambient, climate.conditions)]
+
+# If we are running future scenarios we need to append a downscaling method
 if(length(temp) > 0){
 
-#use with Vic weather database and all new weather databases
-if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
-{
+  #use with Vic weather database and all new weather databases
+  if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
+  {
     #Difference between start and end year(if you want 2030-2060 use 50; if you want 2070-2100 use 90 below)
     deltaFutureToSimStart_yr <- c("d50","d90")
     
@@ -470,8 +488,11 @@ if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
     #use with KP weather database
     YEARS<-c("50years","90years")
   }
+  
+  # prepend the downscaling method to all future conditions
+  temp <- paste0(downscaling.method, ".", rep(temp, each=length(downscaling.method)))
 }
-temp <- paste0(downscaling.method, ".", rep(temp, each=length(downscaling.method))) #add (multiple) downscaling.method
+
 climate.conditions <-  c("Current",temp)
 temp<-c("Current",temp)
 
@@ -485,19 +506,19 @@ source(query.file)
 # these variables are no longer needed
 remove(query.file)
 remove(database)
+rm(split)
 
 ############################### End Weather Query Code ################################
 
 ############################### Weather Assembly Code #################################
-
 #This script assembles the necessary weather data that was extracted during the weather query step
-site<-c(site)
+
 #Set output directories
 weather.dir<-source.dir
 setwd(weather.dir)
-#Create a new folder called StepWat.Weather.Markov.Test in which to put the weather files and markov files
-dir.create("StepWat.Weather.Markov.Test", showWarnings = FALSE)
-assembly_output<-paste(source.dir,"StepWat.Weather.Markov.Test/",sep="")
+#Create a new folder called MarkovWeatherFiles in which to put the weather files and markov files
+dir.create("MarkovWeatherFiles", showWarnings = FALSE)
+assembly_output<-paste(source.dir,"MarkovWeatherFiles/",sep="")
 setwd(assembly_output)
 
 #Number of scenarios (GCM X RCP X Periods run)
@@ -529,7 +550,6 @@ source(assemble.file)
 ############################# MARKOV Weather Generator Code ##############################
 #This code generates two site-specific files necessary for the Markov Weather Generator built into STEPWAT. mk_covar.in
 #and mk_prob.in. These files are based on the weather data for each site that is extracted during the previous step.
-site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10) 
 
 #Change directory to output directory of assemble script
 setwd(assembly_output)
@@ -723,11 +743,6 @@ site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10)
 
 #Directory stores working directory
 directory<-source.dir
-
-#Set GCMs
-GCM<-c("Current","CanESM2","CESM1-CAM5","CSIRO-Mk3-6-0","FGOALS-g2","FGOALS-s2","GISS-E2-R","HadGEM2-CC","HadGEM2-ES","inmcm4", "IPSL-CM5A-MR", "MIROC5", "MIROC-ESM", "MRI-CGCM3")
-#Set RCPs
-RCP<-c("RCP45","RCP85")
 
 #Disturbance folder
 dist.directory<-paste(source.dir,"STEPWAT_DIST/",sep="")
