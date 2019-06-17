@@ -477,7 +477,7 @@ if(length(temp) > 0){
   }
   
   # prepend the downscaling method to all future conditions
-  temp <- paste0(downscaling.method, ".", rep(temp, each=length(downscaling.method))) #add (multiple) downscaling.method
+  temp <- paste0(downscaling.method, ".", rep(temp, each=length(downscaling.method)))
 }
 
 climate.conditions <-  c("Current",temp)
@@ -498,11 +498,12 @@ rm(split)
 ############################### End Weather Query Code ################################
 
 ############################### Weather Assembly Code #################################
+#This script assembles the necessary weather data that was extracted during the weather query step
 
 #Set output directories
 weather.dir<-source.dir
 setwd(weather.dir)
-#Create a new folder called StepWat.Weather.Markov.Test in which to put the weather files and markov files
+#Create a new folder called MarkovWeatherFiles in which to put the weather files and markov files
 dir.create("MarkovWeatherFiles", showWarnings = FALSE)
 assembly_output<-paste(source.dir,"MarkovWeatherFiles/",sep="")
 setwd(assembly_output)
