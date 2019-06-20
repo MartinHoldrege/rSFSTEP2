@@ -630,7 +630,7 @@ if(rescale_space){
       total_space <- data.frame(relVegAbund[i,,])
       
       # If there is only one entry in climate.conditions data.frame(relVegAbund)
-      # will behave differently than if climate.conditions contains more than o$
+      # will behave differently than if climate.conditions contains more than 1.
       # The following block accounts for this.
       if(length(climate.conditions) == 1){
         total_space <- t(total_space)
