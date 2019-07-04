@@ -25,6 +25,7 @@ While Cygwin comes preinstalled with some packages, other packages must be manua
 * libssl-devel
 * libtirpc-devel
 * make
+* python3
 * R
 * zlib-devel
 
@@ -57,7 +58,14 @@ Install rSOILWAT2, ensuring you are in the directory containing the rSOILWAT2 fo
 R CMD INSTALL --no-staged-install rSOILWAT2
 ```
 
-Now rSFSTEP2 is installed, and you can read the documentation on how to use rSFSTEP2 here:
+Now rSFSTEP2 is installed! However, one of the scripts assumes our Python 3 executable is called `python` although it is actually called `python3`. To remedy this problem, run the following commands:
+
+```
+echo alias python="python3" >> ~/.bash_profile
+source ~/.bash_profile
+```
+
+Finally, you can read the documentation on how to use rSFSTEP2 here:
 
 [rSFSTEP2 Documentation](https://github.com/DrylandEcology/rSFSTEP2)
 
