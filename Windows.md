@@ -12,6 +12,7 @@ After downloading Cygwin, you must install Cygwin, as well as certain Cygwin pac
 
 While Cygwin comes preinstalled with some packages, other packages must be manually installed. For each of the following packages, type its name into the search bar, select the dropdown under the "New" column, and select the highest version number that is not a test version.
 
+* dos2unix
 * gcc-core
 * gcc-c++
 * libbz2-devel
@@ -31,9 +32,10 @@ After selecting all packages, confirm your selections by clicking the dropdown t
 
 ## Installing rSFSTEP2
 
-Open Cygwin and type the following commands to download rSFSTEP2 and rSOILWAT2:
+Open Cygwin and type the following commands to download rSFSTEP2 and rSOILWAT2. The config line ensures that Unix line ending characters are preserved when cloning on Windows, as errors will otherwise occur when running scripts in Cygwin.
 
 ```
+git config --global core.autocrlf false
 git clone --recursive https://github.com/DrylandEcology/rSFSTEP2.git
 git clone --recursive https://github.com/DrylandEcology/rSOILWAT2.git
 ```
@@ -58,3 +60,19 @@ R CMD INSTALL --no-staged-install rSOILWAT2
 Now rSFSTEP2 is installed, and you can read the documentation on how to use rSFSTEP2 here:
 
 [rSFSTEP2 Documentation](https://github.com/DrylandEcology/rSFSTEP2)
+
+## Line endings
+
+When working with the codebase on Windows, you may run into problems where a program expects files to use Unix line endings, when they actually use Windows line endings, and vice versa. To remedy this problem, use the following commands provided by the `dos2unix` package. If you are not sure which command to use, try both until the problem is resolved.
+
+To convert a file with Windows line endings to use Unix line endings:
+
+```
+dos2unix (insert file name here)
+```
+
+To convert a file with Unix line endings to use Windows line endings:
+
+```
+unix2dos (insert file name here)
+```
