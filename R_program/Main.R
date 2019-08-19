@@ -28,6 +28,9 @@ db_loc<-""
 # If you would like to run with only the space parameters that you have specified in the input.csv, set this boolean to FALSE.
 rescale_space <- TRUE
 
+# The number of rgroups specified in
+STEPWAT_rgroups <- 10
+
 #Database location, edit the name of the weather database accordingly
 database_name<-"dbWeatherData.VicSites.v3.2.0.sqlite3"
 database<-file.path(db_loc,database_name)
@@ -43,9 +46,9 @@ markov.file<-paste(source.dir,"MarkovWeatherFileGenerator.R",sep="")
 
 #Vegetation script (to estimate relative abundance of functional groups based on climate relationships)
 vegetation.file <- file.path(source.dir, "Vegetation.R")
+
 #Wrapper script (Executes STEPWAT2 for all climate-disturbance-input parameter combinations)
 wrapper.file<-paste(source.dir,"CallSTEPWAT2.R", sep="")
-
 
 #Output script (Combines individual output files into a master output file for each site)
 output.file<-paste(source.dir,"AppendTreatments.R", sep="")
@@ -569,7 +572,7 @@ remove(temp)
 ############################# Vegetation Code ##############################
 # only rescale space if requested.
 if(rescale_space){
-  # This code determines plant functional type relative abundance/composition
+  # This code determines plant functional type relative abundance
   # and then scales STEPWAT2 parameters accordingly
   source(vegetation.file)
 
@@ -582,7 +585,7 @@ if(rescale_space){
   Succulents <- c("succulents")
   Grasses_C3 <- c("p.cool.grass")
   Grasses_C4 <- c("p.warm.grass")
-  Grasses_Annuals <- c("a.cool.grass", "a.warm.grass")
+  Grasses_Annuals <- c("a.cool.grass")
   Trees <- c()
 
   # move to dist folder so we can begin adjusting space
@@ -594,13 +597,13 @@ if(rescale_space){
   # Loop through all of the rgroup files defined in inputs
   for(rg in rgroups){
     #read the start of the file (where space is defined)
-    rgrp <- readLines(con <- paste0(rg,".in"), n = 10)
+    rgrp <- readLines(con <- paste0(rg,".in"), STEPWAT_rgroups)
     # split the file along tabs. This produces a 2d array of entries where rows are lines of the original file
     # and columns are the entries of each line
     rgrp <- strsplit(rgrp, "\t")
     
     # These vectors store the space parameters already in the rgroup file.
-    # They are needed in case one functional type has two rgroup entries.
+    # They are needed in case one SOILWAT2 functional type is represented by more than one STEPWAT2 functional group.
     shrub_space <- c(); forb_space <- c(); succulent_space <- c(); c3_space <- c()
     c4_space <- c(); annuals_space <- c(); tree_space <- c()
   
@@ -737,9 +740,6 @@ if(rescale_space){
   remove(temp_trees)
   remove(readjusted_space)
 } # end if(rescale_space)
-
-############################# Vegetation Code ##############################
-
 
 ############### Run Wrapper Code ############################################################
 

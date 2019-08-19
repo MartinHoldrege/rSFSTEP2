@@ -1,4 +1,3 @@
-#The Burke-Lauenroth Laboratory
 #STEPWAT R Wrapper
 # Vegetation code for STEPWAT Wrapper
 
@@ -76,7 +75,6 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
     dimnames = list(names(sw_weatherList), climate.conditions,
       names(temp_veg[["Rel_Abundance_L0"]])))
   res[1, 1, ] <- temp_veg[["Rel_Abundance_L0"]]
-
 
   # Calculate relative abundance
     for (k_scen in seq_len(n_climate.conditions)) {
