@@ -1,7 +1,6 @@
 #STEPWAT R Wrapper
 # Vegetation code for STEPWAT Wrapper
 
-
 #' Function to estimate relative abundance of functional groups based on
 #' climate relationships
 #'

@@ -9,7 +9,6 @@ library(rSOILWAT2)
 
 stopifnot(utils::packageVersion("rSOILWAT2") >= "2.4.0")
 
-
 #Load source files and directories in the environment
 #Note: Change number of processors and output database location according to your system
 
@@ -27,9 +26,6 @@ db_loc<-""
 # If you would like to rescale space parameters based on climate for each climate scenario, set this boolean to TRUE.
 # If you would like to run with only the space parameters that you have specified in the input.csv, set this boolean to FALSE.
 rescale_space <- TRUE
-
-# The number of rgroups specified in
-STEPWAT_rgroups <- 10
 
 #Database location, edit the name of the weather database accordingly
 database_name<-"dbWeatherData.VicSites.v3.2.0.sqlite3"
@@ -249,6 +245,9 @@ soil.types<-c(treatments,treatments_vector)
 #######################################################################################
 #RGROUP INPUTS (including fire and grazing)
 
+# The number of rgroups specified for each treatment in InputData_Rgroup.csv will be stored in this variable.
+n_rgroups <- c()
+
 #Get all sites specified in the csv
 rgroup_data_all_sites<-unique(rgroup_data$Site)
 
@@ -277,6 +276,9 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
         df=rgroup_data_site[rgroup_data_site$treatment==i,]
         #Get rid of Site and treatment columns
         df <- subset(df, select = -c(1,2))
+        
+        # Record the number of entries (i.e. the number of RGroups) for later use
+        n_rgroups <- c(n_rgroups, nrow(df))
         
         #Populate the dist.freq vector with fire frequency inputs
         temp<-df['Prescribed_killfreq']
@@ -340,6 +342,9 @@ for(i in treatments)
   df=rgroup_data_site[rgroup_data_site$treatment==i,]
   #Get rid of Site and treatment columns
   df <- subset(df, select = -c(1,2) )
+  
+  # Record the number of entries (i.e. the number of RGroups) for later use
+  n_rgroups <- c(n_rgroups, nrow(df))
   
   #Populate the dist.freq vector with fire frequency inputs
   temp<-df['Prescribed_killfreq']
@@ -576,7 +581,7 @@ if(rescale_space){
   # and then scales STEPWAT2 parameters accordingly
   source(vegetation.file)
 
-  # Array of plant functional type relative abundance/composition
+  # Array of plant functional type relative abundance
   relVegAbund <- estimate_STEPWAT_relativeVegAbundance(sw_weatherList)
 
   # vectors that map rgroup names to the columns names of relVegAbund
@@ -594,10 +599,15 @@ if(rescale_space){
   # will store the new rgroup files temporarily
   new_rgroup_files <- c()
 
+  file_number <- 0
   # Loop through all of the rgroup files defined in inputs
   for(rg in rgroups){
-    #read the start of the file (where space is defined)
-    rgrp <- readLines(con <- paste0(rg,".in"), STEPWAT_rgroups)
+    file_number <- file_number + 1
+    
+    #read the start of the file (where space is defined). n_rgroups[file_number] is the number of rgroups that were read in when creating
+    #this specific rgroup file (the file denoted by "rg").
+    rgrp <- readLines(con <- paste0(rg,".in"), n_rgroups[file_number])
+    
     # split the file along tabs. This produces a 2d array of entries where rows are lines of the original file
     # and columns are the entries of each line
     rgrp <- strsplit(rgrp, "\t")
