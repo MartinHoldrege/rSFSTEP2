@@ -6,7 +6,7 @@
 #'
 #' @param sw_weatherList A list. An object as created by the function
 #'   \code{\link{extract_data}} of the script
-#'   \var{"RSoilWat31.Weather.Data.Query_V2.R"}. It is a list with an element
+#'   \var{"WeatherQuery.R"}. It is a list with an element
 #'   for each \var{sites}; these elements are themselves lists with elements
 #'   for each \var{climate.conditions}; these are in turn lists with a
 #'   S4-class
