@@ -694,7 +694,7 @@ if(rescale_space){
         # with tabs between columns and newline characters between rows
         readjusted_space <- ""
         for(y in 1:length(rgrp)){
-          #if space is greater than 0 we need to make sure the rgroup is turned on. Otherwise it wuould be off.
+          #if space is greater than 0 we need to make sure the rgroup is turned on. Otherwise it should be off.
           rgrp[[y]][9] <- if (rgrp[[y]][2] > 0) 1L else 0L  #rgrp[[y]][9] is the on/off column
           
           readjusted_space <- paste0(readjusted_space, rgrp[[y]][1])
