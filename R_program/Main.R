@@ -400,6 +400,10 @@ for (i in rgroup_files)
   system(paste("cat ","rgroup_template.in >>",i,sep=""))
 }
 
+######################################### Process Growing Season Input ##########################################
+
+growingSeason <- read.csv("InputData_GrowingSeason.csv", header = TRUE, row.names = 1);
+
 setwd("..")
 
 ########################### Garbage collection for species, rgroup, and soil requirements #######################
