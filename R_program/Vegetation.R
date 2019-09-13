@@ -111,3 +111,42 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
 
   res
 }
+
+#' Function to scale phenology values based on climate and a reference growing season.
+#' 
+#' @param matrices A list of matrices that will all be scaled.
+#' @param sw_weatherList A list. An object as created by the function
+#'   \code{\link{extract_data}} of the script
+#'   \var{"WeatherQuery.R"}. It is a list with an element
+#'   for each \var{sites}; these elements are themselves lists with elements
+#'   for each \var{climate.conditions}; these are in turn lists with a
+#'   S4-class
+#'   \code{\link[rSOILWAT2:swWeatherData-class]{rSOILWAT2::swWeatherData}}
+#'   object for each year as is returned by the function
+#'   \code{\link[rSOILWAT2]{dbW_getWeatherData}}.
+#' @param defaultGrowingSeason A numeric vector of values between 1 and 12. The number
+#'   of months that describe the potential active season of the input matrice.
+#' @param site_latitude A numeric vector. The latitude in degrees (N, positive;
+#'   S, negative) of the simulation \var{sites}. If vector of length one, then
+#'   the value is repeated for all \var{sites}.
+#'
+#' @examples
+#' data("weatherData", package = "rSOILWAT2")
+#' matrices <- list( phenology, prod_litter, prod_biomass)
+#' sw_weatherList <- list(
+#'   site1 = list(Current = weatherData, Future1 = weatherData),
+#'   site2 = list(Current = weatherData, Future1 = weatherData))
+#' defaultGrowingSeason <- c(3:12)
+#' scale_phenology(matrices, sw_weatherList, defaultGrowingSeason)
+#' 
+scale_phenology <- function(matrices, sw_weatherList, defaultGrowingSeason = 3:10, 
+                            site_latitude = 90){
+  temp_clim <- rSOILWAT2::calc_SiteClimate(
+    weatherList = sw_weatherList[[1]][[1]], do_C4vars = TRUE, do_Cheatgrass_ClimVars = TRUE,
+    latitude = site_latitude[1])
+  
+  return_value <- rSOILWAT2::adjBiom_by_temp(matrices, temp_clim[["meanMonthlyTempC"]], 
+    reference_growing_season = defaultGrowingSeason)
+  
+  return_value
+}
