@@ -6,6 +6,7 @@
 library(DBI)
 library(RSQLite)
 library(rSOILWAT2)
+library(stringr)
 
 stopifnot(utils::packageVersion("rSOILWAT2") >= "2.4.0")
 
@@ -400,10 +401,6 @@ for (i in rgroup_files)
   system(paste("cat ","rgroup_template.in >>",i,sep=""))
 }
 
-######################################### Process Growing Season Input ##########################################
-
-growingSeason <- read.csv("InputData_GrowingSeason.csv", header = TRUE, row.names = 1);
-
 setwd("..")
 
 ########################### Garbage collection for species, rgroup, and soil requirements #######################
@@ -433,7 +430,6 @@ remove(soil_data_all_sites)
 remove(soil_data_all_sites_vectors)
 remove(soil_data_site)
 #variables related to species
-remove(db_loc)
 remove(species_data_site)
 remove(species_data_all_sites_vectors)
 remove(species_data)
@@ -577,6 +573,53 @@ remove(markov.file)
 remove(temp)
 
 ############################# End MARKOV Weather Generator Code ##############################
+
+############################# Phenology Code ###############################
+# This code determines plant functional type phenology
+# and then scales STEPWAT2 parameters accordingly
+source(vegetation.file)
+setwd(db_loc)
+
+growingSeason <- read.csv("InputData_GrowingSeason.csv", header = TRUE);
+
+# Parse growingSeason for phenology values
+phenology <- growingSeason[grepl(".*_phenology", growingSeason[ , 1]), , ]
+row.names(phenology) <- str_match(phenology[ , 1], "(.*)_phenology")[ , 2]
+phenology <- phenology[ , 2:ncol(phenology)]
+
+# Parse growingSeason for pctlive values
+pctlive <- growingSeason[grepl(".*_pctlive", growingSeason[ , 1]), , ]
+row.names(pctlive) <- str_match(pctlive[ , 1], "(.*)_pctlive")[ , 2]
+pctlive <- pctlive[ , 2:ncol(pctlive)]
+
+# Parse growingSeason for litter values
+litter <- growingSeason[grepl("LITTER", growingSeason[ , 1]), , ]
+litter <- litter[ , 2:ncol(litter)]
+
+# Parse growingSeason for gowing season values.
+seasons <- growingSeason[grepl("growing_season", growingSeason[ , 1]), , ]
+seasons <- seasons[ , 2:ncol(seasons)]
+# Turn seasons into a vector of months where plants are expected to grow. 
+seasons <- Position(function(x) x, seasons):Position(function(x) x, seasons, right = TRUE)
+
+# scale_phenology() assumes the seasons are rows, so we have to transpose.
+phenology <- t(phenology)
+pctlive <- t(pctlive)
+litter <- t(litter)
+
+values_to_scale <- list(phenology, pctlive, litter)
+
+scaled_values <- scale_phenology(values_to_scale, sw_weatherList, seasons)
+
+# STEPWAT2 expects months to be columns, so we transpose back
+phenology <- t(scaled_values[[1]])
+pctlive <- t(scaled_values[[2]])
+litter <- t(scaled_values[[3]])
+
+# Return to the directory we were in before scaling phenology
+setwd(assembly_output)
+
+# TODO: write the new sxw tables.
 
 ############################# Vegetation Code ##############################
 # only rescale space if requested.
