@@ -584,20 +584,33 @@ growingSeason <- read.csv("InputData_GrowingSeason.csv", header = TRUE);
 
 # Parse growingSeason for phenology values
 phenology <- growingSeason[grepl(".*_phenology", growingSeason[ , 1]), , ]
+# Use regex to name the rows using the capture group (.*)
 row.names(phenology) <- str_match(phenology[ , 1], "(.*)_phenology")[ , 2]
+# Remove the header column now that it is reflected in the row names.
 phenology <- phenology[ , 2:ncol(phenology)]
+
+# Parse growingSeason for biomass values
+biomass <- growingSeason[grepl(".*_biomass", growingSeason[ ,1]), , ]
+# Use regex to name the rows using the capture group (.*)
+row.names(biomass) <- str_match(biomass[ ,1], "(.*)_biomass")[ , 2]
+# Remove the header column now that it is reflected in the row names.
+biomass <- biomass[ , 2:ncol(biomass)]
 
 # Parse growingSeason for pctlive values
 pctlive <- growingSeason[grepl(".*_pctlive", growingSeason[ , 1]), , ]
+# Use regex to name the rows using the capture group (.*)
 row.names(pctlive) <- str_match(pctlive[ , 1], "(.*)_pctlive")[ , 2]
+# Remove the header column now that it is reflected in the row names.
 pctlive <- pctlive[ , 2:ncol(pctlive)]
 
 # Parse growingSeason for litter values
 litter <- growingSeason[grepl("LITTER", growingSeason[ , 1]), , ]
+# Remove the header. Since there is only one row we don't need to remember it.
 litter <- litter[ , 2:ncol(litter)]
 
-# Parse growingSeason for gowing season values.
+# Parse growingSeason for growing season values.
 seasons <- growingSeason[grepl("growing_season", growingSeason[ , 1]), , ]
+# Remove the header. Since there is only one row we don't need to remember it.
 seasons <- seasons[ , 2:ncol(seasons)]
 # Turn seasons into a vector of months where plants are expected to grow. 
 seasons <- Position(function(x) x, seasons):Position(function(x) x, seasons, right = TRUE)
@@ -606,15 +619,18 @@ seasons <- Position(function(x) x, seasons):Position(function(x) x, seasons, rig
 phenology <- t(phenology)
 pctlive <- t(pctlive)
 litter <- t(litter)
+biomass <- t(biomass)
 
-values_to_scale <- list(phenology, pctlive, litter)
-
+# condense the values we want to scale into a single list
+values_to_scale <- list(phenology, pctlive, litter, biomass)
+# scale the list
 scaled_values <- scale_phenology(values_to_scale, sw_weatherList, seasons)
 
 # STEPWAT2 expects months to be columns, so we transpose back
 phenology <- t(scaled_values[[1]])
 pctlive <- t(scaled_values[[2]])
 litter <- t(scaled_values[[3]])
+biomass <- t(scaled_values[[4]])
 
 # Return to the directory we were in before scaling phenology
 setwd(assembly_output)
