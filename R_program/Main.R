@@ -632,10 +632,19 @@ pctlive <- t(scaled_values[[2]])
 litter <- t(scaled_values[[3]])
 biomass <- t(scaled_values[[4]])
 
-# Return to the directory we were in before scaling phenology
-setwd(assembly_output)
+# Move to the DIST directory so we can start writing the files.
+setwd(source.dir)
+setwd("STEPWAT_DIST")
 
-# TODO: write the new sxw tables.
+# Write the phenology table
+write.table(phenology, "sxwphen.in", append = FALSE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
+# Write the prod table
+write.table(litter, "sxwprod_v2.in", append = FALSE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "\n")
+write.table("\n[end]\n", "sxwprod_v2.in", append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
+write.table(biomass, "sxwprod_v2.in", append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
+write.table("\n[end]\n", "sxwprod_v2.in", append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
+write.table(pctlive, "sxwprod_v2.in", append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
+write.table("\n[end]\n", "sxwprod_v2.in", append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
 
 ############################# Vegetation Code ##############################
 # only rescale space if requested.
@@ -655,9 +664,6 @@ if(rescale_space){
   Grasses_C4 <- c("p.warm.grass")
   Grasses_Annuals <- c("a.cool.grass")
   Trees <- c()
-
-  # move to dist folder so we can begin adjusting space
-  setwd("../STEPWAT_DIST")
 
   # will store the new rgroup files temporarily
   new_rgroup_files <- c()
