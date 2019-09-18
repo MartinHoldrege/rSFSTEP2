@@ -579,6 +579,8 @@ remove(temp)
 # and then scales STEPWAT2 parameters accordingly
 source(vegetation.file)
 setwd(db_loc)
+sxwprod_v2_files <- c()
+sxwphen_files <- c()
 
 growingSeason <- read.csv("InputData_GrowingSeason.csv", header = TRUE);
 
@@ -626,25 +628,30 @@ values_to_scale <- list(phenology, pctlive, litter, biomass)
 # scale the list
 scaled_values <- scale_phenology(values_to_scale, sw_weatherList, seasons)
 
-# STEPWAT2 expects months to be columns, so we transpose back
-phenology <- t(scaled_values[[1]])
-pctlive <- t(scaled_values[[2]])
-litter <- t(scaled_values[[3]])
-biomass <- t(scaled_values[[4]])
-
 # Move to the DIST directory so we can start writing the files.
 setwd(source.dir)
 setwd("STEPWAT_DIST")
 
-# Write the phenology table
-write.table(phenology, "sxwphen.in", append = FALSE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
-# Write the prod table
-write.table(litter, "sxwprod_v2.in", append = FALSE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "\n")
-write.table("\n[end]\n", "sxwprod_v2.in", append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
-write.table(biomass, "sxwprod_v2.in", append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
-write.table("\n[end]\n", "sxwprod_v2.in", append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
-write.table(pctlive, "sxwprod_v2.in", append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
-write.table("\n[end]\n", "sxwprod_v2.in", append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
+for(scen in 1:length(climate.conditions)){
+  # Pull the correct entry out of the scaled list, and transpose it back.
+  phenology <- t(scaled_values[[scen]][[1]])
+  pctlive <- t(scaled_values[[scen]][[2]])
+  litter <- t(scaled_values[[scen]][[3]])
+  biomass <- t(scaled_values[[scen]][[4]])
+  
+  sxwprod_v2_files[scen] <- paste0("sxwprod_v2.", climate.conditions[scen], ".in")
+  sxwphen_files[scen] <- paste0("sxwphen.", climate.conditions[scen], ".in")
+  
+  # Write the phenology table
+  write.table(phenology, sxwphen_files[scen], append = FALSE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
+  # Write the prod table
+  write.table(litter, sxwprod_v2_files[scen], append = FALSE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "\n")
+  write.table("\n[end]\n", sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
+  write.table(biomass, sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
+  write.table("\n[end]\n", sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
+  write.table(pctlive, sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
+  write.table("\n[end]\n", sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
+}
 
 ############################# Vegetation Code ##############################
 # only rescale space if requested.
