@@ -27,7 +27,7 @@ s<-site[1]
     
     setwd(directory)      
     
-   	 #Copy in the soils.in file that is specified by the user in TreatmentFiles
+    #Copy in the soils.in file that is specified by the user in TreatmentFiles
     for(soil in soil.types){
       setwd(dist.directory)
       soil.type.name<-paste0(soil,".in")
@@ -47,6 +47,20 @@ s<-site[1]
         #Identify the directory the weather will be pasted into    
         weather.dir<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/",sep="")
         weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
+        
+        setwd(dist.directory)
+        system(paste0("cp ", "sxwphen.", GCM[g], ".in", " ", directory,
+                      "Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw"))
+        setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw"))
+        system("rm sxwphen.in")
+        system(paste0("mv ", "sxwphen.", GCM[g], ".in", " sxwphen.in"))
+        
+        setwd(dist.directory)
+        system(paste0("cp ", "sxwprod_v2.", GCM[g], ".in", " ", directory,
+                      "Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw"))
+        setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw"))
+        system("rm sxwprod_v2.in")
+        system(paste0("mv ", "sxwprod_v2.", GCM[g], ".in", " sxwprod_v2.in"))
         
         #Copy the weather data into the randomdata folder, commenting out creation of weather.in files as default so rSFSTEP2
         #uses only weather data generated from the markov weather generator but retain this code if one wants to create and copy 30 years of 
@@ -151,12 +165,28 @@ s<-site[1]
             #use with Vic weather database and all new weather databases
             if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
             {
+              downscaling_method <- paste0("hybrid-delta-3mod.",y)
               setwd(paste("Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep=""))
               weath.read<-paste(assembly_output,"Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
             } else {
+              downscaling_method <- paste0("hybrid-delta.",y)
               setwd(paste("Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep=""))
               weath.read<-paste(assembly_output,"Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
             }
+            
+            setwd(dist.directory)
+            system(paste0("cp ", "sxwphen.", downscaling_method, ".", r, ".", GCM[g], ".in", " ", directory,
+                          "Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw"))
+            setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw"))
+            system("rm sxwphen.in")
+            system(paste0("mv ", "sxwphen.", downscaling_method, ".", r, ".", GCM[g], ".in", " sxwphen.in"))
+            
+            setwd(dist.directory)
+            system(paste0("cp ", "sxwprod_v2.", downscaling_method, ".", r, ".", GCM[g], ".in", " ", directory,
+                          "Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw"))
+            setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw"))
+            system("rm sxwprod_v2.in")
+            system(paste0("mv ", "sxwprod_v2.", downscaling_method, ".", r, ".", GCM[g], ".in", " sxwprod_v2.in"))
             
             #Identify the directory the weather will be pasted into   
             weather.dir<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/",sep="")
