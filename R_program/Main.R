@@ -28,6 +28,10 @@ db_loc<-""
 # If you would like to run with only the space parameters that you have specified in the input.csv, set this boolean to FALSE.
 rescale_space <- TRUE
 
+# If you would like to rescale phenology parameters based on climate for each climate scenario set this boolean to TRUE.
+# If you would like to run with the default STEPWAT2 phenology values set this boolean to FALSE.
+rescale_phenology <- TRUE
+
 #Database location, edit the name of the weather database accordingly
 database_name<-"dbWeatherData.VicSites.v3.2.0.sqlite3"
 database<-file.path(db_loc,database_name)
@@ -577,80 +581,93 @@ remove(temp)
 ############################# Phenology Code ###############################
 # This code determines plant functional type phenology
 # and then scales STEPWAT2 parameters accordingly
-source(vegetation.file)
-setwd(db_loc)
-sxwprod_v2_files <- c()
-sxwphen_files <- c()
-
-growingSeason <- read.csv("InputData_GrowingSeason.csv", header = TRUE);
-
-# Parse growingSeason for phenology values
-phenology <- growingSeason[grepl(".*_phenology", growingSeason[ , 1]), , ]
-# Use regex to name the rows using the capture group (.*)
-row.names(phenology) <- str_match(phenology[ , 1], "(.*)_phenology")[ , 2]
-# Remove the header column now that it is reflected in the row names.
-phenology <- phenology[ , 2:ncol(phenology)]
-
-# Parse growingSeason for biomass values
-biomass <- growingSeason[grepl(".*_biomass", growingSeason[ ,1]), , ]
-# Use regex to name the rows using the capture group (.*)
-row.names(biomass) <- str_match(biomass[ ,1], "(.*)_biomass")[ , 2]
-# Remove the header column now that it is reflected in the row names.
-biomass <- biomass[ , 2:ncol(biomass)]
-
-# Parse growingSeason for pctlive values
-pctlive <- growingSeason[grepl(".*_pctlive", growingSeason[ , 1]), , ]
-# Use regex to name the rows using the capture group (.*)
-row.names(pctlive) <- str_match(pctlive[ , 1], "(.*)_pctlive")[ , 2]
-# Remove the header column now that it is reflected in the row names.
-pctlive <- pctlive[ , 2:ncol(pctlive)]
-
-# Parse growingSeason for litter values
-litter <- growingSeason[grepl("LITTER", growingSeason[ , 1]), , ]
-# Remove the header. Since there is only one row we don't need to remember it.
-litter <- litter[ , 2:ncol(litter)]
-
-# Parse growingSeason for growing season values.
-seasons <- growingSeason[grepl("growing_season", growingSeason[ , 1]), , ]
-# Remove the header. Since there is only one row we don't need to remember it.
-seasons <- seasons[ , 2:ncol(seasons)]
-# Turn seasons into a vector of months where plants are expected to grow. 
-seasons <- Position(function(x) x, seasons):Position(function(x) x, seasons, right = TRUE)
-
-# scale_phenology() assumes the seasons are rows, so we have to transpose.
-phenology <- t(phenology)
-pctlive <- t(pctlive)
-litter <- t(litter)
-biomass <- t(biomass)
-
-# condense the values we want to scale into a single list
-values_to_scale <- list(phenology, pctlive, litter, biomass)
-# scale the list
-scaled_values <- scale_phenology(values_to_scale, sw_weatherList, seasons)
-
-# Move to the DIST directory so we can start writing the files.
-setwd(source.dir)
-setwd("STEPWAT_DIST")
-
-for(scen in 1:length(climate.conditions)){
-  # Pull the correct entry out of the scaled list, and transpose it back.
-  phenology <- t(scaled_values[[scen]][[1]])
-  pctlive <- t(scaled_values[[scen]][[2]])
-  litter <- t(scaled_values[[scen]][[3]])
-  biomass <- t(scaled_values[[scen]][[4]])
+if(rescale_phenology){
+  source(vegetation.file)
+  setwd(db_loc)
+  sxwprod_v2_files <- c()
+  sxwphen_files <- c()
   
-  sxwprod_v2_files[scen] <- paste0("sxwprod_v2.", climate.conditions[scen], ".in")
-  sxwphen_files[scen] <- paste0("sxwphen.", climate.conditions[scen], ".in")
+  growingSeason <- read.csv("InputData_GrowingSeason.csv", header = TRUE);
   
-  # Write the phenology table
-  write.table(phenology, sxwphen_files[scen], append = FALSE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
-  # Write the prod table
-  write.table(litter, sxwprod_v2_files[scen], append = FALSE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "\n")
-  write.table("\n[end]\n", sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
-  write.table(biomass, sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
-  write.table("\n[end]\n", sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
-  write.table(pctlive, sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
-  write.table("\n[end]\n", sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
+  # Parse growingSeason for phenology values
+  phenology <- growingSeason[grepl(".*_phenology", growingSeason[ , 1]), , ]
+  # Use regex to name the rows using the capture group (.*)
+  row.names(phenology) <- str_match(phenology[ , 1], "(.*)_phenology")[ , 2]
+  # Remove the header column now that it is reflected in the row names.
+  phenology <- phenology[ , 2:ncol(phenology)]
+  
+  # Parse growingSeason for biomass values
+  biomass <- growingSeason[grepl(".*_biomass", growingSeason[ ,1]), , ]
+  # Use regex to name the rows using the capture group (.*)
+  row.names(biomass) <- str_match(biomass[ ,1], "(.*)_biomass")[ , 2]
+  # Remove the header column now that it is reflected in the row names.
+  biomass <- biomass[ , 2:ncol(biomass)]
+  
+  # Parse growingSeason for pctlive values
+  pctlive <- growingSeason[grepl(".*_pctlive", growingSeason[ , 1]), , ]
+  # Use regex to name the rows using the capture group (.*)
+  row.names(pctlive) <- str_match(pctlive[ , 1], "(.*)_pctlive")[ , 2]
+  # Remove the header column now that it is reflected in the row names.
+  pctlive <- pctlive[ , 2:ncol(pctlive)]
+  
+  # Parse growingSeason for litter values
+  litter <- growingSeason[grepl("LITTER", growingSeason[ , 1]), , ]
+  # Remove the header. Since there is only one row we don't need to remember it.
+  litter <- litter[ , 2:ncol(litter)]
+  
+  # Parse growingSeason for growing season values.
+  seasons <- growingSeason[grepl("growing_season", growingSeason[ , 1]), , ]
+  # Remove the header. Since there is only one row we don't need to remember it.
+  seasons <- seasons[ , 2:ncol(seasons)]
+  # Turn seasons into a vector of months where plants are expected to grow. 
+  seasons <- Position(function(x) x, seasons):Position(function(x) x, seasons, right = TRUE)
+  
+  # scale_phenology() assumes the seasons are rows, so we have to transpose.
+  phenology <- t(phenology)
+  pctlive <- t(pctlive)
+  litter <- t(litter)
+  biomass <- t(biomass)
+  
+  # condense the values we want to scale into a single list
+  values_to_scale <- list(phenology, pctlive, litter, biomass)
+  # scale the list
+  scaled_values <- scale_phenology(values_to_scale, sw_weatherList, seasons)
+  
+  # Move to the DIST directory so we can start writing the files.
+  setwd(source.dir)
+  setwd("STEPWAT_DIST")
+  
+  for(scen in 1:length(climate.conditions)){
+    # Pull the correct entry out of the scaled list, and transpose it back.
+    phenology <- t(scaled_values[[scen]][[1]])
+    pctlive <- t(scaled_values[[scen]][[2]])
+    litter <- t(scaled_values[[scen]][[3]])
+    biomass <- t(scaled_values[[scen]][[4]])
+    
+    # Normalize each row of phenology to sum to 1.
+    for(thisRow in 1:nrow(phenology)){
+      phenology[thisRow, ] <- phenology[thisRow, ] / sum(phenology[thisRow, ])
+    }
+    
+    # Round so we don't output scientific notation
+    phenology <- round(phenology, 9)
+    pctlive <- round(pctlive, 9)
+    litter <- round(litter, 9)
+    biomass <- round(biomass, 9)
+    
+    sxwprod_v2_files[scen] <- paste0("sxwprod_v2.", climate.conditions[scen], ".in")
+    sxwphen_files[scen] <- paste0("sxwphen.", climate.conditions[scen], ".in")
+    
+    # Write the phenology table
+    write.table(phenology, sxwphen_files[scen], append = FALSE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
+    # Write the prod table
+    write.table(litter, sxwprod_v2_files[scen], append = FALSE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "\n")
+    write.table("\n[end]\n", sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
+    write.table(biomass, sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
+    write.table("\n[end]\n", sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
+    write.table(pctlive, sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
+    write.table("\n[end]\n", sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
+  }
 }
 
 ############################# Vegetation Code ##############################
