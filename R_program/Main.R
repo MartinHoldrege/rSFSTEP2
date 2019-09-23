@@ -584,9 +584,6 @@ remove(temp)
 if(rescale_phenology){
   source(vegetation.file)
   setwd(db_loc)
-  sxwprod_v2_files <- c()
-  sxwphen_files <- c()
-  
   growingSeason <- read.csv("InputData_GrowingSeason.csv", header = TRUE);
   
   # Parse growingSeason for phenology values
@@ -655,19 +652,31 @@ if(rescale_phenology){
     litter <- round(litter, 9)
     biomass <- round(biomass, 9)
     
-    sxwprod_v2_files[scen] <- paste0("sxwprod_v2.", climate.conditions[scen], ".in")
-    sxwphen_files[scen] <- paste0("sxwphen.", climate.conditions[scen], ".in")
+    sxwprod_v2_file <- paste0("sxwprod_v2.", climate.conditions[scen], ".in")
+    sxwphen_file <- paste0("sxwphen.", climate.conditions[scen], ".in")
     
     # Write the phenology table
-    write.table(phenology, sxwphen_files[scen], append = FALSE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
+    write.table(phenology, sxwphen_file, append = FALSE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
     # Write the prod table
-    write.table(litter, sxwprod_v2_files[scen], append = FALSE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "\n")
-    write.table("\n[end]\n", sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
-    write.table(biomass, sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
-    write.table("\n[end]\n", sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
-    write.table(pctlive, sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
-    write.table("\n[end]\n", sxwprod_v2_files[scen], append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
+    write.table(litter, sxwprod_v2_file, append = FALSE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "\n")
+    write.table("\n[end]\n", sxwprod_v2_file, append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
+    write.table(biomass, sxwprod_v2_file, append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
+    write.table("\n[end]\n", sxwprod_v2_file, append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
+    write.table(pctlive, sxwprod_v2_file, append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
+    write.table("\n[end]\n", sxwprod_v2_file, append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
   }
+  
+  # Garbage collection for this section
+  remove(growingSeason)
+  remove(litter)
+  remove(phenology)
+  remove(biomass)
+  remove(pctlive)
+  remove(values_to_scale)
+  remove(scaled_values)
+  remove(seasons)
+  remove(sxwphen_file)
+  remove(sxwprod_v2_file)
 }
 
 ############################# Vegetation Code ##############################
