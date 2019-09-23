@@ -685,6 +685,10 @@ if(rescale_space){
   # This code determines plant functional type relative abundance
   # and then scales STEPWAT2 parameters accordingly
   source(vegetation.file)
+  
+  # Move to the DIST directory so we can read the files.
+  setwd(source.dir)
+  setwd("STEPWAT_DIST")
 
   # Array of plant functional type relative abundance
   relVegAbund <- estimate_STEPWAT_relativeVegAbundance(sw_weatherList)
