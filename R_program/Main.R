@@ -28,8 +28,8 @@ db_loc<-""
 # If you would like to run with only the space parameters that you have specified in the input.csv, set this boolean to FALSE.
 rescale_space <- TRUE
 
-# If you would like to rescale phenology parameters based on climate for each climate scenario set this boolean to TRUE.
-# If you would like to run with the default STEPWAT2 phenology values set this boolean to FALSE.
+# If you would like to rescale monthly phenological activity, monthly biomass, monthly % live, and monthly litter based on climate for each climate scenario set this boolean to TRUE.
+# If you would like to run with the default values already in STEPWAT2 set this boolean to FALSE.
 rescale_phenology <- TRUE
 
 #Database location, edit the name of the weather database accordingly
@@ -580,7 +580,7 @@ remove(temp)
 
 ############################# Phenology Code ###############################
 # This code determines plant functional type phenology
-# and then scales STEPWAT2 parameters accordingly
+# and then scales phenological activity, biomass, litter and % live accordingly
 if(rescale_phenology){
   source(vegetation.file)
   setwd(db_loc)
@@ -588,21 +588,21 @@ if(rescale_phenology){
   
   # Parse growingSeason for phenology values
   phenology <- growingSeason[grepl(".*_phenology", growingSeason[ , 1]), , ]
-  # Use regex to name the rows using the capture group (.*)
+  # Set the rgroup names as rownames of object phenology
   row.names(phenology) <- str_match(phenology[ , 1], "(.*)_phenology")[ , 2]
   # Remove the header column now that it is reflected in the row names.
   phenology <- phenology[ , 2:ncol(phenology)]
   
   # Parse growingSeason for biomass values
   biomass <- growingSeason[grepl(".*_biomass", growingSeason[ ,1]), , ]
-  # Use regex to name the rows using the capture group (.*)
+  # Set the rgroup names as rownames of object biomass
   row.names(biomass) <- str_match(biomass[ ,1], "(.*)_biomass")[ , 2]
   # Remove the header column now that it is reflected in the row names.
   biomass <- biomass[ , 2:ncol(biomass)]
   
   # Parse growingSeason for pctlive values
   pctlive <- growingSeason[grepl(".*_pctlive", growingSeason[ , 1]), , ]
-  # Use regex to name the rows using the capture group (.*)
+  # Set the rgroup names as rownames of object pctlive
   row.names(pctlive) <- str_match(pctlive[ , 1], "(.*)_pctlive")[ , 2]
   # Remove the header column now that it is reflected in the row names.
   pctlive <- pctlive[ , 2:ncol(pctlive)]
@@ -619,7 +619,7 @@ if(rescale_phenology){
   # Turn seasons into a vector of months where plants are expected to grow. 
   seasons <- Position(function(x) x, seasons):Position(function(x) x, seasons, right = TRUE)
   
-  # scale_phenology() assumes the seasons are rows, so we have to transpose.
+  # scale_phenology() assumes the months are rows, so we have to transpose.
   phenology <- t(phenology)
   pctlive <- t(pctlive)
   litter <- t(litter)

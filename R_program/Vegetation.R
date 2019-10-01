@@ -155,7 +155,7 @@ scale_phenology <- function(matrices, sw_weatherList, defaultGrowingSeason = 3:1
   # Calculate relative abundance
   for (k_scen in seq_len(n_climate.conditions)) {
     temp_clim <- rSOILWAT2::calc_SiteClimate(
-      weatherList = sw_weatherList[[n_sites]][[k_scen]], do_C4vars = TRUE, do_Cheatgrass_ClimVars = TRUE,
+      weatherList = sw_weatherList[[n_sites]][[k_scen]], do_C4vars = FALSE, do_Cheatgrass_ClimVars = FALSE,
       latitude = site_latitude[n_sites])
     
     return_list[[k_scen]] <- rSOILWAT2::adjBiom_by_temp(matrices, temp_clim[["meanMonthlyTempC"]], 
