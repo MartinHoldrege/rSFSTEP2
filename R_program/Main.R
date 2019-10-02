@@ -6,7 +6,6 @@
 library(DBI)
 library(RSQLite)
 library(rSOILWAT2)
-library(stringr)
 
 stopifnot(utils::packageVersion("rSOILWAT2") >= "2.4.0")
 
