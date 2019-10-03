@@ -1,3 +1,5 @@
+############## Make an output directory ################
+system("mkdir output")
 ############## Locate all rgroup.in files ##############
 rgroup.files <- list.files(".", pattern = "rgroup")
 ############### Remove the template file ###############
@@ -121,8 +123,27 @@ for(col in 1:ncol(wildfire)){
 }
 
 ############################### Write output files ################################
-system("mkdir output")
 write.csv(all.group.stats, "output/all_group_parameters.csv")
 write.csv(resource.availibility.stats, "output/resource_availibility_parameters.csv")
 write.csv(wet.dry.stats, "output/wet_dry_parameters.csv")
 write.csv(wildfire.stats, "output/wildfire_parameters.csv")
+
+########################### compare swxphen.in files ##############################
+phen.files <- list.files(".", pattern = "sxwphen")
+
+phen.original <- read.csv("../../inputs/InputData_Phenology.csv", row.names = 1)
+
+phen.data <- list()
+
+for(index in 1:length(phen.files)){
+  phen.data[[index]] <- read.table(phen.files[index], row.names = 1)
+}
+
+for(i in 1:length(phen.data)){
+  phen.data[[i]] <- data.matrix(phen.data[[i]])
+}
+phen.data <- simplify2array(phen.data)
+
+for(file in 1:length(phen.files)){
+  write.csv(round(phen.data[, , file] - phen.original, 7), paste0("output/", phen.files[file], "-original.csv"))
+}
