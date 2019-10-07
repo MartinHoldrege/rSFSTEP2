@@ -33,7 +33,8 @@ for(index in 1:length(rgroup.files)){
   ##### Read the first table (all group parameters like space) #####
   all.group.parameters[[index]] <- list()
   while(rgroup_data[line,1] != "[end]"){
-    this.line <- as.numeric(sapply(rgroup_data[line, 2:length(rgroup_data[line,])], as.character))
+    this.line <- as.numeric(sapply(rgroup_data[line, 2:length(rgroup_data[line,])], 
+                                   as.character))
     all.group.parameters[[index]][[line]] <- this.line[!is.na(this.line)]
     line <- line + 1
   }
@@ -43,7 +44,8 @@ for(index in 1:length(rgroup.files)){
   resource.availibility[[index]] <- list()
   line <- line + 1
   while(rgroup_data[line,1] != "[end]"){
-    this.line <- as.numeric(sapply(rgroup_data[line, 2:length(rgroup_data[line,])], as.character))
+    this.line <- as.numeric(sapply(rgroup_data[line, 2:length(rgroup_data[line,])], 
+                                   as.character))
     resource.availibility[[index]][[line - last.end]] <- this.line[!is.na(this.line)]
     line <- line + 1
   }
@@ -53,7 +55,8 @@ for(index in 1:length(rgroup.files)){
   wet.dry.modifiers[[index]] <- list()
   line <- line + 1
   while(rgroup_data[line,1] != "[end]"){
-    this.line <- as.numeric(sapply(rgroup_data[line, 2:length(rgroup_data[line,])], as.character))
+    this.line <- as.numeric(sapply(rgroup_data[line, 2:length(rgroup_data[line,])], 
+                                   as.character))
     wet.dry.modifiers[[index]][[line - last.end]] <- this.line[!is.na(this.line)]
     line <- line + 1
   }
@@ -71,17 +74,23 @@ for(index in 1:length(rgroup.files)){
 
 ####### Compress lists of lists of vectors into 3d arrays ##########
 for(i in 1:length(resource.availibility)){
-  resource.availibility[[i]] <- matrix(unlist(resource.availibility[[i]]), nrow = length(resource.availibility[[i]]), byrow = TRUE)
+  resource.availibility[[i]] <- matrix(unlist(resource.availibility[[i]]), 
+                                       nrow = length(resource.availibility[[i]]), 
+                                       byrow = TRUE)
 }
 resource.availibility <- simplify2array(resource.availibility)
 
 for(i in 1:length(all.group.parameters)){
-  all.group.parameters[[i]] <- matrix(unlist(all.group.parameters[[i]]), nrow = length(all.group.parameters[[i]]), byrow = TRUE)
+  all.group.parameters[[i]] <- matrix(unlist(all.group.parameters[[i]]), 
+                                      nrow = length(all.group.parameters[[i]]), 
+                                      byrow = TRUE)
 }
 all.group.parameters <- simplify2array(all.group.parameters)
 
 for(i in 1:length(wet.dry.modifiers)){
-  wet.dry.modifiers[[i]] <- matrix(unlist(wet.dry.modifiers[[i]]), nrow = length(wet.dry.modifiers[[i]]), byrow = TRUE)
+  wet.dry.modifiers[[i]] <- matrix(unlist(wet.dry.modifiers[[i]]), 
+                                   nrow = length(wet.dry.modifiers[[i]]), 
+                                   byrow = TRUE)
 }
 wet.dry.modifiers <- simplify2array(wet.dry.modifiers)
 
@@ -89,8 +98,10 @@ wet.dry.modifiers <- simplify2array(wet.dry.modifiers)
 wildfire <- matrix(unlist(wildfire), nrow = length(wildfire), byrow = TRUE)
 
 ############## Prepare all group parameters output #################
-all.group.stats <- array(dim = c(length(all.group.parameters[ , 1, 1]), length(all.group.parameters[1, , 1]) * 3))
-colnames(all.group.stats) <- rep(c("minimum", "maximum", "std"), length(all.group.parameters[1, , 1]))
+all.group.stats <- array(dim = c(length(all.group.parameters[ , 1, 1]), 
+                                 length(all.group.parameters[1, , 1]) * 3))
+colnames(all.group.stats) <- rep(c("minimum", "maximum", "std"), 
+                                 length(all.group.parameters[1, , 1]))
 for(row in 1:length(all.group.parameters[ , 1, 1])){
   for(col in 1:length(all.group.parameters[1, , 1])){
     all.group.stats[row, col * 3 - 2] <- round(min(all.group.parameters[row, col, ]), 5)
@@ -100,8 +111,10 @@ for(row in 1:length(all.group.parameters[ , 1, 1])){
 }
 
 ############### Prepare resource availibility output ###############
-resource.availibility.stats <- array(dim = c(length(resource.availibility[ , 1, 1]), length(resource.availibility[1, , 1]) * 3))
-colnames(resource.availibility.stats) <- rep(c("minimum", "maximum", "std"), length(resource.availibility[1, , 1]))
+resource.availibility.stats <- array(dim = c(length(resource.availibility[ , 1, 1]), 
+                                             length(resource.availibility[1, , 1]) * 3))
+colnames(resource.availibility.stats) <- rep(c("minimum", "maximum", "std"), 
+                                             length(resource.availibility[1, , 1]))
 for(row in 1:length(resource.availibility[ , 1, 1])){
   for(col in 1:length(resource.availibility[1, , 1])){
     resource.availibility.stats[row, col * 3 - 2] <- round(min(resource.availibility[row, col, ]), 5)
@@ -111,8 +124,10 @@ for(row in 1:length(resource.availibility[ , 1, 1])){
 }
 
 ############### Prepare wet-dry parameters output ##################
-wet.dry.stats <- array(dim = c(length(wet.dry.modifiers[ , 1, 1]), length(wet.dry.modifiers[1, , 1]) * 3))
-colnames(wet.dry.stats) <- rep(c("minimum", "maximum", "std"), length(wet.dry.modifiers[1, , 1]))
+wet.dry.stats <- array(dim = c(length(wet.dry.modifiers[ , 1, 1]), 
+                               length(wet.dry.modifiers[1, , 1]) * 3))
+colnames(wet.dry.stats) <- rep(c("minimum", "maximum", "std"), 
+                               length(wet.dry.modifiers[1, , 1]))
 for(row in 1:length(wet.dry.modifiers[ , 1, 1])){
   for(col in 1:length(wet.dry.modifiers[1, , 1])){
     wet.dry.stats[row, col * 3 - 2] <- round(min(wet.dry.modifiers[row, col, ]), 5)
@@ -131,10 +146,14 @@ for(col in 1:ncol(wildfire)){
 }
 
 ###################### Write output files ##########################
-write.csv(all.group.stats, "output/rgroup_comparisons/all_group_parameters.csv")
-write.csv(resource.availibility.stats, "output/rgroup_comparisonsresource_availibility_parameters.csv")
-write.csv(wet.dry.stats, "output/rgroup_comparisons/wet_dry_parameters.csv")
-write.csv(wildfire.stats, "output/rgroup_comparisons/wildfire_parameters.csv")
+write.csv(all.group.stats, 
+          "output/rgroup_comparisons/all_group_parameters.csv")
+write.csv(resource.availibility.stats, 
+          "output/rgroup_comparisonsresource_availibility_parameters.csv")
+write.csv(wet.dry.stats, 
+          "output/rgroup_comparisons/wet_dry_parameters.csv")
+write.csv(wildfire.stats, 
+          "output/rgroup_comparisons/wildfire_parameters.csv")
 
 ####################################################################################
 ########################### Compare swxphen.in files ###############################
@@ -160,9 +179,46 @@ for(i in 1:length(phen.data)){
 }
 phen.data <- simplify2array(phen.data)
 
+####################### Create Graphics ############################
+colors <- c("blue", "red", "green", 
+            "orange", "black", "brown",
+            "purple", "aquamarine", 
+            "pink", "grey", "tan")
+
+for(rgroup in 1:length(phen.original[, 1])){
+  nextColor <- 2
+  png(paste0("output/sxwphen_comparisons/", 
+             row.names(phen.original)[rgroup], 
+             "_graph.png"), 
+      width = 1080, height = 720)
+  plot(x = c(1:12), y = t(phen.original[rgroup,]), xlab = "Month", 
+       ylab = "Phenological Activity", 
+       main = paste0(row.names(phen.original)[rgroup], 
+                     " Phenological Differences"),
+       col = colors[1], type = "l", ylim = c(0, .5))
+  
+  for(file in 1:length(phen.data[1,1,])){
+    points(x = c(1:12), 
+           y = t(phen.data[rgroup, , file]), 
+           col = colors[nextColor], 
+           pch = (nextColor-1), 
+           cex = 3, lwd = 4)
+    nextColor <- nextColor + 1
+  }
+  
+  legend("topright",
+         phen.files,
+         col = colors[2:(file+1)],
+         pch = 1:(file))
+  
+  dev.off()
+}
+
 ###################### Write the CSV files #########################
 for(file in 1:length(phen.files)){
-  write.csv(round(phen.data[, , file] - phen.original, 7), paste0("output/sxwphen_comparisons/", phen.files[file], "-original.csv"))
+  write.csv(round(phen.data[, , file] - phen.original, 7), 
+            paste0("output/sxwphen_comparisons/", 
+                   phen.files[file], "-original.csv"))
 }
 
 ####################################################################################
@@ -227,7 +283,14 @@ for(index in 1:length(prod.files)){
   rownames(pctlive) <- rownames(pctlive.input)
   
   ##################### Write the CSV files ########################
-  write.csv(pctlive - pctlive.original, paste0("output/sxwprod_comparisons/PCTLIVE.", prod.files[index], "-original.csv"))
-  write.csv(biomass - biomass.original, paste0("output/sxwprod_comparisons/BIOMASS.", prod.files[index], "-original.csv"))
-  write.csv(litter - litter.original, paste0("output/sxwprod_comparisons/LITTER.", prod.files[index], "-original.csv"))
+  write.csv(pctlive - pctlive.original, 
+            paste0("output/sxwprod_comparisons/PCTLIVE.", 
+                   prod.files[index], 
+                   "-original.csv"))
+  write.csv(biomass - biomass.original, 
+            paste0("output/sxwprod_comparisons/BIOMASS.", 
+                   prod.files[index], "-original.csv"))
+  write.csv(litter - litter.original, 
+            paste0("output/sxwprod_comparisons/LITTER.", 
+                   prod.files[index], "-original.csv"))
 }
