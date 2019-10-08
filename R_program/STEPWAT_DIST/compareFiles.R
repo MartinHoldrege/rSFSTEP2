@@ -157,7 +157,7 @@ for(col in 1:ncol(wildfire)){
 write.csv(all.group.stats, 
           "output/rgroup_comparisons/all_group_parameters.csv")
 write.csv(resource.availibility.stats, 
-          "output/rgroup_comparisonsresource_availibility_parameters.csv")
+          "output/rgroup_comparisons/resource_availibility_parameters.csv")
 write.csv(wet.dry.stats, 
           "output/rgroup_comparisons/wet_dry_parameters.csv")
 write.csv(wildfire.stats, 
