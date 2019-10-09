@@ -193,40 +193,42 @@ phen.data <- simplify2array(phen.data)
 if(!file.exists("output/sxwphen_comparisons/graphics")){
   system("mkdir output/sxwphen_comparisons/graphics")
 }
-# Note that I specify 11 colors. 
-# This means we can have 10 phen files + the original phen file.
-colors <- c("blue", "red", "green", 
-            "orange", "black", "brown",
-            "purple", "aquamarine", 
-            "pink", "grey", "tan")
+
+colors <- c("blue", "black", "red", 
+            "green", "orange", "green4", 
+            "brown", "purple", "aquamarine", 
+            "pink", "grey")
 
 for(rgroup in 1:length(phen.original[, 1])){
-  nextColor <- 2
-  png(paste0("output/sxwphen_comparisons/graphics/", 
-             row.names(phen.original)[rgroup], 
-             "_graph.png"), 
-      width = 1080, height = 720)
-  plot(x = c(1:12), y = t(phen.original[rgroup,]), xlab = "Month", 
-       ylab = "Phenological Activity", 
-       main = paste0(row.names(phen.original)[rgroup], 
-                     " Phenological Differences"),
-       col = colors[1], type = "l", ylim = c(0, .5), lwd = 2)
-  
-  for(file in 1:length(phen.data[1,1,])){
-    points(x = c(1:12), 
-           y = t(phen.data[rgroup, , file]), 
-           col = colors[nextColor], 
-           pch = (nextColor-1), 
-           cex = 3, lwd = 4) # 3 and 4 fit well in a 1080 image
-    nextColor <- nextColor + 1
+  for(startFile in seq(from = 1, to = length(phen.files), by = 10)){
+    nextColor <- 2
+    png(paste0("output/sxwphen_comparisons/graphics/", 
+               row.names(phen.original)[rgroup], "_", 
+               startFile, "-", min(length(phen.data[1,1,]), startFile + 9),
+               "_graph.png"), 
+        width = 1080, height = 720)
+    plot(x = c(1:12), y = t(phen.original[rgroup,]), xlab = "Month", 
+         ylab = "Phenological Activity", 
+         main = paste0(row.names(phen.original)[rgroup], 
+                       " Phenological Differences"),
+         col = colors[1], type = "l", ylim = c(0, .5), lwd = 2)
+    
+    for(file in startFile:min(length(phen.data[1,1,]), startFile + 9)){
+      points(x = c(1:12), 
+             y = t(phen.data[rgroup, , file]), 
+             col = colors[nextColor], 
+             pch = (nextColor-1), 
+             cex = 3, lwd = 4) # 3 and 4 fit well in a 1080 image
+      nextColor <- nextColor + 1
+    }
+    
+    legend("topleft",
+           phen.files[startFile:min(length(phen.data[1,1,]), startFile + 9)],
+           col = colors[2:(nextColor-1)],
+           pch = 1:(nextColor-2))
+    
+    dev.off()
   }
-  
-  legend("topright",
-         phen.files,
-         col = colors[2:(file+1)],
-         pch = 1:(file))
-  
-  dev.off()
 }
 
 ###################### Write the CSV files #########################
@@ -321,53 +323,21 @@ if(!file.exists("output/sxwprod_comparisons/LITTER_graphics")){
   system("mkdir output/sxwprod_comparisons/LITTER_graphics")
 }
 
-nextColor <- 2
-png(paste0("output/sxwprod_comparisons/LITTER_graphics/", 
-           "LITTER", 
-           "_graph.png"), 
-    width = 1080, height = 720)
-plot(x = c(1:12), y = t(litter.original), xlab = "Month", 
-     ylab = "LITTER", 
-     main = "LITTER Differences",
-     col = colors[1], type = "l", ylim = c(0, 1), lwd = 2)
-
-for(file in 1:length(prod.files)){
-  points(x = c(1:12), 
-         y = litter.list[[file]], 
-         col = colors[nextColor], 
-         pch = (nextColor-1), 
-         cex = 3, lwd = 4)
-  nextColor <- nextColor + 1
-}
-
-legend("topright",
-       prod.files,
-       col = colors[2:(file+1)],
-       pch = 1:(file))
-
-dev.off()
-
-#################### Create BIOMASS Graphics #######################
-if(!file.exists("output/sxwprod_comparisons/biomass_graphics")){
-  system("mkdir output/sxwprod_comparisons/biomass_graphics")
-}
-
-for(rgroup in 1:nrow(biomass.original)){
+for(startFile in seq(from = 1, to = length(prod.files), by = 10)){
   nextColor <- 2
-  png(paste0("output/sxwprod_comparisons/biomass_graphics/", 
-             row.names(biomass.original)[rgroup], 
-             "_biomass_graph.png"), 
+  png(paste0("output/sxwprod_comparisons/LITTER_graphics/", 
+             "LITTER_", startFile, "-", 
+             min(length(litter.list), startFile + 9),
+             "_graph.png"), 
       width = 1080, height = 720)
-  
-  plot(x = c(1:12), y = t(biomass.original[rgroup, ]), xlab = "Month", 
-       ylab = "Biomass value", 
-       main = paste0(row.names(biomass.original)[rgroup],
-                     " Biomass Differences"),
+  plot(x = c(1:12), y = t(litter.original), xlab = "Month", 
+       ylab = "LITTER", 
+       main = "LITTER Differences",
        col = colors[1], type = "l", ylim = c(0, 1), lwd = 2)
   
-  for(file in 1:length(prod.files)){
+  for(file in startFile:min(length(litter.list), startFile + 9)){
     points(x = c(1:12), 
-           y = biomass.list[[file]][rgroup, ], 
+           y = litter.list[[file]], 
            col = colors[nextColor], 
            pch = (nextColor-1), 
            cex = 3, lwd = 4)
@@ -375,11 +345,50 @@ for(rgroup in 1:nrow(biomass.original)){
   }
   
   legend("topright",
-         prod.files,
-         col = colors[2:(file+1)],
-         pch = 1:(file))
+         prod.files[startFile:min(length(prod.files), startFile + 9)],
+         col = colors[2:(nextColor-1)],
+         pch = 1:(nextColor-2))
   
   dev.off()
+}
+
+#################### Create BIOMASS Graphics #######################
+if(!file.exists("output/sxwprod_comparisons/biomass_graphics")){
+  system("mkdir output/sxwprod_comparisons/biomass_graphics")
+}
+
+for(rgroup in 1:nrow(biomass.original)){
+  for(startFile in seq(from = 1, to = length(prod.files), by = 10)){
+    nextColor <- 2
+    png(paste0("output/sxwprod_comparisons/biomass_graphics/", 
+               row.names(biomass.original)[rgroup], 
+               "_", startFile, "-", 
+               min(length(prod.files), startFile + 9),
+               "_biomass_graph.png"), 
+        width = 1080, height = 720)
+    
+    plot(x = c(1:12), y = t(biomass.original[rgroup, ]), xlab = "Month", 
+         ylab = "Biomass value", 
+         main = paste0(row.names(biomass.original)[rgroup],
+                       " Biomass Differences"),
+         col = colors[1], type = "l", ylim = c(0, 1), lwd = 2)
+    
+    for(file in startFile:min(length(prod.files), startFile + 9)){
+      points(x = c(1:12), 
+             y = biomass.list[[file]][rgroup, ], 
+             col = colors[nextColor], 
+             pch = (nextColor-1), 
+             cex = 3, lwd = 4)
+      nextColor <- nextColor + 1
+    }
+    
+    legend("topright",
+           prod.files[startFile:min(length(prod.files), startFile + 9)],
+           col = colors[2:(nextColor-1)],
+           pch = 1:(nextColor-2))
+    
+    dev.off()
+  }
 }
 
 #################### Create PCTLIVE Graphics #######################
@@ -388,31 +397,35 @@ if(!file.exists("output/sxwprod_comparisons/pctlive_graphics")){
 }
 
 for(rgroup in 1:nrow(pctlive.original)){
-  nextColor <- 2
-  png(paste0("output/sxwprod_comparisons/pctlive_graphics/", 
-             row.names(pctlive.original)[rgroup], 
-             "_pctlive_graph.png"), 
-      width = 1080, height = 720)
-  
-  plot(x = c(1:12), y = t(pctlive.original[rgroup, ]), xlab = "Month", 
-       ylab = "% Live Value", 
-       main = paste0(row.names(pctlive.original)[rgroup],
-                     " % Live Differences"),
-       col = colors[1], type = "l", ylim = c(0, 1), lwd = 2)
-  
-  for(file in 1:length(prod.files)){
-    points(x = c(1:12), 
-           y = pctlive.list[[file]][rgroup, ], 
-           col = colors[nextColor], 
-           pch = (nextColor-1), 
-           cex = 3, lwd = 4)
-    nextColor <- nextColor + 1
+  for(startFile in seq(from = 1, to = length(prod.files), by = 10)){
+    nextColor <- 2
+    png(paste0("output/sxwprod_comparisons/pctlive_graphics/", 
+               row.names(pctlive.original)[rgroup], "_",
+               startFile, "-", 
+               min(length(prod.files), startFile + 9),
+               "_pctlive_graph.png"), 
+        width = 1080, height = 720)
+    
+    plot(x = c(1:12), y = t(pctlive.original[rgroup, ]), xlab = "Month", 
+         ylab = "% Live Value", 
+         main = paste0(row.names(pctlive.original)[rgroup],
+                       " % Live Differences"),
+         col = colors[1], type = "l", ylim = c(0, 1), lwd = 2)
+    
+    for(file in startFile:min(length(prod.files), startFile + 9)){
+      points(x = c(1:12), 
+             y = pctlive.list[[file]][rgroup, ], 
+             col = colors[nextColor], 
+             pch = (nextColor-1), 
+             cex = 3, lwd = 4)
+      nextColor <- nextColor + 1
+    }
+    
+    legend("topright",
+           prod.files[startFile:min(length(prod.files), startFile + 9)],
+           col = colors[2:(nextColor-1)],
+           pch = 1:(nextColor-2))
+    
+    dev.off()
   }
-  
-  legend("topright",
-         prod.files,
-         col = colors[2:(file+1)],
-         pch = 1:(file))
-  
-  dev.off()
 }
