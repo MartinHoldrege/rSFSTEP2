@@ -183,9 +183,20 @@ for(index in 1:length(phen.files)){
   phen.data[[index]] <- read.table(phen.files[index], row.names = 1)
 }
 
-################# Convert the list to a 3d array ###################
+############## Convert the list to 2d and 3d arrays ################
+# The 2d array represents the difference between the derived file 
+# and the original (derived - original). It is used for printing.
+# The 3d represents the derived values. It is used for graphing.
+# The 3d array is easier to work with. The 2d is easier to print.
+phen.data.2d <- matrix(nrow = nrow(phen.data[[1]]) * length(phen.files),
+                       ncol = 13)
+phen.data.2d[, 1] <- rep(phen.files, each = nrow(phen.original))
+rownames(phen.data.2d) <- rep(row.names(phen.original),
+                              length(phen.files))
+colnames(phen.data.2d) <- c("File Name", month.abb)
 for(i in 1:length(phen.data)){
   phen.data[[i]] <- data.matrix(phen.data[[i]])
+  phen.data.2d[(nrow(phen.original)*(i-1)+1):(i*nrow(phen.original)),2:13] <- data.matrix(phen.data[[i]] - phen.original)
 }
 phen.data <- simplify2array(phen.data)
 
@@ -231,12 +242,10 @@ for(rgroup in 1:length(phen.original[, 1])){
   }
 }
 
-###################### Write the CSV files #########################
-for(file in 1:length(phen.files)){
-  write.csv(round(phen.data[, , file] - phen.original, 7), 
-            paste0("output/sxwphen_comparisons/", 
-                   phen.files[file], "-original.csv"))
-}
+###################### Write the CSV file ##########################
+write.csv(phen.data.2d, 
+          paste0("output/sxwphen_comparisons/", 
+                 "Derived_Files-Original.csv"))
 
 ####################################################################################
 ########################## Compare sxwprod_v2.in files #############################
