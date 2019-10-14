@@ -221,7 +221,8 @@ for(rgroup in 1:length(phen.original[, 1])){
     plot(x = c(1:12), y = t(phen.original[rgroup,]), xlab = "Month", 
          ylab = "Phenological Activity", 
          main = paste0(row.names(phen.original)[rgroup], 
-                       " Phenological Differences"),
+                       " Phenological Activity Values by Month for ",
+                        "Multiple derived files."),
          col = colors[1], type = "l", ylim = c(0, .5), lwd = 2)
     
     for(file in startFile:min(length(phen.data[1,1,]), startFile + 9)){
@@ -341,7 +342,7 @@ for(startFile in seq(from = 1, to = length(prod.files), by = 10)){
       width = 1080, height = 720)
   plot(x = c(1:12), y = t(litter.original), xlab = "Month", 
        ylab = "LITTER", 
-       main = "LITTER Differences",
+       main = "LITTER Values for Derived Files by Month, Compared to Original (blue line)",
        col = colors[1], type = "l", ylim = c(0, 1), lwd = 2)
   
   for(file in startFile:min(length(litter.list), startFile + 9)){
@@ -379,7 +380,8 @@ for(rgroup in 1:nrow(biomass.original)){
     plot(x = c(1:12), y = t(biomass.original[rgroup, ]), xlab = "Month", 
          ylab = "Biomass value", 
          main = paste0(row.names(biomass.original)[rgroup],
-                       " Biomass Differences"),
+                       " Biomass Values by Month for Derived Files, ", 
+                        "Compared to Original (blue line)"),
          col = colors[1], type = "l", ylim = c(0, 1), lwd = 2)
     
     for(file in startFile:min(length(prod.files), startFile + 9)){
@@ -418,7 +420,7 @@ for(rgroup in 1:nrow(pctlive.original)){
     plot(x = c(1:12), y = t(pctlive.original[rgroup, ]), xlab = "Month", 
          ylab = "% Live Value", 
          main = paste0(row.names(pctlive.original)[rgroup],
-                       " % Live Differences"),
+                       " % Live Values for Derived Files, Compared to Original (blue line)."),
          col = colors[1], type = "l", ylim = c(0, 1), lwd = 2)
     
     for(file in startFile:min(length(prod.files), startFile + 9)){
