@@ -205,17 +205,29 @@ if(!file.exists("output/sxwphen_comparisons/graphics")){
   system("mkdir output/sxwphen_comparisons/graphics")
 }
 
+# We want to project "Current" onto every graphic, so we separate it
+# from phen.files
+phen.current.index <- grep(phen.files, pattern = "urrent")
+if(length(phen.current.index) == 1){
+  phen.current.file <- phen.files[phen.current.index]
+}
+phen.files <- phen.files[!grepl(phen.files, pattern = "urrent")]
+
 colors <- c("blue", "black", "red", 
             "green", "orange", "green4", 
             "brown", "purple", "aquamarine", 
             "pink", "grey")
 
+files.per.graphic <- 9
+
 for(rgroup in 1:length(phen.original[, 1])){
-  for(startFile in seq(from = 1, to = length(phen.files), by = 10)){
+  for(startFile in seq(from = 1, to = length(phen.files), 
+                       by = files.per.graphic)){
     nextColor <- 2
     png(paste0("output/sxwphen_comparisons/graphics/", 
                row.names(phen.original)[rgroup], "_", 
-               startFile, "-", min(length(phen.data[1,1,]), startFile + 9),
+               startFile, "-", 
+               min(length(phen.data[1,1,]), startFile + files.per.graphic - 1),
                "_graph.png"), 
         width = 1080, height = 720)
     plot(x = c(1:12), y = t(phen.original[rgroup,]), xlab = "Month", 
@@ -225,17 +237,37 @@ for(rgroup in 1:length(phen.original[, 1])){
                         "Multiple derived files."),
          col = colors[1], type = "l", ylim = c(0, .5), lwd = 2)
     
-    for(file in startFile:min(length(phen.data[1,1,]), startFile + 9)){
+    # If a "Current" file is present, we want to add it to every graph.
+    if(length(phen.current.index == 1)){
+      points(x = c(1:12), 
+             y = t(phen.data[rgroup, , phen.current.index]), 
+             col = colors[nextColor], 
+             pch = (nextColor-1), 
+             cex = 3, lwd = 2)
+      nextColor <- nextColor + 1
+    }
+    
+    for(file in startFile:min(length(phen.data[1,1,]), 
+                              startFile + files.per.graphic - 1)){
+      # Add this scenario to the graph
       points(x = c(1:12), 
              y = t(phen.data[rgroup, , file]), 
              col = colors[nextColor], 
              pch = (nextColor-1), 
-             cex = 3, lwd = 4) # 3 and 4 fit well in a 1080 image
+             cex = 3, lwd = 2) # 3 and 2 fit well in a 1080 image
       nextColor <- nextColor + 1
     }
     
+    if(length(phen.current.index == 1)){
+      legend.values <- c(phen.current.file, 
+                         phen.files[startFile:min(length(phen.files), 
+                                                  startFile + files.per.graphic - 1)])
+    } else {
+      legend.values <- phen.files[startFile:min(length(phen.files), 
+                                                startFile + files.per.graphic - 1)]
+    }
     legend("topleft",
-           phen.files[startFile:min(length(phen.data[1,1,]), startFile + 9)],
+           legend.values,
            col = colors[2:(nextColor-1)],
            pch = 1:(nextColor-2))
     
