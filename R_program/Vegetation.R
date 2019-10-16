@@ -144,7 +144,7 @@ scale_phenology <- function(matrices, sw_weatherList, defaultGrowingSeason = 3:1
   n_sites <- length(sw_weatherList)
   
   if (length(site_latitude) != n_sites && length(site_latitude) > 1) {
-    stop("'estimate_STEPWAT_relativeVegAbundance': argument 'site_latitude' ",
+    stop("'scale_phenology': argument 'site_latitude' ",
          "must have a length one or be equal to the length of 'sw_weatherList'.")
   } 
   
@@ -155,11 +155,16 @@ scale_phenology <- function(matrices, sw_weatherList, defaultGrowingSeason = 3:1
   # Calculate relative abundance
   for (k_scen in seq_len(n_climate.conditions)) {
     temp_clim <- rSOILWAT2::calc_SiteClimate(
-      weatherList = sw_weatherList[[n_sites]][[k_scen]], do_C4vars = FALSE, do_Cheatgrass_ClimVars = FALSE,
+      weatherList = sw_weatherList[[n_sites]][[k_scen]], 
+      do_C4vars = FALSE, 
+      do_Cheatgrass_ClimVars = FALSE,
       latitude = site_latitude[n_sites])
     
-    return_list[[k_scen]] <- rSOILWAT2::adjBiom_by_temp(matrices, temp_clim[["meanMonthlyTempC"]], 
-                                                        reference_growing_season = defaultGrowingSeason)
+    return_list[[k_scen]] <- rSOILWAT2::adjBiom_by_temp(matrices, 
+                                                        temp_clim[["meanMonthlyTempC"]], 
+                                                        reference_growing_season = defaultGrowingSeason,
+                                                        growing_limit_C = 4,
+                                                        isNorth = TRUE)
   }
   
   return_list

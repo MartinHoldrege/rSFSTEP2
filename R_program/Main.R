@@ -602,7 +602,7 @@ if(rescale_phenology){
   # condense the values we want to scale into a single list
   values_to_scale <- list(phenology, pctlive, litter, biomass)
   # scale the list
-  scaled_values <- scale_phenology(values_to_scale, sw_weatherList, seasons)
+  scaled_values <- scale_phenology(values_to_scale, sw_weatherList, seasons, site_latitude = 90)
   
   # Move to the DIST directory so we can start writing the files.
   setwd(source.dir)
