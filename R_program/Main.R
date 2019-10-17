@@ -601,12 +601,32 @@ if(rescale_phenology){
   
   # condense the values we want to scale into a single list
   values_to_scale <- list(phenology, pctlive, litter, biomass)
+  # TRUE if we want to output the growing season for each climate scenario.
+  output.growingseason <- TRUE
   # scale the list
-  scaled_values <- scale_phenology(values_to_scale, sw_weatherList, seasons, site_latitude = 90)
+  scaled_values <- scale_phenology(values_to_scale, sw_weatherList, 
+                                   seasons, site_latitude = 90, 
+                                   includeGrowingSeasonInfo = output.growingseason)
   
   # Move to the DIST directory so we can start writing the files.
   setwd(source.dir)
   setwd("STEPWAT_DIST")
+  
+  # output the growing season information
+  if(output.growingseason){
+    # Pull apart scaled_values
+    growingSeason <- scaled_values[[2]]
+    # scaled_values no longer needs the growing season information.
+    scaled_values <- scaled_values[[1]]
+    
+    # Convert growingSeason to an array for printing
+    growingSeason <- t(simplify2array(growingSeason))
+    row.names(growingSeason) <- climate.conditions
+    colnames(growingSeason) <- month.abb
+    # Print the growing season to the DIST directory
+    write.csv(growingSeason, "growingSeasons.csv",
+              row.names = TRUE)
+  }
   
   for(scen in 1:length(climate.conditions)){
     # Pull the correct entry out of the scaled list, and transpose it back.

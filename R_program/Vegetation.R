@@ -129,6 +129,12 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
 #' @param site_latitude A numeric vector. The latitude in degrees (N, positive;
 #'   S, negative) of the simulation \var{sites}. If vector of length one, then
 #'   the value is repeated for all \var{sites}.
+#' @param includeGrowingSeasonInfo A boolean value. If TRUE, the return list will
+#'   contain 2 entries: return[[1]] is a list of the scaled matrices and 
+#'   return[[2]] is a list of boolean vectors where TRUE means that for the given
+#'   scenario and month the mean temperature was above the minimum growing temperature.
+#'   If includeGrowingSeason is FALSE, only the list of scaled growing seasons
+#'   will be returned.
 #'
 #' @examples
 #' data("weatherData", package = "rSOILWAT2")
@@ -140,7 +146,7 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
 #' scale_phenology(matrices, sw_weatherList, defaultGrowingSeason)
 #' 
 scale_phenology <- function(matrices, sw_weatherList, defaultGrowingSeason = 3:10, 
-                            site_latitude = 90){
+                            site_latitude = 90, includeGrowingSeasonInfo = FALSE){
   n_sites <- length(sw_weatherList)
   
   if (length(site_latitude) != n_sites && length(site_latitude) > 1) {
@@ -151,6 +157,7 @@ scale_phenology <- function(matrices, sw_weatherList, defaultGrowingSeason = 3:1
   n_climate.conditions <- unique(lengths(sw_weatherList))
   
   return_list <- list()
+  growingSeason_list <- list()
   
   # Calculate relative abundance
   for (k_scen in seq_len(n_climate.conditions)) {
@@ -160,11 +167,19 @@ scale_phenology <- function(matrices, sw_weatherList, defaultGrowingSeason = 3:1
       do_Cheatgrass_ClimVars = FALSE,
       latitude = site_latitude[n_sites])
     
+    if(includeGrowingSeasonInfo){
+      growingSeason_list[[k_scen]] <- temp_clim[["meanMonthlyTempC"]] > 4
+    }
+    
     return_list[[k_scen]] <- rSOILWAT2::adjBiom_by_temp(matrices, 
                                                         temp_clim[["meanMonthlyTempC"]], 
                                                         reference_growing_season = defaultGrowingSeason,
                                                         growing_limit_C = 4,
                                                         isNorth = TRUE)
+  }
+  
+  if(includeGrowingSeasonInfo){
+    return_list <- list(return_list, growingSeason_list)
   }
   
   return_list
