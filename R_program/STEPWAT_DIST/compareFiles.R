@@ -6,6 +6,23 @@
 # Prevent this program from running outside of the DIST directory ##
 stopifnot(endsWith(getwd(), "STEPWAT_DIST"))
 
+#####################################################################################
+########################### Some Useful Functions ###################################
+#####################################################################################
+# Returns the row in growingSeason that pertains to the file.
+# this is needed when using the "growingSeason.csv" file because
+# it's order does not match the order of the phen or the prod files
+file.to.growing.season.index <- function(fileName, growingSeasons){
+  index <- -1
+  for(i in 1:nrow(growingSeasons)){
+    if(grepl(row.names(growingSeasons)[i], fileName)){
+      index <- i
+    }
+  }
+  
+  index
+}
+
 ################### Make an output directory #######################
 if(!file.exists("output")){
   system("mkdir output")
@@ -213,12 +230,23 @@ if(length(phen.current.index) == 1){
 }
 phen.files <- phen.files[!grepl(phen.files, pattern = "urrent")]
 
+############# Read in the growing season information ###############
+growingSeasons <- read.csv("growingSeasons.csv", row.names = 1)
+
+files.per.graphic <- 9
+
+growingSeasons <- ((growingSeasons - 1) * 10) - 0.015
+for(index in 1:length(phen.files)){
+  growingSeasonIndex <- file.to.growing.season.index(phen.files[index], 
+                                                     growingSeasons)
+  growingSeasons[growingSeasonIndex,] <- growingSeasons[growingSeasonIndex,] - 
+    (.004 * (index %% files.per.graphic))
+}
+
 colors <- c("blue", "black", "red", 
             "green", "orange", "green4", 
             "brown", "purple", "aquamarine", 
             "pink", "grey")
-
-files.per.graphic <- 9
 
 for(rgroup in 1:length(phen.original[, 1])){
   for(startFile in seq(from = 1, to = length(phen.files), 
@@ -234,8 +262,9 @@ for(rgroup in 1:length(phen.original[, 1])){
          ylab = "Phenological Activity", 
          main = paste0(row.names(phen.original)[rgroup], 
                        " Phenological Activity Values by Month for ",
-                        "Multiple derived files."),
-         col = colors[1], type = "l", ylim = c(0, .5), lwd = 2)
+                        "Multiple derived files. Growing seasons for each",
+                        "file are visible at the bottom of the graph."),
+         col = colors[1], type = "l", ylim = c(-.05, .5), lwd = 2)
     
     # If a "Current" file is present, we want to add it to every graph.
     if(length(phen.current.index == 1)){
@@ -244,17 +273,34 @@ for(rgroup in 1:length(phen.original[, 1])){
              col = colors[nextColor], 
              pch = (nextColor-1), 
              cex = 3, lwd = 2)
+      
+      lines(x = c(1:12), 
+            y = growingSeasons[file.to.growing.season.index(phen.current.file, 
+                                                            growingSeasons), ] - .036,
+            col = colors[nextColor], 
+            lwd = 5)
+      
       nextColor <- nextColor + 1
     }
     
-    for(file in startFile:min(length(phen.data[1,1,]), 
+    for(file in startFile:min(length(phen.files), 
                               startFile + files.per.graphic - 1)){
+      if(file == phen.current.file){
+        next
+      }
       # Add this scenario to the graph
       points(x = c(1:12), 
-             y = t(phen.data[rgroup, , file]), 
+             y = t(phen.data[rgroup, , file + 1]), 
              col = colors[nextColor], 
              pch = (nextColor-1), 
              cex = 3, lwd = 2) # 3 and 2 fit well in a 1080 image
+      
+      lines(x = c(1:12), 
+            y = growingSeasons[file.to.growing.season.index(phen.files[file], 
+                                                            growingSeasons), ],
+            col = colors[nextColor], 
+            lwd = 5)
+      
       nextColor <- nextColor + 1
     }
     
