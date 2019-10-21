@@ -263,7 +263,7 @@ for(rgroup in 1:length(phen.original[, 1])){
          main = paste0(row.names(phen.original)[rgroup], 
                        " Phenological Activity Values by Month for ",
                         "Multiple derived files. Growing seasons for each",
-                        "file are visible at the bottom of the graph."),
+                        " file are visible at the bottom of the graph."),
          col = colors[1], type = "l", ylim = c(-.05, .5), lwd = 2)
     
     # If a "Current" file is present, we want to add it to every graph.
@@ -411,6 +411,9 @@ if(!file.exists("output/sxwprod_comparisons/LITTER_graphics")){
   system("mkdir output/sxwprod_comparisons/LITTER_graphics")
 }
 
+# Increasing the spacing between growing season lines for prod files.
+growingSeasons <- growingSeasons * 2
+
 for(startFile in seq(from = 1, to = length(prod.files), by = 10)){
   nextColor <- 2
   png(paste0("output/sxwprod_comparisons/LITTER_graphics/", 
@@ -420,8 +423,11 @@ for(startFile in seq(from = 1, to = length(prod.files), by = 10)){
       width = 1080, height = 720)
   plot(x = c(1:12), y = t(litter.original), xlab = "Month", 
        ylab = "LITTER", 
-       main = "LITTER Values for Derived Files by Month, Compared to Original (blue line)",
-       col = colors[1], type = "l", ylim = c(0, 1), lwd = 2)
+       main = paste0("LITTER Values for Derived Files by Month,",
+                     " Compared to Original (blue line). ",
+                     "Growing seasons for each file shown ",
+                     "at the bottom."),
+       col = colors[1], type = "l", ylim = c(-0.08, 1), lwd = 2)
   
   for(file in startFile:min(length(litter.list), startFile + 9)){
     points(x = c(1:12), 
@@ -429,6 +435,12 @@ for(startFile in seq(from = 1, to = length(prod.files), by = 10)){
            col = colors[nextColor], 
            pch = (nextColor-1), 
            cex = 3, lwd = 4)
+    
+    lines(x = c(1:12),
+          y = growingSeasons[file.to.growing.season.index(prod.files[file], growingSeasons),],
+          col = colors[nextColor],
+          lwd = 5)
+    
     nextColor <- nextColor + 1
   }
   
@@ -459,8 +471,9 @@ for(rgroup in 1:nrow(biomass.original)){
          ylab = "Biomass value", 
          main = paste0(row.names(biomass.original)[rgroup],
                        " Biomass Values by Month for Derived Files, ", 
-                        "Compared to Original (blue line)"),
-         col = colors[1], type = "l", ylim = c(0, 1.25), lwd = 2)
+                       "Compared to Original (blue line)",
+                       " with growing season shown at the bottom."),
+         col = colors[1], type = "l", ylim = c(-.08, 1.25), lwd = 2)
     
     for(file in startFile:min(length(prod.files), startFile + 9)){
       points(x = c(1:12), 
@@ -468,6 +481,12 @@ for(rgroup in 1:nrow(biomass.original)){
              col = colors[nextColor], 
              pch = (nextColor-1), 
              cex = 3, lwd = 4)
+      
+      lines(x = c(1:12),
+            y = growingSeasons[file.to.growing.season.index(prod.files[file], growingSeasons),],
+            col = colors[nextColor],
+            lwd = 5)
+      
       nextColor <- nextColor + 1
     }
     
@@ -498,8 +517,9 @@ for(rgroup in 1:nrow(pctlive.original)){
     plot(x = c(1:12), y = t(pctlive.original[rgroup, ]), xlab = "Month", 
          ylab = "% Live Value", 
          main = paste0(row.names(pctlive.original)[rgroup],
-                       " % Live Values for Derived Files, Compared to Original (blue line)."),
-         col = colors[1], type = "l", ylim = c(0, 1), lwd = 2)
+                       " % Live Values for Derived Files, Compared to Original (blue line).",
+                       " Growing seasons shown at the bottom of the graph."),
+         col = colors[1], type = "l", ylim = c(-0.08, 1), lwd = 2)
     
     for(file in startFile:min(length(prod.files), startFile + 9)){
       points(x = c(1:12), 
@@ -507,6 +527,12 @@ for(rgroup in 1:nrow(pctlive.original)){
              col = colors[nextColor], 
              pch = (nextColor-1), 
              cex = 3, lwd = 4)
+      
+      lines(x = c(1:12),
+            y = growingSeasons[file.to.growing.season.index(prod.files[file], growingSeasons),],
+            col = colors[nextColor],
+            lwd = 5)
+      
       nextColor <- nextColor + 1
     }
     
