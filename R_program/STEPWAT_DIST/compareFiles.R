@@ -373,7 +373,7 @@ for(index in 1:length(prod.files)){
     line <- line + 1
   }
   
-  ### R tead the tables matrices with 1 column, here we fix that ###
+  ### R read the table matrices with 1 column, here we fix that ###
   pctlive.input <- matrix(pctlive.input, ncol = 13, byrow = TRUE)
   biomass.input <- matrix(biomass.input, ncol = 13, byrow = TRUE)
   rownames(pctlive.input) <- pctlive.input[ , 1]
@@ -392,19 +392,47 @@ for(index in 1:length(prod.files)){
   pctlive.list[[index]] <- pctlive
   biomass.list[[index]] <- biomass
   litter.list[[index]] <- litter
-  
-  ##################### Write the CSV files ########################
-  write.csv(pctlive - pctlive.original, 
-            paste0("output/sxwprod_comparisons/PCTLIVE.", 
-                   prod.files[index], 
-                   "-original.csv"))
-  write.csv(biomass - biomass.original, 
-            paste0("output/sxwprod_comparisons/BIOMASS.", 
-                   prod.files[index], "-original.csv"))
-  write.csv(litter - litter.original, 
-            paste0("output/sxwprod_comparisons/LITTER.", 
-                   prod.files[index], "-original.csv"))
 }
+
+############### Create 2d matrix for printing ####################
+pctlive.2d <- matrix(nrow = (nrow(pctlive.list[[1]]) * length(pctlive.list)),
+                     ncol = 14)
+colnames(pctlive.2d) <- c("RGroup", "File", month.abb)
+biomass.2d <- matrix(nrow = (nrow(biomass.list[[1]]) * length(biomass.list)),
+                     ncol = 14)
+colnames(biomass.2d) <- c("RGroup", "File", month.abb)
+litter.2d <- matrix(nrow = length(litter.list),
+                    ncol = 13)
+colnames(litter.2d) <- c("File", month.abb)
+
+for(index in 1:length(prod.files)){
+  litter.2d[index, 1] <- prod.files[index]
+  litter.2d[index, 2:13] <- data.matrix(litter.list[[index]] - litter.original)
+  
+  biomass.rows <- (nrow(biomass.original)*(index-1)+1):(index*nrow(biomass.original))
+  biomass.2d[biomass.rows,2] <- rep(prod.files[index], times = nrow(biomass.original))
+  biomass.2d[biomass.rows,1] <- rownames(biomass.original)
+  biomass.2d[biomass.rows,3:14] <- data.matrix(biomass.list[[index]] - biomass.original)
+  
+  pctlive.rows <- (nrow(pctlive.original)*(index-1)+1):(index*nrow(pctlive.original))
+  pctlive.2d[pctlive.rows,2] <- rep(prod.files[index], times = nrow(pctlive.original))
+  pctlive.2d[pctlive.rows,1] <- rownames(pctlive.original)
+  pctlive.2d[pctlive.rows,3:14] <- data.matrix(pctlive.list[[index]] - pctlive.original)
+}
+
+##################### Write the CSV files ########################
+write.csv(pctlive.2d, 
+          paste0("output/sxwprod_comparisons/PCTLIVE.", 
+                 "derived-original.csv"),
+          row.names = FALSE)
+write.csv(biomass.2d, 
+          paste0("output/sxwprod_comparisons/BIOMASS.", 
+                 "derived-original.csv"),
+          row.names = FALSE)
+write.csv(litter.2d, 
+          paste0("output/sxwprod_comparisons/LITTER.", 
+                 "derived-original.csv"),
+          row.names = FALSE)
 
 #################### Create LITTER Graphics ########################
 if(!file.exists("output/sxwprod_comparisons/LITTER_graphics")){
