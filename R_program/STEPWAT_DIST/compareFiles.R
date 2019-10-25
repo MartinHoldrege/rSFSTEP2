@@ -193,9 +193,9 @@ phen.files <- list.files(".", pattern = "sxwphen")
 ##################### Store the original CSV #######################
 phen.original <- read.csv("../../inputs/InputData_Phenology.csv", row.names = 1)
 
+###### Read the input files from the STEPWAT_DIST directory ########
 phen.data <- list()
 
-###### Read the input files from the STEPWAT_DIST directory ########
 for(index in 1:length(phen.files)){
   phen.data[[index]] <- read.table(phen.files[index], row.names = 1)
 }
@@ -215,13 +215,11 @@ for(i in 1:length(phen.data)){
   phen.data[[i]] <- data.matrix(phen.data[[i]])
   phen.data.2d[(nrow(phen.original)*(i-1)+1):(i*nrow(phen.original)),3:14] <- data.matrix(phen.data[[i]] - phen.original)
 }
+
+# phen.data is the 3d array
 phen.data <- simplify2array(phen.data)
 
-####################### Create Graphics ############################
-if(!file.exists("output/sxwphen_comparisons/graphics")){
-  system("mkdir output/sxwphen_comparisons/graphics")
-}
-
+##################### Locate the "Current" file ####################
 # We want to project "Current" onto every graphic, so we separate it
 # from phen.files
 phen.current.index <- grep(phen.files, pattern = "urrent")
@@ -231,10 +229,22 @@ if(length(phen.current.index) == 1){
 phen.files <- phen.files[!grepl(phen.files, pattern = "urrent")]
 
 ############# Read in the growing season information ###############
+# Growing seasons are the periods where temperature exceeds 4 degrees
+# celsius on average. The the values are TRUE when (mean temp > 4)
+# and FALSE when (mean temp < 4)
 growingSeasons <- read.csv("growingSeasons.csv", row.names = 1)
 
+####################### Create Graphics ############################
+if(!file.exists("output/sxwphen_comparisons/graphics")){
+  system("mkdir output/sxwphen_comparisons/graphics")
+}
+
+# number of files written to each PNG image. Remember that if "Current" 
+# exists it will be written to every file as well (regardless of this 
+# value), making the total (files.per.graphic + 1) files.
 files.per.graphic <- 9
 
+# Shift growingSeason values so they don't overlap
 growingSeasons <- ((growingSeasons - 1) * 10) - 0.015
 for(index in 1:length(phen.files)){
   growingSeasonIndex <- file.to.growing.season.index(phen.files[index], 
@@ -243,10 +253,10 @@ for(index in 1:length(phen.files)){
     (.004 * (index %% files.per.graphic))
 }
 
-colors <- c("blue", "black", "red", 
-            "green", "orange", "green4", 
-            "brown", "purple", "aquamarine", 
-            "pink", "grey")
+# Colors for each file. The number of colors required is (files.per.graphic + 2)
+# to account for "original" and "Current".
+colors <- c("blue", "black", "red", "green", "orange", "green4", 
+            "brown", "purple", "aquamarine", "pink", "grey")
 
 for(rgroup in 1:length(phen.original[, 1])){
   for(startFile in seq(from = 1, to = length(phen.files), 
@@ -285,9 +295,6 @@ for(rgroup in 1:length(phen.original[, 1])){
     
     for(file in startFile:min(length(phen.files), 
                               startFile + files.per.graphic - 1)){
-      if(file == phen.current.file){
-        next
-      }
       # Add this scenario to the graph
       points(x = c(1:12), 
              y = t(phen.data[rgroup, , file + 1]), 
@@ -318,8 +325,8 @@ for(rgroup in 1:length(phen.original[, 1])){
            pch = 1:(nextColor-2))
     
     dev.off()
-  }
-}
+  } # END for each file
+} # END for each RGroup
 
 ###################### Write the CSV file ##########################
 write.csv(phen.data.2d, 
@@ -434,6 +441,16 @@ write.csv(litter.2d,
                  "derived-original.csv"),
           row.names = FALSE)
 
+##################### Locate the "Current" file ####################
+# We want to project "Current" onto every graphic, so we separate it
+# from prod.files
+prod.current.index <- grep(prod.files, pattern = "urrent")
+if(length(prod.current.index) == 1){
+  prod.current.file <- prod.files[prod.current.index]
+}
+prod.files <- prod.files[!grepl(prod.files, pattern = "urrent")]
+
+
 #################### Create LITTER Graphics ########################
 if(!file.exists("output/sxwprod_comparisons/LITTER_graphics")){
   system("mkdir output/sxwprod_comparisons/LITTER_graphics")
@@ -442,11 +459,12 @@ if(!file.exists("output/sxwprod_comparisons/LITTER_graphics")){
 # Increasing the spacing between growing season lines for prod files.
 growingSeasons <- growingSeasons * 2
 
-for(startFile in seq(from = 1, to = length(prod.files), by = 10)){
+for(startFile in seq(from = 1, to = length(prod.files), 
+                     by = files.per.graphic)){
   nextColor <- 2
   png(paste0("output/sxwprod_comparisons/LITTER_graphics/", 
              "LITTER_", startFile, "-", 
-             min(length(litter.list), startFile + 9),
+             min(length(litter.list), startFile + files.per.graphic - 1),
              "_graph.png"), 
       width = 1080, height = 720)
   plot(x = c(1:12), y = t(litter.original), xlab = "Month", 
@@ -457,9 +475,30 @@ for(startFile in seq(from = 1, to = length(prod.files), by = 10)){
                      "at the bottom."),
        col = colors[1], type = "l", ylim = c(-0.08, 1), lwd = 2)
   
-  for(file in startFile:min(length(litter.list), startFile + 9)){
+  if(length(prod.current.index) == 1){
     points(x = c(1:12), 
-           y = litter.list[[file]], 
+           y = litter.list[[prod.current.index]], 
+           col = colors[nextColor], 
+           pch = (nextColor-1), 
+           cex = 3, lwd = 4)
+    
+    lines(x = c(1:12), 
+          y = litter.list[[prod.current.index]], 
+          col = colors[nextColor], 
+          lwd = 2)
+    
+    lines(x = c(1:12),
+          y = growingSeasons[file.to.growing.season.index(prod.current.file, growingSeasons),] - .072,
+          col = colors[nextColor],
+          lwd = 5)
+    
+    nextColor <- nextColor + 1
+  }
+  
+  for(file in startFile:min(length(prod.files), 
+                            startFile + files.per.graphic - 1)){
+    points(x = c(1:12), 
+           y = litter.list[[file + 1]], 
            col = colors[nextColor], 
            pch = (nextColor-1), 
            cex = 3, lwd = 4)
@@ -472,8 +511,16 @@ for(startFile in seq(from = 1, to = length(prod.files), by = 10)){
     nextColor <- nextColor + 1
   }
   
+  if(length(prod.current.index == 1)){
+    legend.values <- c(prod.current.file, 
+                       prod.files[startFile:min(length(prod.files), 
+                                                startFile + files.per.graphic - 1)])
+  } else {
+    legend.values <- prod.files[startFile:min(length(prod.files), 
+                                              startFile + files.per.graphic - 1)]
+  }
   legend("topright",
-         prod.files[startFile:min(length(prod.files), startFile + 9)],
+         legend.values,
          col = colors[2:(nextColor-1)],
          pch = 1:(nextColor-2))
   
@@ -486,12 +533,12 @@ if(!file.exists("output/sxwprod_comparisons/biomass_graphics")){
 }
 
 for(rgroup in 1:nrow(biomass.original)){
-  for(startFile in seq(from = 1, to = length(prod.files), by = 10)){
+  for(startFile in seq(from = 1, to = length(prod.files), by = files.per.graphic)){
     nextColor <- 2
     png(paste0("output/sxwprod_comparisons/biomass_graphics/", 
                row.names(biomass.original)[rgroup], 
                "_", startFile, "-", 
-               min(length(prod.files), startFile + 9),
+               min(length(prod.files), startFile + files.per.graphic - 1),
                "_biomass_graph.png"), 
         width = 1080, height = 900)
     
@@ -503,9 +550,30 @@ for(rgroup in 1:nrow(biomass.original)){
                        " with growing season shown at the bottom."),
          col = colors[1], type = "l", ylim = c(-.08, 1.25), lwd = 2)
     
-    for(file in startFile:min(length(prod.files), startFile + 9)){
+    if(length(prod.current.index) == 1){
       points(x = c(1:12), 
-             y = biomass.list[[file]][rgroup, ], 
+             y = biomass.list[[prod.current.index]][rgroup, ], 
+             col = colors[nextColor], 
+             pch = (nextColor-1), 
+             cex = 3, lwd = 4)
+      
+      lines(x = c(1:12), 
+            y = biomass.list[[prod.current.index]][rgroup, ], 
+            col = colors[nextColor], 
+            lwd = 2)
+      
+      lines(x = c(1:12),
+            y = growingSeasons[file.to.growing.season.index(prod.current.file, growingSeasons),] - .072,
+            col = colors[nextColor],
+            lwd = 5)
+      
+      nextColor <- nextColor + 1
+    }
+    
+    for(file in startFile:min(length(prod.files), 
+                              startFile + files.per.graphic - 1)){
+      points(x = c(1:12), 
+             y = biomass.list[[file + 1]][rgroup, ], 
              col = colors[nextColor], 
              pch = (nextColor-1), 
              cex = 3, lwd = 4)
@@ -518,8 +586,16 @@ for(rgroup in 1:nrow(biomass.original)){
       nextColor <- nextColor + 1
     }
     
+    if(length(prod.current.index == 1)){
+      legend.values <- c(prod.current.file, 
+                         prod.files[startFile:min(length(prod.files), 
+                                                  startFile + files.per.graphic - 1)])
+    } else {
+      legend.values <- prod.files[startFile:min(length(prod.files), 
+                                                startFile + files.per.graphic - 1)]
+    }
     legend("topleft",
-           prod.files[startFile:min(length(prod.files), startFile + 9)],
+           legend.values,
            col = colors[2:(nextColor-1)],
            pch = 1:(nextColor-2))
     
@@ -549,7 +625,27 @@ for(rgroup in 1:nrow(pctlive.original)){
                        " Growing seasons shown at the bottom of the graph."),
          col = colors[1], type = "l", ylim = c(-0.08, 1), lwd = 2)
     
-    for(file in startFile:min(length(prod.files), startFile + 9)){
+    if(length(prod.current.index) == 1){
+      points(x = c(1:12), 
+             y = pctlive.list[[prod.current.index]][rgroup, ], 
+             col = colors[nextColor], 
+             pch = (nextColor-1), 
+             cex = 3, lwd = 4)
+      
+      lines(x = c(1:12), 
+            y = pctlive.list[[prod.current.index]][rgroup, ], 
+            col = colors[nextColor], 
+            lwd = 2)
+      
+      lines(x = c(1:12),
+            y = growingSeasons[file.to.growing.season.index(prod.current.file, growingSeasons),] - 0.072,
+            col = colors[nextColor],
+            lwd = 5)
+      
+      nextColor <- nextColor + 1
+    }
+    
+    for(file in startFile:min(length(prod.files), startFile + files.per.graphic - 1)){
       points(x = c(1:12), 
              y = pctlive.list[[file]][rgroup, ], 
              col = colors[nextColor], 
@@ -564,11 +660,19 @@ for(rgroup in 1:nrow(pctlive.original)){
       nextColor <- nextColor + 1
     }
     
+    if(length(prod.current.index == 1)){
+      legend.values <- c(prod.current.file, 
+                         prod.files[startFile:min(length(prod.files), 
+                                                  startFile + files.per.graphic - 1)])
+    } else {
+      legend.values <- prod.files[startFile:min(length(prod.files), 
+                                                startFile + files.per.graphic - 1)]
+    }
     legend("topright",
-           prod.files[startFile:min(length(prod.files), startFile + 9)],
+           legend.values,
            col = colors[2:(nextColor-1)],
            pch = 1:(nextColor-2))
-    
+
     dev.off()
   }
 }
