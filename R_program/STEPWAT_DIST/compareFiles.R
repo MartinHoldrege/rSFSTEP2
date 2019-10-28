@@ -285,6 +285,11 @@ for(rgroup in 1:length(phen.original[, 1])){
              cex = 3, lwd = 2)
       
       lines(x = c(1:12), 
+            y = t(phen.data[rgroup, , phen.current.index]), 
+            col = colors[nextColor], 
+            lwd = 2)
+      
+      lines(x = c(1:12), 
             y = growingSeasons[file.to.growing.season.index(phen.current.file, 
                                                             growingSeasons), ] - .036,
             col = colors[nextColor], 
