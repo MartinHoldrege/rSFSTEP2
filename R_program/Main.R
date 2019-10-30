@@ -23,12 +23,19 @@ setwd(source.dir)
 #Set database and inputs location
 db_loc<-""
 
-# If you would like to rescale space parameters based on climate for each climate scenario, set this boolean to TRUE.
-# If you would like to run with only the space parameters that you have specified in the input.csv, set this boolean to FALSE.
+# If you would like to rescale space parameters based on climate for each climate 
+# scenario, set this boolean to TRUE. If you would like to run with only the space 
+# parameters that you have specified in the input.csv, set this boolean to FALSE.
 rescale_space <- TRUE
 
-# If you would like to rescale monthly phenological activity, monthly biomass, monthly % live, and monthly litter based on climate for each climate scenario set this boolean to TRUE.
-# If you would like to run with the default values already in STEPWAT2 set this boolean to FALSE.
+# If you would like to compare the generated RGroup.in files with the values specified
+# in the input CSV set this boolean to TRUE.
+output_original_space <- TRUE
+
+# If you would like to rescale monthly phenological activity, monthly biomass, 
+# monthly % live, and monthly litter based on climate for each climate scenario 
+# set this boolean to TRUE. If you would like to run with the default values 
+# already in STEPWAT2 set this boolean to FALSE.
 rescale_phenology <- TRUE
 
 #Database location, edit the name of the weather database accordingly
@@ -260,6 +267,7 @@ rgroup_data_all_sites_vectors<-rgroup_data_all_sites[grepl(",",rgroup_data_all_s
 
 contains_vector <- FALSE
 rgroups <- c()
+space_values <- list()
 
 #Generate a rgroup.in file for the site for the x,y option first
 if(any(grepl(",",rgroup_data_all_sites))==TRUE)
@@ -321,9 +329,9 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
         # Now add the file name to the list of file names
         rgroups <- c(rgroups, paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i))
         
+        space_values[[length(space_values) + 1]] <- df[ , 2]
         # Write the rgroup.in file to the STEPWAT_DIST folder
         write.table(df, file = paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
-        
       }
     }
   }
@@ -386,9 +394,19 @@ for(i in treatments)
         
   # Now add the file name to the list of file names
   rgroups <- c(rgroups, paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i))
-        
+  
+  # Remember the space values in case we need to print them
+  space_values[[length(space_values) + 1]] <- df[ , 2]
+  
   # Write the rgoup.in file to the STEPWAT_DIST directory
   write.table(df, file = paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+}
+
+if(output_original_space){
+  # Output the space values to a file. This will allow us to compare them to the rescaled space
+  # parameters generated later in this file. For comparing files see compareFiles.R in STEPWAT_DIST.
+  names(space_values) <- rgroups
+  write.csv(space_values, file = "space_original_values.csv", row.names = FALSE)
 }
 
 # adding names to the vector will help us determine what climate scenario applies to what rgroup.in file
@@ -419,6 +437,7 @@ remove(dist.freq.current)
 remove(graz.freq.current)
 remove(contains_vector)
 # variables related to rgroup
+remove(space_values)
 remove(rgroup_data_site)
 remove(treatments)
 remove(df)
