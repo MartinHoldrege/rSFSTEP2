@@ -19,7 +19,6 @@ file.to.growing.season.index <- function(fileName, growingSeasons){
       index <- i
     }
   }
-  
   index
 }
 
@@ -28,13 +27,18 @@ if(!file.exists("output")){
   system("mkdir output")
 }
 
+# Colors for each file. The number of colors required is (files.per.graphic + 2)
+# to account for "original" and "Current".
+colors <- c("blue", "black", "red", "green", "orange", "green4", 
+            "brown", "purple", "aquamarine", "pink", "grey")
+ 
 #####################################################################################
 ############################# Analyze RGroup files ##################################
 #####################################################################################
 if(!file.exists("output/rgroup_comparisons")){
   system("mkdir output/rgroup_comparisons")
 }
-
+ 
 ################## Locate all rgroup.in files ######################
 rgroup.files <- list.files(".", pattern = "rgroup")
 
@@ -72,9 +76,8 @@ for(i in 1:length(all.group.parameters)){
 }
 all.group.parameters <- simplify2array(all.group.parameters)
 
-space.values <- matrix(nrow = (length(all.group.parameters[1,1,]) * length(all.group.parameters[,1,1])),
-                       ncol = 3);
-colnames(space.values) <- c("File", "RGroup", "Space Value")
+space.values <- data.frame(nrow = (length(all.group.parameters[1,1,]) * length(all.group.parameters[,1,1])),
+                           ncol = 3);
 
 number.rgroups <- length(all.group.parameters[,1,1])
 
@@ -84,7 +87,60 @@ for(i in 1:length(all.group.parameters[1,1,])){
 
 space.values[ ,1] <- rep(rgroup.files, each = number.rgroups)
 space.values[ ,2] <- rep(rgroup.names, times = nrow(space.values) / length(rgroup.names))
+colnames(space.values) <- c("File", "RGroup", "Space Value")
 
+################# Read original space values #######################
+space.original <- read.csv("space_original_values.csv")
+
+########## Create graphics and calculate differences ###############
+if(!file.exists("output/rgroup_comparisons/graphics")){
+  system("mkdir output/rgroup_comparisons/graphics")
+}
+for(column in 1:ncol(space.original)){
+  original.filename <- colnames(space.original)[column]
+     
+  # Create a folder specific to this original input
+  if(!file.exists(paste0("output/rgroup_comparisons/graphics/", original.filename))){
+    system(paste0("mkdir output/rgroup_comparisons/graphics/", original.filename))
+  }
+  
+  space.temp <- space.values[grep(original.filename, space.values[,1]), ]
+  
+  for(rgroup in 1:nrow(space.original)){
+    rgroup.space.values <- space.temp[grep(space.temp[rgroup,2], space.temp[,2]), ]
+    rgroup.space.files <- c()
+    for(filename in rgroup.space.values[,1]){
+      tmp <- strsplit(filename, "\\.")
+      tmp <- tmp[[1]][8:(length(tmp[[1]])-1)]
+      rgroup.space.files <- c(rgroup.space.files,paste(tmp, collapse = "."))
+    }
+    
+    png(paste0("output/rgroup_comparisons/graphics/", 
+                original.filename, "/", 
+                rgroup.space.values[1,2],
+                ".space.graph.png"), 
+        width = 1080, height = 720)
+    
+    plot(x = 1:length(rgroup.space.files), y = rgroup.space.values[,3],
+         xlab = "Files", ylab = "Space Value",
+         main = paste0(rgroup.space.values[1,2],
+                       " Space values"),
+         col = colors[1:length(rgroup.space.files)], type = "p",
+         ylim = c(0.0, (max(rgroup.space.values[,3])*1.1)), lwd = 7)
+            
+    legend("bottomright",
+           rgroup.space.files,
+           col = colors[1:length(rgroup.space.files)],
+           pch = 1)
+    
+    dev.off()
+  }
+      
+  space.temp <- space.values[grep(original.filename, space.values[,1]),3]
+  space.temp <- space.temp - rep(space.original[ ,column])
+  space.values[grep(original.filename, space.values[,1]),3] <- space.temp
+}
+            
 ###################### Write output files ##########################
 write.csv(space.values, 
           "output/rgroup_comparisons/space.csv",
