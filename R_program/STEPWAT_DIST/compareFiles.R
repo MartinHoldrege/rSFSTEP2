@@ -121,17 +121,17 @@ for(column in 1:ncol(space.original)){
                 ".space.graph.png"), 
         width = 1080, height = 720)
     
-    plot(x = 1:length(rgroup.space.files), y = rgroup.space.values[,3],
+    barplot(rgroup.space.values[,3],
          xlab = "Files", ylab = "Space Value",
          main = paste0(rgroup.space.values[1,2],
                        " Space values"),
-         col = colors[1:length(rgroup.space.files)], type = "p",
-         ylim = c(0.0, (max(rgroup.space.values[,3])*1.1)), lwd = 7)
+         col = colors[1:length(rgroup.space.files)],
+         ylim = c(0.0, (max(rgroup.space.values[,3])*1.1)), lwd = 3)
             
     legend("bottomright",
            rgroup.space.files,
            col = colors[1:length(rgroup.space.files)],
-           pch = 1)
+           pch = 15)
     
     dev.off()
   }
