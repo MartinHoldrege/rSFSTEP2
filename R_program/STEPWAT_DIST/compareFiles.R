@@ -87,7 +87,7 @@ for(i in 1:length(all.group.parameters[1,1,])){
 
 space.values[ ,1] <- rep(rgroup.files, each = number.rgroups)
 space.values[ ,2] <- rep(rgroup.names, times = nrow(space.values) / length(rgroup.names))
-colnames(space.values) <- c("File", "RGroup", "Space Value")
+colnames(space.values) <- c("File", "RGroup", "Delta Space")
 
 ################# Read original space values #######################
 space.original <- read.csv("space_original_values.csv")
