@@ -6,6 +6,11 @@
 # Prevent this program from running outside of the DIST directory ##
 stopifnot(endsWith(getwd(), "STEPWAT_DIST"))
 
+# number of files written to each PNG image. Remember that if "Current" 
+# exists it will be written to every file as well (regardless of this 
+# value), making the total (files.per.graphic + 1) files.
+files.per.graphic <- 9
+
 #####################################################################################
 ########################### Some Useful Functions ###################################
 #####################################################################################
@@ -104,41 +109,52 @@ for(column in 1:ncol(space.original)){
     system(paste0("mkdir output/rgroup_comparisons/graphics/", original.filename))
   }
   
-  space.temp <- space.values[grep(original.filename, space.values[,1]), ]
+  all.space.values <- space.values[grep(original.filename, space.values[,1]), ]
+  number.files <- length(unique(all.space.values[,1]))
   
-  for(rgroup in 1:nrow(space.original)){
-    rgroup.space.values <- space.temp[grep(space.temp[rgroup,2], space.temp[,2]), ]
-    rgroup.space.files <- c()
-    for(filename in rgroup.space.values[,1]){
-      tmp <- strsplit(filename, "\\.")
-      tmp <- tmp[[1]][8:(length(tmp[[1]])-1)]
-      rgroup.space.files <- c(rgroup.space.files,paste(tmp, collapse = "."))
+  for(startFile in seq(from = 1, to = number.files,
+                       by = files.per.graphic)){
+    space.temp <- all.space.values[(number.rgroups * (startFile-1) + 1):
+                                     min((number.rgroups 
+                                          * (startFile 
+                                             + files.per.graphic - 1)), number.files * number.rgroups), ]
+    for(rgroup in 1:nrow(space.original)){
+      rgroup.space.values <- space.temp[grep(space.temp[rgroup,2], space.temp[,2]), ]
+      rgroup.space.files <- c()
+      for(filename in rgroup.space.values[,1]){
+        tmp <- strsplit(filename, "\\.")
+        tmp <- tmp[[1]][8:(length(tmp[[1]])-1)]
+        rgroup.space.files <- c(rgroup.space.files,paste(tmp, collapse = "."))
+      }
+      
+      png(paste0("output/rgroup_comparisons/graphics/", 
+                  original.filename, "/", 
+                  rgroup.space.values[1,2],
+                  ".", startFile, "-",
+                  startFile + files.per.graphic,
+                  ".space.graph.png"), 
+          width = 1080, height = 800)
+      
+      barplot(rgroup.space.values[,3],
+              width = rep(1, nrow(rgroup.space.values)),
+              xlab = "Files", ylab = "Space Value",
+              main = paste0(rgroup.space.values[1,2],
+                            " Space values"),
+              col = colors[1:length(rgroup.space.files)],
+              ylim = c(0, (max(rgroup.space.values[,3])*1.4)), lwd = 3)
+              
+      legend("topright",
+             rgroup.space.files,
+             col = colors[1:length(rgroup.space.files)],
+             pch = 15)
+      
+      dev.off()
     }
-    
-    png(paste0("output/rgroup_comparisons/graphics/", 
-                original.filename, "/", 
-                rgroup.space.values[1,2],
-                ".space.graph.png"), 
-        width = 1080, height = 720)
-    
-    barplot(rgroup.space.values[,3],
-         xlab = "Files", ylab = "Space Value",
-         main = paste0(rgroup.space.values[1,2],
-                       " Space values"),
-         col = colors[1:length(rgroup.space.files)],
-         ylim = c(0.0, (max(rgroup.space.values[,3])*1.1)), lwd = 3)
-            
-    legend("bottomright",
-           rgroup.space.files,
-           col = colors[1:length(rgroup.space.files)],
-           pch = 15)
-    
-    dev.off()
   }
       
-  space.temp <- space.values[grep(original.filename, space.values[,1]),3]
-  space.temp <- space.temp - rep(space.original[ ,column])
-  space.values[grep(original.filename, space.values[,1]),3] <- space.temp
+  all.space.values <- space.values[grep(original.filename, space.values[,1]),3]
+  all.space.values <- all.space.values - rep(space.original[ ,column])
+  space.values[grep(original.filename, space.values[,1]),3] <- all.space.values
 }
             
 ###################### Write output files ##########################
@@ -204,11 +220,6 @@ growingSeasons <- read.csv("growingSeasons.csv", row.names = 1)
 if(!file.exists("output/sxwphen_comparisons/graphics")){
   system("mkdir output/sxwphen_comparisons/graphics")
 }
-
-# number of files written to each PNG image. Remember that if "Current" 
-# exists it will be written to every file as well (regardless of this 
-# value), making the total (files.per.graphic + 1) files.
-files.per.graphic <- 9
 
 # Shift growingSeason values so they don't overlap
 growingSeasons <- ((growingSeasons - 1) * 10) - 0.015
