@@ -124,17 +124,8 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
 #'   \code{\link[rSOILWAT2:swWeatherData-class]{rSOILWAT2::swWeatherData}}
 #'   object for each year as is returned by the function
 #'   \code{\link[rSOILWAT2]{dbW_getWeatherData}}.
-#' @param defaultGrowingSeason A numeric vector of values between 1 and 12. The number
-#'   of months that describe the potential active season of the input matrice.
-#' @param site_latitude A numeric vector. The latitude in degrees (N, positive;
-#'   S, negative) of the simulation \var{sites}. If vector of length one, then
-#'   the value is repeated for all \var{sites}.
-#' @param includeGrowingSeasonInfo A boolean value. If TRUE, the return list will
-#'   contain 2 entries: return[[1]] is a list of the scaled matrices and 
-#'   return[[2]] is a list of boolean vectors where TRUE means that for the given
-#'   scenario and month the mean temperature was above the minimum growing temperature.
-#'   If includeGrowingSeason is FALSE, only the list of scaled growing seasons
-#'   will be returned.
+#' @param monthly.temperature A vector of length 12. The mean monthly temperatures
+#'   used to generate matrices.
 #'
 #' @examples
 #' data("weatherData", package = "rSOILWAT2")
@@ -142,22 +133,16 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
 #' sw_weatherList <- list(
 #'   site1 = list(Current = weatherData, Future1 = weatherData),
 #'   site2 = list(Current = weatherData, Future1 = weatherData))
-#' defaultGrowingSeason <- c(3:12)
-#' scale_phenology(matrices, sw_weatherList, defaultGrowingSeason)
+#' monthly.temperature = c(-5, -1, 1, 4, 9, 14, 18, 17, 12, 5, -1, -5)
+#' scale_phenology(matrices, sw_weatherList, defaultGrowingSeason, monthly.temperature)
 #' 
-scale_phenology <- function(matrices, sw_weatherList, defaultGrowingSeason = 3:10, 
-                            site_latitude = 90, includeGrowingSeasonInfo = FALSE){
+scale_phenology <- function(matrices, sw_weatherList, monthly.temperature,
+                            site_latitude = 90){
   n_sites <- length(sw_weatherList)
-  
-  if (length(site_latitude) != n_sites && length(site_latitude) > 1) {
-    stop("'scale_phenology': argument 'site_latitude' ",
-         "must have a length one or be equal to the length of 'sw_weatherList'.")
-  } 
   
   n_climate.conditions <- unique(lengths(sw_weatherList))
   
   return_list <- list()
-  growingSeason_list <- list()
   
   # Calculate relative abundance
   for (k_scen in seq_len(n_climate.conditions)) {
@@ -167,19 +152,17 @@ scale_phenology <- function(matrices, sw_weatherList, defaultGrowingSeason = 3:1
       do_Cheatgrass_ClimVars = FALSE,
       latitude = site_latitude[n_sites])
     
-    if(includeGrowingSeasonInfo){
-      growingSeason_list[[k_scen]] <- temp_clim[["meanMonthlyTempC"]] > 4
+    index <- 1
+    return_list[[k_scen]] <- list()
+    for(arr in matrices) {
+      return_list[[k_scen]][[index]] <- arr
+      for(row in 1:nrow(arr)) {
+        return_list[[k_scen]][[index]][row,] <- rSOILWAT2::adj_phenology_by_temp(unlist(arr[row,]),
+                                                              unlist(monthly.temperature),
+                                                              unlist(temp_clim[["meanMonthlyTempC"]]))
+      }
+      index <- index + 1
     }
-    
-    return_list[[k_scen]] <- rSOILWAT2::adjBiom_by_temp(matrices, 
-                                                        temp_clim[["meanMonthlyTempC"]], 
-                                                        reference_growing_season = defaultGrowingSeason,
-                                                        growing_limit_C = 4,
-                                                        isNorth = TRUE)
-  }
-  
-  if(includeGrowingSeasonInfo){
-    return_list <- list(return_list, growingSeason_list)
   }
   
   return_list

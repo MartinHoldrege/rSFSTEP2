@@ -607,52 +607,19 @@ if(rescale_phenology){
   biomass <- read.csv("InputData_Biomass.csv", header = TRUE, row.names = 1)
   pctlive <- read.csv("InputData_PctLive.csv", header = TRUE, row.names = 1)
   litter <- read.csv("InputData_Litter.csv", header = TRUE, row.names = 1)
-  seasons <- read.csv("InputData_GrowingSeason.csv", header = TRUE, row.names = 1)
-  
-  # Turn seasons into a vector of months where plants are expected to grow. 
-  seasons <- Position(function(x) x, seasons):Position(function(x) x, seasons, right = TRUE)
-  
-  # scale_phenology() assumes the months are rows, so we have to transpose.
-  phenology <- t(phenology)
-  pctlive <- t(pctlive)
-  litter <- t(litter)
-  biomass <- t(biomass)
+  monthly.temperature <- read.csv("InputData_MonthlyTemp.csv", header = TRUE, row.names = 1)
   
   # condense the values we want to scale into a single list
   values_to_scale <- list(phenology, pctlive, litter, biomass)
-  # TRUE if we want to output the growing season for each climate scenario.
-  output.growingseason <- TRUE
   # scale the list
   scaled_values <- scale_phenology(values_to_scale, sw_weatherList, 
-                                   seasons, site_latitude = 90, 
-                                   includeGrowingSeasonInfo = output.growingseason)
+                                   monthly.temperature)
   
   # Move to the DIST directory so we can start writing the files.
   setwd(source.dir)
   setwd("STEPWAT_DIST")
   
-  # output the growing season information
-  if(output.growingseason){
-    # Pull apart scaled_values
-    growingSeason <- scaled_values[[2]]
-    # scaled_values no longer needs the growing season information.
-    scaled_values <- scaled_values[[1]]
-    
-    # Convert growingSeason to an array for printing
-    growingSeason <- t(simplify2array(growingSeason))
-    row.names(growingSeason) <- climate.conditions
-    colnames(growingSeason) <- month.abb
-    # Print the growing season to the DIST directory
-    write.csv(growingSeason, "growingSeasons.csv",
-              row.names = TRUE)
-  }
-  
   for(scen in 1:length(climate.conditions)){
-    # Pull the correct entry out of the scaled list, and transpose it back.
-    phenology <- t(scaled_values[[scen]][[1]])
-    pctlive <- t(scaled_values[[scen]][[2]])
-    litter <- t(scaled_values[[scen]][[3]])
-    biomass <- t(scaled_values[[scen]][[4]])
     
     # Normalize each row of phenology to sum to 1.
     for(thisRow in 1:nrow(phenology)){
@@ -686,7 +653,7 @@ if(rescale_phenology){
   remove(pctlive)
   remove(values_to_scale)
   remove(scaled_values)
-  remove(seasons)
+  remove(monthly.temperature)
   remove(sxwphen_file)
   remove(sxwprod_v2_file)
 }
