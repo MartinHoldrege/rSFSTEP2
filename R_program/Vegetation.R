@@ -126,6 +126,7 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
 #'   \code{\link[rSOILWAT2]{dbW_getWeatherData}}.
 #' @param monthly.temperature A vector of length 12. The mean monthly temperatures
 #'   used to generate matrices.
+#' @param site_latitude A numeric value. The latitude of the site. Defaults to 90.
 #'
 #' @examples
 #' data("weatherData", package = "rSOILWAT2")

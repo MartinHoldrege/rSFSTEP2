@@ -613,13 +613,18 @@ if(rescale_phenology){
   values_to_scale <- list(phenology, pctlive, litter, biomass)
   # scale the list
   scaled_values <- scale_phenology(values_to_scale, sw_weatherList, 
-                                   monthly.temperature)
+                                   monthly.temperature, site_latitude = 90)
   
   # Move to the DIST directory so we can start writing the files.
   setwd(source.dir)
   setwd("STEPWAT_DIST")
   
   for(scen in 1:length(climate.conditions)){
+    # Pull the correct entry out of the scaled list.
+    phenology <- scaled_values[[scen]][[1]]		
+    pctlive <- scaled_values[[scen]][[2]]		
+    litter <- scaled_values[[scen]][[3]]		
+    biomass <- scaled_values[[scen]][[4]]
     
     # Normalize each row of phenology to sum to 1.
     for(thisRow in 1:nrow(phenology)){
