@@ -43,6 +43,13 @@ Once the sbatch tasks have been succesfully completed, follow the steps below to
 
 Note: The method to run a shell script is present as a comment in the respective script. 
 
+## Comparing generated files
+rSFSTEP2 has the options to scale phenology and/or space based on site and climate. After running the simulation you can get some statistics on how the inputs were modified by running
+```
+./compare_files.sh <number of sites>
+```
+The results will be stored in `rSFSTEP2/R_program_??/STEPWAT_DIST/output/` where ?? is the site number.
+
 ## Note: repository renamed from StepWat_R_Wrapper_parallel to rSFSTEP2 on Feb 23, 2017
 
 All existing information should [automatically be redirected](https://help.github.com/articles/renaming-a-repository/) to the new name.
