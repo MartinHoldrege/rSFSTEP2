@@ -1,5 +1,10 @@
 # rSFSTEP2
 
+# Cloning the repository:
+```
+git clone --branch master https://github.com/DrylandEcology/rSFSTEP2.git
+```
+
 # Instructions for running rSFSTEP2
 
 Required R packages for rSFSTEP2: 
