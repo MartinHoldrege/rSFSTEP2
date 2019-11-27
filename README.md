@@ -53,7 +53,7 @@ rSFSTEP2 has the options to scale phenology and/or space based on site and clima
 ```
 ./compare_files.sh <number of sites>
 ```
-The results will be stored in `rSFSTEP2/R_program_??/STEPWAT_DIST/output/` where ?? is the site number.
+The results will be stored in `rSFSTEP2/R_program_??/STEPWAT_DIST/output/` where ?? is the site number. The generated comparison files essentially compare how the input text files were modified.
 
 ## Note: repository renamed from StepWat_R_Wrapper_parallel to rSFSTEP2 on Feb 23, 2017
 
