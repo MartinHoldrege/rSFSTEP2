@@ -140,12 +140,12 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
 scale_phenology <- function(matrices, sw_weatherList, monthly.temperature,
                             site_latitude = 90){
   
+  n_sites <- length(sw_weatherList)
+  
   if (length(site_latitude) != n_sites && length(site_latitude) > 1) {
     stop("'scale_phenology': argument 'site_latitude' ",
          "must have a length one or be equal to the length of 'sw_weatherList'.")
   } 
-  
-  n_sites <- length(sw_weatherList)
   
   n_climate.conditions <- unique(lengths(sw_weatherList))
   
