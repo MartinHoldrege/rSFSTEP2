@@ -6,6 +6,33 @@
 # Prevent this program from running outside of the DIST directory ##
 stopifnot(endsWith(getwd(), "STEPWAT_DIST"))
 
+# A useful function when adding lines to the mean monthly temperature graph.
+addTemperatureLine <- function(temperature_values, color){
+  lines(x = c(1:12), 
+        y = temperature_values, 
+        col = color, 
+        lwd = 2)
+}
+
+addTemperaturePoint <- function(temperature_values, color, symbol){
+  points(x = c(1:12), 
+         y = temperature_values, 
+         col = color, 
+         pch = symbol, 
+         cex = 3, lwd = 4)
+}
+
+# Convert a file name to an index in an array who's row names are climate conditions
+fileName2climateIndex <- function(fileName, climateArray){
+  return <- 0
+  for(i in 1:nrow(climateArray)){
+    if(grepl(rownames(climateArray)[i], fileName)){
+      return <- i
+    }
+  }
+  return
+}
+
 # number of files written to each PNG image. Remember that if "Current" 
 # exists it will be written to every file as well (regardless of this 
 # value), making the total (files.per.graphic + 1) files.
@@ -158,6 +185,8 @@ phen.files <- list.files(".", pattern = "sxwphen")
 
 ##################### Store the original CSV #######################
 phen.original <- read.csv("../../inputs/InputData_Phenology.csv", row.names = 1)
+temperature.original <- read.csv("../../inputs/InputData_MonthlyTemp.csv", row.names = 1)
+temperature.derived <- read.csv("temperature.csv", row.names = 1)
 
 ###### Read the input files from the STEPWAT_DIST directory ########
 phen.data <- list()
@@ -194,7 +223,7 @@ if(length(phen.current.index) == 1){
 }
 phen.files <- phen.files[!grepl(phen.files, pattern = "urrent")]
 
-####################### Create Graphics ############################
+#################### Create LITTER Graphics ########################
 if(!file.exists("output/sxwphen_comparisons/graphics")){
   system("mkdir output/sxwphen_comparisons/graphics")
 }
@@ -213,7 +242,10 @@ for(rgroup in 1:length(phen.original[, 1])){
                startFile, "-", 
                min(length(phen.data[1,1,]), startFile + files.per.graphic - 1),
                "_graph.png"), 
-        width = 1080, height = 720)
+        width = 2048, height = 720)
+    
+    par(mfrow = c(1, 2))
+    
     plot(x = c(1:12), y = t(phen.original[rgroup,]), xlab = "Month", 
          ylab = "Phenological Activity", 
          main = paste0(row.names(phen.original)[rgroup], 
@@ -259,6 +291,24 @@ for(rgroup in 1:length(phen.original[, 1])){
     }
     legend("topleft",
            legend.values,
+           col = colors[2:(nextColor-1)],
+           pch = 1:(nextColor-2))
+    
+    #################### Add the temperature graph #################
+    plot(x = c(1:12), y = temperature.original, xlab = "Month", 
+         ylab = "Temperature", 
+         main = "Mean Monthly Temperature for each Climate Scenario with original temperature in blue",
+         col = colors[1], type = "l", ylim = c(-10, 35), lwd = 2)
+    
+    climateIndexes <- c()
+    for(row in 1:length(legend.values)){
+      climateIndexes[row] <- fileName2climateIndex(legend.values[row], temperature.derived)
+      addTemperatureLine(temperature.derived[climateIndexes[row], ], colors[row + 1])
+      addTemperaturePoint(temperature.derived[climateIndexes[row], ], colors[row + 1], row)
+    }
+    
+    legend("topleft",
+           row.names(temperature.derived)[climateIndexes],
            col = colors[2:(nextColor-1)],
            pch = 1:(nextColor-2))
     
@@ -401,7 +451,10 @@ for(startFile in seq(from = 1, to = length(prod.files),
              "LITTER_", startFile, "-", 
              min(length(litter.list), startFile + files.per.graphic - 1),
              "_graph.png"), 
-      width = 1080, height = 720)
+      width = 2048, height = 720)
+  
+  par(mfrow = c(1, 2))
+  
   plot(x = c(1:12), y = t(litter.original), xlab = "Month", 
        ylab = "LITTER", 
        main = paste0("LITTER Values for Derived Files by Month,",
@@ -447,6 +500,24 @@ for(startFile in seq(from = 1, to = length(prod.files),
          col = colors[2:(nextColor-1)],
          pch = 1:(nextColor-2))
   
+  #################### Add the temperature graph #################
+  plot(x = c(1:12), y = temperature.original, xlab = "Month", 
+       ylab = "Temperature", 
+       main = "Mean Monthly Temperature for each Climate Scenario with original temperature in blue",
+       col = colors[1], type = "l", ylim = c(-10, 35), lwd = 2)
+  
+  climateIndexes <- c()
+  for(row in 1:length(legend.values)){
+    climateIndexes[row] <- fileName2climateIndex(legend.values[row], temperature.derived)
+    addTemperatureLine(temperature.derived[climateIndexes[row], ], colors[row + 1])
+    addTemperaturePoint(temperature.derived[climateIndexes[row], ], colors[row + 1], row)
+  }
+  
+  legend("topleft",
+         row.names(temperature.derived)[climateIndexes],
+         col = colors[2:(nextColor-1)],
+         pch = 1:(nextColor-2))
+  
   dev.off()
 }
 
@@ -463,7 +534,9 @@ for(rgroup in 1:nrow(biomass.original)){
                "_", startFile, "-", 
                min(length(prod.files), startFile + files.per.graphic - 1),
                "_biomass_graph.png"), 
-        width = 1080, height = 900)
+        width = 2048, height = 900)
+    
+    par(mfrow = c(1, 2))
     
     plot(x = c(1:12), y = t(biomass.original[rgroup, ]), xlab = "Month", 
          ylab = "Biomass value", 
@@ -511,6 +584,24 @@ for(rgroup in 1:nrow(biomass.original)){
            col = colors[2:(nextColor-1)],
            pch = 1:(nextColor-2))
     
+    #################### Add the temperature graph #################
+    plot(x = c(1:12), y = temperature.original, xlab = "Month", 
+         ylab = "Temperature", 
+         main = "Mean Monthly Temperature for each Climate Scenario with original temperature in blue",
+         col = colors[1], type = "l", ylim = c(-10, 35), lwd = 2)
+    
+    climateIndexes <- c()
+    for(row in 1:length(legend.values)){
+      climateIndexes[row] <- fileName2climateIndex(legend.values[row], temperature.derived)
+      addTemperatureLine(temperature.derived[climateIndexes[row], ], colors[row + 1])
+      addTemperaturePoint(temperature.derived[climateIndexes[row], ], colors[row + 1], row)
+    }
+    
+    legend("topleft",
+           row.names(temperature.derived)[climateIndexes],
+           col = colors[2:(nextColor-1)],
+           pch = 1:(nextColor-2))
+    
     dev.off()
   }
 }
@@ -528,7 +619,9 @@ for(rgroup in 1:nrow(pctlive.original)){
                startFile, "-", 
                min(length(prod.files), startFile + 9),
                "_pctlive_graph.png"), 
-        width = 1080, height = 720)
+        width = 2048, height = 720)
+    
+    par(mfrow = c(1, 2))
     
     plot(x = c(1:12), y = t(pctlive.original[rgroup, ]), xlab = "Month", 
          ylab = "% Live Value", 
@@ -569,11 +662,30 @@ for(rgroup in 1:nrow(pctlive.original)){
       legend.values <- prod.files[startFile:min(length(prod.files), 
                                                 startFile + files.per.graphic - 1)]
     }
+    
     legend("topright",
            legend.values,
            col = colors[2:(nextColor-1)],
            pch = 1:(nextColor-2))
-
+    
+    #################### Add the temperature graph #################
+    plot(x = c(1:12), y = temperature.original, xlab = "Month", 
+         ylab = "Temperature", 
+         main = "Mean Monthly Temperature for each Climate Scenario with original temperature in blue",
+         col = colors[1], type = "l", ylim = c(-10, 35), lwd = 2)
+    
+    climateIndexes <- c()
+    for(row in 1:length(legend.values)){
+      climateIndexes[row] <- fileName2climateIndex(legend.values[row], temperature.derived)
+      addTemperatureLine(temperature.derived[climateIndexes[row], ], colors[row + 1])
+      addTemperaturePoint(temperature.derived[climateIndexes[row], ], colors[row + 1], row)
+    }
+    
+    legend("topleft",
+           row.names(temperature.derived)[climateIndexes],
+           col = colors[2:(nextColor-1)],
+           pch = 1:(nextColor-2))
+    
     dev.off()
   }
 }

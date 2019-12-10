@@ -611,13 +611,31 @@ if(rescale_phenology){
   
   # condense the values we want to scale into a single list
   values_to_scale <- list(phenology, pctlive, litter, biomass)
+  
+  # If you plan on comparing output files, this needs to be TRUE
+  shouldOutputTemperature = TRUE
+  
   # scale the list
   scaled_values <- scale_phenology(values_to_scale, sw_weatherList, 
-                                   monthly.temperature, site_latitude = 90)
+                                   monthly.temperature, site_latitude = 90, 
+                                   outputTemperature = shouldOutputTemperature)
   
   # Move to the DIST directory so we can start writing the files.
   setwd(source.dir)
   setwd("STEPWAT_DIST")
+  
+  if(shouldOutputTemperature){
+    # Format and write the temperature values for each climate scenario
+    temperature_values <- scaled_values[[2]]
+    temperature_values <- t(simplify2array(temperature_values))
+    row.names(temperature_values) <- climate.conditions
+    colnames(temperature_values) <- month.abb
+    write.csv(file = "temperature.csv", temperature_values)
+    
+    # Remove temperature values from scaled_values, leaving only the phen, biomass,
+    # litter, and pctlive values.
+    scaled_values <- scaled_values[[1]]
+  }
   
   for(scen in 1:length(climate.conditions)){
     # Pull the correct entry out of the scaled list.

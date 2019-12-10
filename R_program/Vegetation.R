@@ -127,6 +127,9 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
 #' @param monthly.temperature A vector of length 12. The reference mean monthly
 #'   temperatures used to generate matrices
 #' @param site_latitude A numeric value. The latitude of the site. Default is 90.
+#' @param outputTemperature A boolean value. If TRUE, this function will output a
+#'   CSV file containing the mean monthly temperature in celsius for each climate 
+#'   scenario.
 #'
 #' @examples
 #' data("weatherData", package = "rSOILWAT2")
@@ -138,7 +141,7 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
 #' scale_phenology(matrices, sw_weatherList, monthly.temperature)
 #' 
 scale_phenology <- function(matrices, sw_weatherList, monthly.temperature,
-                            site_latitude = 90){
+                            site_latitude = 90, outputTemperature = FALSE){
   
   n_sites <- length(sw_weatherList)
   
@@ -150,6 +153,7 @@ scale_phenology <- function(matrices, sw_weatherList, monthly.temperature,
   n_climate.conditions <- unique(lengths(sw_weatherList))
   
   return_list <- list()
+  temperature_list <- list()
   
   # Calculate relative abundance
   for (k_scen in seq_len(n_climate.conditions)) {
@@ -158,6 +162,10 @@ scale_phenology <- function(matrices, sw_weatherList, monthly.temperature,
       do_C4vars = FALSE, 
       do_Cheatgrass_ClimVars = FALSE,
       latitude = site_latitude[n_sites])
+    
+    if(outputTemperature){
+      temperature_list[[k_scen]] <- temp_clim[["meanMonthlyTempC"]]
+    }
     
     index <- 1
     return_list[[k_scen]] <- list()
@@ -170,6 +178,10 @@ scale_phenology <- function(matrices, sw_weatherList, monthly.temperature,
       }
       index <- index + 1
     }
+  }
+  
+  if(outputTemperature){
+    return_list <- list(return_list, temperature_list)
   }
   
   return_list
