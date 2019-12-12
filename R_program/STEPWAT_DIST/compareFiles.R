@@ -250,7 +250,8 @@ for(rgroup in 1:length(phen.original[, 1])){
          ylab = "Phenological Activity", 
          main = paste0(row.names(phen.original)[rgroup], 
                        " Phenological Activity Values by Month for ",
-                        "Multiple derived files."),
+                       "Multiple Derived Files, with Original Value ",
+                       "in Blue."),
          col = colors[1], type = "l", ylim = c(-.05, .5), lwd = 2)
     
     # If a "Current" file is present, we want to add it to every graph.
@@ -457,8 +458,8 @@ for(startFile in seq(from = 1, to = length(prod.files),
   
   plot(x = c(1:12), y = t(litter.original), xlab = "Month", 
        ylab = "LITTER", 
-       main = paste0("LITTER Values for Derived Files by Month,",
-                     " Compared to Original (blue line)"),
+       main = paste0("LITTER Values for Derived Files by Month, ",
+                     "Compared to Original Value in Blue"),
        col = colors[1], type = "l", ylim = c(-0.08, 1), lwd = 2)
   
   if(length(prod.current.index) == 1){
@@ -542,7 +543,7 @@ for(rgroup in 1:nrow(biomass.original)){
          ylab = "Biomass value", 
          main = paste0(row.names(biomass.original)[rgroup],
                        " Biomass Values by Month for Derived Files, ", 
-                       "Compared to Original (blue line)"),
+                       "Compared to Original Value in Blue"),
          col = colors[1], type = "l", ylim = c(-.08, 1.25), lwd = 2)
     
     if(length(prod.current.index) == 1){
@@ -626,7 +627,7 @@ for(rgroup in 1:nrow(pctlive.original)){
     plot(x = c(1:12), y = t(pctlive.original[rgroup, ]), xlab = "Month", 
          ylab = "% Live Value", 
          main = paste0(row.names(pctlive.original)[rgroup],
-                       " % Live Values for Derived Files, Compared to Original (blue line)"),
+                       " % Live Values for Derived Files, Compared to Original Value in Blue"),
          col = colors[1], type = "l", ylim = c(-0.08, 1), lwd = 2)
     
     if(length(prod.current.index) == 1){
