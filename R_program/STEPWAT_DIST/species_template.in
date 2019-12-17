@@ -7,11 +7,16 @@
 # name = name as found in previous table.  must be exactly the same.
 # viable = max years seed viability.  sets seedprod array size.
 # xdecay = decay exponent.  indivs established = SUM(1/seed_age^xdecay)
+# pseed = the average number of seeds produced by annual species per 1g of biomass, per 1m^2 and per year.
+# var = the variance parameter of the beta distribution for annual establishment. This parameter, 
+#       along with the mean (pestab), is used to calculate the two shape parameters: alpha and beta. 
+#       Default value: 0.0001. NOTE: var must be < pestab * (1-pestab) or alpha and/or beta will be negative,
+#       we will no longer be meeting the assumptions of a beta distribution, and the code will fail.
 #
-# name     viable xdecay 
- brte        10    1.00
- cryp        10    1.00
- chen        10    1.00
+# name  viable xdecay  pseed   var
+ brte     10    1.00    1000  0.0001               
+ cryp     10    1.00     100  0.0001      
+ chen     10    1.00     100  0.0001        
  
 [end]  # end of additional annuals-only parameters.
 
@@ -56,18 +61,19 @@
 # Pmax = probability of producing seeds in a wet year
 # H = the average release height of the inflorescences (cm) 
 # VT = the average sinking velocity of the seeds (cm/sec)
+# VW - the mean horizontal wind speed (500 cm/sec in Coffin and Lauenroth 1989)
 #
-# name 	dispersal	param1	PPTdry	PPTwet	Pmin	Pmax	H	VT
- artr	1		0.5	105	520	0.01	0.55	30.0	100.0 
- cryp 	1		0.5	105	520	0.01	0.55	30.0	100.0 
- chen 	1		0.5	105	520	0.01	0.55	30.0	100.0 
- phho 	1		0.5	105	520	0.01	0.55	30.0	100.0 
- arfr 	1		0.5	105	520	0.01	0.55	30.0	100.0 
- brte 	1		0.5	105	520	0.01	0.55	30.0	100.0 
- pssp 	1		0.5	105	520	0.01	0.55	30.0	100.0 
- bogr 	1		0.5	105	520	0.01	0.55	30.0	100.0 
- chvi 	1		0.5	105	520	0.01	0.55	30.0	100.0 
- oppo 	1		0.5	105	520	0.01	0.55	30.0	100.0
+# name 	dispersal	param1	PPTdry	PPTwet	Pmin	Pmax	H	VT	VW
+ artr	1		0.5	105	520	0.01	0.55	30.0	100.0	500.0
+ cryp 	1		0.5	105	520	0.01	0.55	30.0	100.0	500.0
+ chen 	1		0.5	105	520	0.01	0.55	30.0	100.0	500.0
+ phho 	1		0.5	105	520	0.01	0.55	30.0	100.0	500.0
+ arfr 	1		0.5	105	520	0.01	0.55	30.0	100.0	500.0
+ brte 	1		0.5	105	520	0.01	0.55	30.0	100.0	500.0
+ pssp 	1		0.5	105	520	0.01	0.55	30.0	100.0	500.0
+ bogr 	1		0.5	105	520	0.01	0.55	30.0	100.0	500.0
+ chvi 	1		0.5	105	520	0.01	0.55	30.0	100.0	500.0
+ oppo 	1		0.5	105	520	0.01	0.55	30.0	100.0	500.0
 
 [end]	# this marks the end of the seed-dispersal parameters
 
