@@ -644,6 +644,21 @@ if(rescale_phenology){
     litter <- scaled_values[[scen]][[3]]		
     biomass <- scaled_values[[scen]][[4]]
     
+    # Cap pctlive values at 1.
+    for(thisRow in 1:nrow(pctlive)){
+      pctlive[thisRow, ] <- pmin(1, phenology[thisRow, ])
+    }
+    
+    # Cap litter values at 1.
+    for(thisRow in 1:nrow(litter)){
+      litter[thisRow, ] <- pmin(1, litter[thisRow, ])
+    }
+    
+    # Cap biomass values at 1.
+    for(thisRow in 1:nrow(biomass)){
+      biomass[thisRow, ] <- pmin(1, biomass[thisRow, ])
+    }
+    
     # Normalize each row of phenology to sum to 1.
     for(thisRow in 1:nrow(phenology)){
       phenology[thisRow, ] <- phenology[thisRow, ] / sum(phenology[thisRow, ])
