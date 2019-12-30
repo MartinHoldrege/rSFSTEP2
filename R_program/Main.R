@@ -646,7 +646,7 @@ if(rescale_phenology){
     
     # Cap pctlive values at 1.
     for(thisRow in 1:nrow(pctlive)){
-      pctlive[thisRow, ] <- pmin(1, phenology[thisRow, ])
+      pctlive[thisRow, ] <- pmin(1, pctlive[thisRow, ])
     }
     
     # Cap litter values at 1.
