@@ -613,12 +613,12 @@ if(!file.exists("output/sxwprod_comparisons/pctlive_graphics")){
 }
 
 for(rgroup in 1:nrow(pctlive.original)){
-  for(startFile in seq(from = 1, to = length(prod.files), by = 10)){
+  for(startFile in seq(from = 1, to = length(prod.files), by = files.per.graphic)){
     nextColor <- 2
     png(paste0("output/sxwprod_comparisons/pctlive_graphics/", 
                row.names(pctlive.original)[rgroup], "_",
                startFile, "-", 
-               min(length(prod.files), startFile + 9),
+               min(length(prod.files), startFile + files.per.graphic - 1),
                "_pctlive_graph.png"), 
         width = 2048, height = 720)
     
