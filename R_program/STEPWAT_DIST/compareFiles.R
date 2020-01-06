@@ -142,7 +142,7 @@ for(column in 1:ncol(space.original)){
                   original.filename, "/", 
                   rgroup.space.values[1,2],
                   ".", startFile, "-",
-                  startFile + files.per.graphic,
+                  startFile + files.per.graphic - 1,
                   ".space.graph.png"), 
           width = 1080, height = 800)
       
@@ -150,7 +150,8 @@ for(column in 1:ncol(space.original)){
               width = rep(1, nrow(rgroup.space.values)),
               xlab = "Files", ylab = "Space Value",
               main = paste0(rgroup.space.values[1,2],
-                            " Space values"),
+                            " Space values.\n Original value was ",
+                            space.original[rgroup, column]),
               col = colors[1:length(rgroup.space.files)],
               ylim = c(0, (max(rgroup.space.values[,3])*1.4)), lwd = 3)
               
