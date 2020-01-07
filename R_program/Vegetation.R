@@ -155,7 +155,7 @@ scale_phenology <- function(matrices, sw_weatherList, monthly.temperature,
   return_list <- list()
   temperature_list <- list()
   
-  # Calculate relative abundance
+  # Adjust the phenology for each climate scenario
   for (k_scen in seq_len(n_climate.conditions)) {
     temp_clim <- rSOILWAT2::calc_SiteClimate(
       weatherList = sw_weatherList[[n_sites]][[k_scen]], 
