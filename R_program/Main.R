@@ -605,8 +605,11 @@ if(rescale_phenology){
   # Read the input CSV files
   phenology <- read.csv("InputData_Phenology.csv", header = TRUE, row.names = 1)
   biomass <- read.csv("InputData_Biomass.csv", header = TRUE, row.names = 1)
+  biomass.sum <- rowSums(biomass)
   pctlive <- read.csv("InputData_PctLive.csv", header = TRUE, row.names = 1)
+  pctlive.sum <- rowSums(pctlive)
   litter <- read.csv("InputData_Litter.csv", header = TRUE, row.names = 1)
+  litter.sum <- sum(litter)
   monthly.temperature <- read.csv("InputData_MonthlyTemp.csv", header = TRUE, row.names = 1)
   
   # condense the values we want to scale into a single list
@@ -644,19 +647,22 @@ if(rescale_phenology){
     litter <- scaled_values[[scen]][[3]]		
     biomass <- scaled_values[[scen]][[4]]
     
-    # Cap pctlive values at 1.
+    # Normalize each row of pctlive to sum to the same value as the 
+    # sum of the values read from inputs.
     for(thisRow in 1:nrow(pctlive)){
-      pctlive[thisRow, ] <- pmin(1, pctlive[thisRow, ])
+      pctlive[thisRow, ] <- pctlive[thisRow, ] / sum(pctlive[thisRow, ]) * pctlive.sum[thisRow]
     }
     
-    # Cap litter values at 1.
+    # Normalize each row of litter to sum to the same value as the 
+    # sum of the values read from inputs.
     for(thisRow in 1:nrow(litter)){
-      litter[thisRow, ] <- pmin(1, litter[thisRow, ])
+      litter[thisRow, ] <- litter[thisRow, ] / sum(litter[thisRow, ]) * litter.sum[thisRow]
     }
     
-    # Cap biomass values at 1.
+    # Normalize each row of biomass to sum to the same value as the 
+    # sum of the values read from inputs.
     for(thisRow in 1:nrow(biomass)){
-      biomass[thisRow, ] <- pmin(1, biomass[thisRow, ])
+      biomass[thisRow, ] <- biomass[thisRow, ] / sum(biomass[thisRow, ]) * biomass.sum[thisRow]
     }
     
     # Normalize each row of phenology to sum to 1.
