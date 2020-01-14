@@ -665,11 +665,6 @@ if(rescale_phenology){
       biomass[thisRow, ] <- biomass[thisRow, ] / sum(biomass[thisRow, ]) * biomass.sum[thisRow]
     }
     
-    # Normalize each row of phenology to sum to 1.
-    for(thisRow in 1:nrow(phenology)){
-      phenology[thisRow, ] <- phenology[thisRow, ] / sum(phenology[thisRow, ])
-    }
-    
     # Round so we don't output scientific notation
     phenology <- round(phenology, 9)
     pctlive <- round(pctlive, 9)
