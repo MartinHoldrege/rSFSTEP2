@@ -638,6 +638,8 @@ if(rescale_phenology){
     # Remove temperature values from scaled_values, leaving only the phen, biomass,
     # litter, and pctlive values.
     scaled_values <- scaled_values[[1]]
+    
+    remove(temperature_values)
   }
   
   for(scen in 1:length(climate.conditions)){
@@ -651,18 +653,27 @@ if(rescale_phenology){
     # sum of the values read from inputs.
     for(thisRow in 1:nrow(pctlive)){
       pctlive[thisRow, ] <- pctlive[thisRow, ] / sum(pctlive[thisRow, ]) * pctlive.sum[thisRow]
+      # Make sure no values exceed 1
+      pctlive[thisRow, ] <- pmin(pctlive[thisRow, ], 1)
     }
     
     # Normalize each row of litter to sum to the same value as the 
     # sum of the values read from inputs.
     for(thisRow in 1:nrow(litter)){
       litter[thisRow, ] <- litter[thisRow, ] / sum(litter[thisRow, ]) * litter.sum[thisRow]
+      # Make sure no values exceed 1
+      litter[thisRow, ] <- pmin(litter[thisRow, ], 1)
     }
     
     # Normalize each row of biomass to sum to the same value as the 
     # sum of the values read from inputs.
     for(thisRow in 1:nrow(biomass)){
       biomass[thisRow, ] <- biomass[thisRow, ] / sum(biomass[thisRow, ]) * biomass.sum[thisRow]
+      
+      # Force the largest value to be 1.
+      biomass[thisRow, which.max(biomass[thisRow, ])] <- 1
+      # Make sure no values exceed 1
+      biomass[thisRow, ] <- pmin(biomass[thisRow, ], 1)
     }
     
     # Round so we don't output scientific notation
@@ -695,6 +706,11 @@ if(rescale_phenology){
   remove(monthly.temperature)
   remove(sxwphen_file)
   remove(sxwprod_v2_file)
+  remove(thisRow)
+  remove(shouldOutputTemperature)
+  remove(biomass.sum)
+  remove(litter.sum)
+  remove(pctlive.sum)
 }
 
 ############################# Vegetation Code ##############################
