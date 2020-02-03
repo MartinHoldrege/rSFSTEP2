@@ -111,3 +111,78 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
 
   res
 }
+
+#' Function to scale phenology values based on climate and a reference growing season.
+#' 
+#' @param matrices A list of matrices that will all be scaled.
+#' @param sw_weatherList A list. An object as created by the function
+#'   \code{\link{extract_data}} of the script
+#'   \var{"WeatherQuery.R"}. It is a list with an element
+#'   for each \var{sites}; these elements are themselves lists with elements
+#'   for each \var{climate.conditions}; these are in turn lists with a
+#'   S4-class
+#'   \code{\link[rSOILWAT2:swWeatherData-class]{rSOILWAT2::swWeatherData}}
+#'   object for each year as is returned by the function
+#'   \code{\link[rSOILWAT2]{dbW_getWeatherData}}.
+#' @param monthly.temperature A vector of length 12. The reference mean monthly
+#'   temperatures used to generate matrices
+#' @param site_latitude A numeric value. The latitude of the site. Default is 90.
+#' @param outputTemperature A boolean value. If TRUE, this function will output a
+#'   CSV file containing the mean monthly temperature in celsius for each climate 
+#'   scenario.
+#'
+#' @examples
+#' data("weatherData", package = "rSOILWAT2")
+#' matrices <- list( phenology, prod_litter, prod_biomass)
+#' sw_weatherList <- list(
+#'   site1 = list(Current = weatherData, Future1 = weatherData),
+#'   site2 = list(Current = weatherData, Future1 = weatherData))
+#' monthly.temperature = c(-5, -1, 1, 4, 9, 14, 18, 17, 12, 5, -1, -5)
+#' scale_phenology(matrices, sw_weatherList, monthly.temperature)
+#' 
+scale_phenology <- function(matrices, sw_weatherList, monthly.temperature,
+                            site_latitude = 90, outputTemperature = FALSE){
+  
+  n_sites <- length(sw_weatherList)
+  
+  if (length(site_latitude) != n_sites && length(site_latitude) > 1) {
+    stop("'scale_phenology': argument 'site_latitude' ",
+         "must have a length one or be equal to the length of 'sw_weatherList'.")
+  } 
+  
+  n_climate.conditions <- unique(lengths(sw_weatherList))
+  
+  return_list <- list()
+  temperature_list <- list()
+  
+  # Adjust the phenology for each climate scenario
+  for (k_scen in seq_len(n_climate.conditions)) {
+    temp_clim <- rSOILWAT2::calc_SiteClimate(
+      weatherList = sw_weatherList[[n_sites]][[k_scen]], 
+      do_C4vars = FALSE, 
+      do_Cheatgrass_ClimVars = FALSE,
+      latitude = site_latitude[n_sites])
+    
+    if(outputTemperature){
+      temperature_list[[k_scen]] <- temp_clim[["meanMonthlyTempC"]]
+    }
+    
+    index <- 1
+    return_list[[k_scen]] <- list()
+    for(arr in matrices) {
+      return_list[[k_scen]][[index]] <- arr
+      for(row in 1:nrow(arr)) {
+        return_list[[k_scen]][[index]][row,] <- rSOILWAT2::adj_phenology_by_temp_v2(unlist(arr[row,]),
+                                                              unlist(monthly.temperature),
+                                                              unlist(temp_clim[["meanMonthlyTempC"]]))
+      }
+      index <- index + 1
+    }
+  }
+  
+  if(outputTemperature){
+    return_list <- list(return_list, temperature_list)
+  }
+  
+  return_list
+}

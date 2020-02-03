@@ -11,11 +11,8 @@ library(RSQLite)
 setwd(directory)
 
 s<-site[1]
-  foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
-      
-      setwd(dist.directory)
-      
-      #Copy in the relevant species.in file for each site, as specified in the Main.R
+foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
+  #Copy in the relevant species.in file for each site, as specified in the Main.R
   for(sp in species)
   {
     setwd(dist.directory)
@@ -27,7 +24,7 @@ s<-site[1]
     
     setwd(directory)      
     
-   	 #Copy in the soils.in file that is specified by the user in TreatmentFiles
+    #Copy in the soils.in file that is specified by the user in TreatmentFiles
     for(soil in soil.types){
       setwd(dist.directory)
       soil.type.name<-paste0(soil,".in")
@@ -39,6 +36,9 @@ s<-site[1]
       #Go to the weather directory
       setwd(assembly_output)
       
+      # The sxw folder for scaling phenology
+      STEPWAT.sxw.directory<-paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw")
+      
       #If climate conditions = "Current", copy the current weather data files into the randomdata folder
       if (GCM[g]=="Current") {
         setwd(paste("Site_",s,"_",GCM[g],sep=""))
@@ -47,6 +47,25 @@ s<-site[1]
         #Identify the directory the weather will be pasted into    
         weather.dir<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/",sep="")
         weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
+        
+        if(rescale_phenology){
+          ################ Copy phen and prod files generated for current conditions #################
+          setwd(dist.directory)
+          # Copy the phenology file generated for this specific GCM, RCP and YEAR.
+          system(paste0("cp ", "sxwphen.", GCM[g], ".in", " ", STEPWAT.sxw.directory))
+          # Copy the prod file generated for this specific GCM, RCP and YEAR.
+          system(paste0("cp ", "sxwprod_v2.", GCM[g], ".in", " ", STEPWAT.sxw.directory))
+          # Move to the SXW inputs for STEPWAT2
+          setwd(STEPWAT.sxw.directory)
+          # Remove the old phenology file
+          system("rm sxwphen.in")
+          # Remove the old prod file
+          system("rm sxwprod_v2.in")
+          # Rename the phenology file to the name recognized by STEPWAT2
+          system(paste0("mv ", "sxwphen.", GCM[g], ".in", " sxwphen.in"))
+          # Rename the prod file to the name recognized by STEPWAT2
+          system(paste0("mv ", "sxwprod_v2.", GCM[g], ".in", " sxwprod_v2.in"))
+        }
         
         #Copy the weather data into the randomdata folder, commenting out creation of weather.in files as default so rSFSTEP2
         #uses only weather data generated from the markov weather generator but retain this code if one wants to create and copy 30 years of 
@@ -151,11 +170,32 @@ s<-site[1]
             #use with Vic weather database and all new weather databases
             if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
             {
+              downscaling_method <- "hybrid-delta-3mod"
               setwd(paste("Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep=""))
               weath.read<-paste(assembly_output,"Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
             } else {
+              downscaling_method <- "hybrid-delta"
               setwd(paste("Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep=""))
               weath.read<-paste(assembly_output,"Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
+            }
+            
+            if(rescale_phenology){
+              ########## Move phen and prod files generated for this specific GCM x RCP x YEARS combination #########
+              setwd(dist.directory)
+              # Copy the phenology file generated for this climate into STEPWAT2
+              system(paste0("cp ", "sxwphen.", downscaling_method, ".", y, ".", r, ".", GCM[g], ".in", " ", STEPWAT.sxw.directory))
+              # Copy the prod file generated for this climate into STEPWAT2
+              system(paste0("cp ", "sxwprod_v2.", downscaling_method, ".", y, ".", r, ".", GCM[g], ".in", " ", STEPWAT.sxw.directory))
+              # Move into the sxw inputs folder for STEPWAT2
+              setwd(STEPWAT.sxw.directory)
+              # Remove the old phenology file
+              system("rm sxwphen.in")
+              # Remove the old prod file
+              system("rm sxwprod_v2.in")
+              # Rename the new phenology file to the name recognized by STEPWAT2
+              system(paste0("mv ", "sxwphen.", downscaling_method, ".", y, ".", r, ".", GCM[g], ".in", " sxwphen.in"))
+              # Rename the new prod file to the name recognized by STEPWAT2
+              system(paste0("mv ", "sxwprod_v2.", downscaling_method, ".", y, ".", r, ".", GCM[g], ".in", " sxwprod_v2.in"))
             }
             
             #Identify the directory the weather will be pasted into   

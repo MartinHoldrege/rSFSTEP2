@@ -23,9 +23,20 @@ setwd(source.dir)
 #Set database and inputs location
 db_loc<-""
 
-# If you would like to rescale space parameters based on climate for each climate scenario, set this boolean to TRUE.
-# If you would like to run with only the space parameters that you have specified in the input.csv, set this boolean to FALSE.
+# If you would like to rescale space parameters based on climate for each climate 
+# scenario, set this boolean to TRUE. If you would like to run with only the space 
+# parameters that you have specified in the input.csv, set this boolean to FALSE.
 rescale_space <- TRUE
+
+# If you would like to compare the generated RGroup.in files with the values specified
+# in the input CSV set this boolean to TRUE.
+output_original_space <- TRUE
+
+# If you would like to rescale monthly phenological activity, monthly biomass, 
+# monthly % live, and monthly litter based on climate for each climate scenario 
+# set this boolean to TRUE. If you would like to run with the default values 
+# already in STEPWAT2 set this boolean to FALSE.
+rescale_phenology <- TRUE
 
 #Database location, edit the name of the weather database accordingly
 database_name<-"dbWeatherData.VicSites.v3.2.0.sqlite3"
@@ -256,6 +267,7 @@ rgroup_data_all_sites_vectors<-rgroup_data_all_sites[grepl(",",rgroup_data_all_s
 
 contains_vector <- FALSE
 rgroups <- c()
+space_values <- list()
 
 #Generate a rgroup.in file for the site for the x,y option first
 if(any(grepl(",",rgroup_data_all_sites))==TRUE)
@@ -317,9 +329,9 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
         # Now add the file name to the list of file names
         rgroups <- c(rgroups, paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i))
         
+        space_values[[length(space_values) + 1]] <- df[ , 2]
         # Write the rgroup.in file to the STEPWAT_DIST folder
         write.table(df, file = paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
-        
       }
     }
   }
@@ -382,9 +394,19 @@ for(i in treatments)
         
   # Now add the file name to the list of file names
   rgroups <- c(rgroups, paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i))
-        
+  
+  # Remember the space values in case we need to print them
+  space_values[[length(space_values) + 1]] <- df[ , 2]
+  
   # Write the rgoup.in file to the STEPWAT_DIST directory
   write.table(df, file = paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
+}
+
+if(output_original_space){
+  # Output the space values to a file. This will allow us to compare them to the rescaled space
+  # parameters generated later in this file. For comparing files see compareFiles.R in STEPWAT_DIST.
+  names(space_values) <- rgroups
+  write.csv(space_values, file = "space_original_values.csv", row.names = FALSE)
 }
 
 # adding names to the vector will help us determine what climate scenario applies to what rgroup.in file
@@ -415,6 +437,7 @@ remove(dist.freq.current)
 remove(graz.freq.current)
 remove(contains_vector)
 # variables related to rgroup
+remove(space_values)
 remove(rgroup_data_site)
 remove(treatments)
 remove(df)
@@ -429,7 +452,6 @@ remove(soil_data_all_sites)
 remove(soil_data_all_sites_vectors)
 remove(soil_data_site)
 #variables related to species
-remove(db_loc)
 remove(species_data_site)
 remove(species_data_all_sites_vectors)
 remove(species_data)
@@ -574,12 +596,133 @@ remove(temp)
 
 ############################# End MARKOV Weather Generator Code ##############################
 
+############################# Phenology Code ###############################
+# This code determines plant functional type phenology
+# and then scales phenological activity, biomass, litter and % live accordingly
+if(rescale_phenology){
+  source(vegetation.file)
+  setwd(db_loc)
+  # Read the input CSV files
+  phenology <- read.csv("InputData_Phenology.csv", header = TRUE, row.names = 1)
+  biomass <- read.csv("InputData_Biomass.csv", header = TRUE, row.names = 1)
+  biomass.sum <- rowSums(biomass)
+  pctlive <- read.csv("InputData_PctLive.csv", header = TRUE, row.names = 1)
+  pctlive.sum <- rowSums(pctlive)
+  litter <- read.csv("InputData_Litter.csv", header = TRUE, row.names = 1)
+  litter.sum <- sum(litter)
+  monthly.temperature <- read.csv("InputData_MonthlyTemp.csv", header = TRUE, row.names = 1)
+  
+  # condense the values we want to scale into a single list
+  values_to_scale <- list(phenology, pctlive, litter, biomass)
+  
+  # If you plan on comparing output files, this needs to be TRUE
+  shouldOutputTemperature = TRUE
+  
+  # scale the list
+  scaled_values <- scale_phenology(values_to_scale, sw_weatherList, 
+                                   monthly.temperature, site_latitude = 90, 
+                                   outputTemperature = shouldOutputTemperature)
+  
+  # Move to the DIST directory so we can start writing the files.
+  setwd(source.dir)
+  setwd("STEPWAT_DIST")
+  
+  if(shouldOutputTemperature){
+    # Format and write the temperature values for each climate scenario
+    temperature_values <- scaled_values[[2]]
+    temperature_values <- t(simplify2array(temperature_values))
+    row.names(temperature_values) <- climate.conditions
+    colnames(temperature_values) <- month.abb
+    write.csv(file = "temperature.csv", temperature_values)
+    
+    # Remove temperature values from scaled_values, leaving only the phen, biomass,
+    # litter, and pctlive values.
+    scaled_values <- scaled_values[[1]]
+    
+    remove(temperature_values)
+  }
+  
+  for(scen in 1:length(climate.conditions)){
+    # Pull the correct entry out of the scaled list.
+    phenology <- scaled_values[[scen]][[1]]		
+    pctlive <- scaled_values[[scen]][[2]]		
+    litter <- scaled_values[[scen]][[3]]		
+    biomass <- scaled_values[[scen]][[4]]
+    
+    # Normalize each row of pctlive to sum to the same value as the 
+    # sum of the values read from inputs.
+    for(thisRow in 1:nrow(pctlive)){
+      pctlive[thisRow, ] <- pctlive[thisRow, ] / sum(pctlive[thisRow, ]) * pctlive.sum[thisRow]
+      # Make sure no values exceed 1
+      pctlive[thisRow, ] <- pmin(pctlive[thisRow, ], 1)
+    }
+    
+    # Normalize each row of litter to sum to the same value as the 
+    # sum of the values read from inputs.
+    for(thisRow in 1:nrow(litter)){
+      litter[thisRow, ] <- litter[thisRow, ] / sum(litter[thisRow, ]) * litter.sum[thisRow]
+      # Make sure no values exceed 1
+      litter[thisRow, ] <- pmin(litter[thisRow, ], 1)
+    }
+    
+    # Normalize each row of biomass to sum to the same value as the 
+    # sum of the values read from inputs.
+    for(thisRow in 1:nrow(biomass)){
+      biomass[thisRow, ] <- biomass[thisRow, ] / sum(biomass[thisRow, ]) * biomass.sum[thisRow]
+      
+      # Force the largest value to be 1.
+      biomass[thisRow, which.max(biomass[thisRow, ])] <- 1
+      # Make sure no values exceed 1
+      biomass[thisRow, ] <- pmin(biomass[thisRow, ], 1)
+    }
+    
+    # Round so we don't output scientific notation
+    phenology <- round(phenology, 9)
+    pctlive <- round(pctlive, 9)
+    litter <- round(litter, 9)
+    biomass <- round(biomass, 9)
+    
+    sxwprod_v2_file <- paste0("sxwprod_v2.", climate.conditions[scen], ".in")
+    sxwphen_file <- paste0("sxwphen.", climate.conditions[scen], ".in")
+    
+    # Write the phenology table
+    write.table(phenology, sxwphen_file, append = FALSE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
+    # Write the prod table
+    write.table(litter, sxwprod_v2_file, append = FALSE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "\n")
+    write.table("\n[end]\n", sxwprod_v2_file, append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
+    write.table(biomass, sxwprod_v2_file, append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
+    write.table("\n[end]\n", sxwprod_v2_file, append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
+    write.table(pctlive, sxwprod_v2_file, append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
+    write.table("\n[end]\n", sxwprod_v2_file, append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
+  }
+  
+  # Garbage collection for this section
+  remove(litter)
+  remove(phenology)
+  remove(biomass)
+  remove(pctlive)
+  remove(values_to_scale)
+  remove(scaled_values)
+  remove(monthly.temperature)
+  remove(sxwphen_file)
+  remove(sxwprod_v2_file)
+  remove(thisRow)
+  remove(shouldOutputTemperature)
+  remove(biomass.sum)
+  remove(litter.sum)
+  remove(pctlive.sum)
+}
+
 ############################# Vegetation Code ##############################
 # only rescale space if requested.
 if(rescale_space){
   # This code determines plant functional type relative abundance
   # and then scales STEPWAT2 parameters accordingly
   source(vegetation.file)
+  
+  # Move to the DIST directory so we can read the files.
+  setwd(source.dir)
+  setwd("STEPWAT_DIST")
 
   # Array of plant functional type relative abundance
   relVegAbund <- estimate_STEPWAT_relativeVegAbundance(sw_weatherList)
@@ -592,9 +735,6 @@ if(rescale_space){
   Grasses_C4 <- c("p.warm.grass")
   Grasses_Annuals <- c("a.cool.grass")
   Trees <- c()
-
-  # move to dist folder so we can begin adjusting space
-  setwd("../STEPWAT_DIST")
 
   # will store the new rgroup files temporarily
   new_rgroup_files <- c()
