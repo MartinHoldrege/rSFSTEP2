@@ -8,7 +8,7 @@ git clone --branch master https://github.com/DrylandEcology/rSFSTEP2.git
 # Instructions for running rSFSTEP2
 
 Required R packages for rSFSTEP2: 
-DBI, RSQLite, rSOILWAT2, doParallel
+DBI, RSQLite, [rSOILWAT2](https://github.com/DrylandEcology/rSOILWAT2#installation), [rSW2utils](https://github.com/DrylandEcology/rSW2utils#installation), doParallel
 
 On a super computer:
 --
