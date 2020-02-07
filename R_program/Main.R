@@ -64,7 +64,7 @@ output.file<-paste(source.dir,"AppendTreatments.R", sep="")
 tick_on<-proc.time()
 
 #rSFSTEP2 will automatically populate the site string with the sites specified in generate_stepwat_sites.sh
-site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10)
+site<-c(sitefolderid)
 
 #######################################################################################
 #Set working directory to location with inputs
@@ -467,8 +467,12 @@ endyr <- 2010
 climate.ambient <- "Current"
 
 #Specify the RCP/GCM combinations
-climate.conditions <- c(climate.ambient,  "RCP45.CanESM2", "RCP45.CESM1-CAM5", "RCP45.CSIRO-Mk3-6-0", "RCP45.FGOALS-g2", "RCP45.FGOALS-s2", "RCP45.GISS-E2-R", "RCP45.HadGEM2-CC", "RCP45.HadGEM2-ES",
-                        "RCP45.inmcm4", "RCP45.IPSL-CM5A-MR", "RCP45.MIROC5", "RCP45.MIROC-ESM","RCP45.MRI-CGCM3", "RCP85.CanESM2", "RCP85.CESM1-CAM5", "RCP85.CSIRO-Mk3-6-0", "RCP85.FGOALS-g2","RCP85.FGOALS-s2","RCP85.GISS-E2-R","RCP85.HadGEM2-CC","RCP85.HadGEM2-ES","RCP85.inmcm4","RCP85.IPSL-CM5A-MR","RCP85.MIROC5","RCP85.MIROC-ESM","RCP85.MRI-CGCM3")
+climate.conditions <- c(climate.ambient,  "RCP45.CanESM2", "RCP45.CESM1-CAM5", "RCP45.CSIRO-Mk3-6-0", "RCP45.FGOALS-g2",
+                        "RCP45.FGOALS-s2", "RCP45.GISS-E2-R", "RCP45.HadGEM2-CC", "RCP45.HadGEM2-ES", "RCP45.inmcm4", 
+                        "RCP45.IPSL-CM5A-MR", "RCP45.MIROC5", "RCP45.MIROC-ESM","RCP45.MRI-CGCM3", "RCP85.CanESM2", 
+                        "RCP85.CESM1-CAM5", "RCP85.CSIRO-Mk3-6-0", "RCP85.FGOALS-g2","RCP85.FGOALS-s2","RCP85.GISS-E2-R",
+                        "RCP85.HadGEM2-CC","RCP85.HadGEM2-ES","RCP85.inmcm4","RCP85.IPSL-CM5A-MR","RCP85.MIROC5",
+                        "RCP85.MIROC-ESM","RCP85.MRI-CGCM3")
 
 ###################### Derive GCM and RCP information from climate.conditions #######################
 split <- strsplit(climate.conditions, "\\.")   # Split entries in climate.conditions on the period
@@ -609,7 +613,7 @@ if(rescale_phenology){
   pctlive <- read.csv("InputData_PctLive.csv", header = TRUE, row.names = 1)
   pctlive.sum <- rowSums(pctlive)
   litter <- read.csv("InputData_Litter.csv", header = TRUE, row.names = 1)
-  litter.sum <- sum(litter)
+  litter.sum <- rowSums(litter)
   monthly.temperature <- read.csv("InputData_MonthlyTemp.csv", header = TRUE, row.names = 1)
   
   # condense the values we want to scale into a single list
@@ -688,7 +692,7 @@ if(rescale_phenology){
     # Write the phenology table
     write.table(phenology, sxwphen_file, append = FALSE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
     # Write the prod table
-    write.table(litter, sxwprod_v2_file, append = FALSE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "\n")
+    write.table(litter, sxwprod_v2_file, append = FALSE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
     write.table("\n[end]\n", sxwprod_v2_file, append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
     write.table(biomass, sxwprod_v2_file, append = TRUE, col.names = FALSE, row.names = TRUE, quote = FALSE, sep = "\t")
     write.table("\n[end]\n", sxwprod_v2_file, append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
@@ -895,7 +899,7 @@ if(rescale_space){
 ########### Set parameters ###############################################
 
 #This will be populated by rSFSTEP2
-site<-c(sitefolderid)#,2,3,4,5,6,7,8,9,10) 
+site<-c(sitefolderid)
 
 #Directory stores working directory
 directory<-source.dir
