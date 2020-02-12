@@ -224,7 +224,7 @@ if(length(phen.current.index) == 1){
 }
 phen.files <- phen.files[!grepl(phen.files, pattern = "urrent")]
 
-#################### Create LITTER Graphics ########################
+################### Create PHENOLOGY Graphics #######################
 if(!file.exists("output/sxwphen_comparisons/graphics")){
   system("mkdir output/sxwphen_comparisons/graphics")
 }
@@ -418,7 +418,7 @@ for(rgroup in 1:nrow(litter.original)){
     nextColor <- 2
     png(paste0("output/sxwprod_comparisons/LITTER_graphics/", 
                rgroup.names[rgroup], "_LITTER_", startFile, "-", 
-               min(length(litter.list), startFile + files.per.graphic - 1),
+               min(length(prod.files), startFile + files.per.graphic - 1),
                "_graph.png"), 
         width = 2048, height = 720)
     
