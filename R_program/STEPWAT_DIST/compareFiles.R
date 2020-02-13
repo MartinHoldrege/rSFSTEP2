@@ -224,7 +224,7 @@ if(length(phen.current.index) == 1){
 }
 phen.files <- phen.files[!grepl(phen.files, pattern = "urrent")]
 
-#################### Create LITTER Graphics ########################
+################### Create PHENOLOGY Graphics #######################
 if(!file.exists("output/sxwphen_comparisons/graphics")){
   system("mkdir output/sxwphen_comparisons/graphics")
 }
@@ -338,73 +338,39 @@ litter.original <- read.csv("../../inputs/InputData_Litter.csv", row.names = 1)
 biomass.original <- read.csv("../../inputs/InputData_Biomass.csv", row.names = 1)
 pctlive.original <- read.csv("../../inputs/InputData_PctLive.csv", row.names = 1)
 
-litter <- c(); biomass.input <- c(); pctlive.input <- c()
-
 litter.list <- list(); biomass.list <- list(); pctlive.list <- list()
 
 ################ Loop through the generated files ##################
 for(index in 1:length(prod.files)){
   prod.data <- read.table(prod.files[index], fill = TRUE)
+  number.rgroups <- sum(prod.data[ , 1] != "[end]") / 3
+  rgroup.names <- prod.data[1:number.rgroups, 1]
   
-  ################### Parse the LITTER table #######################
-  line <- 1
-  last.end <- 0
-  while(prod.data[line, 1] != "[end]"){
-    litter[line] <- as.numeric(as.character(prod.data[line, 1]))
-    line <- line + 1
-  }
-  last.end <- line
-  line <- line + 1
+  litter.list[[index]] <- prod.data[1:number.rgroups, 2:ncol(prod.data)]
+  row.names(litter.list[[index]]) <- rgroup.names
   
-  ################### Parse the BIOMASS table ######################
-  while(prod.data[line, 1] != "[end]"){
-    biomass.input[line - last.end] <- as.character(prod.data[line, 1])
-    line <- line + 1
-  }
-  last.end <- line
-  line <- line + 1
+  biomass.list[[index]] <- prod.data[(number.rgroups + 2):(number.rgroups * 2 + 1), 2:ncol(prod.data)]
+  row.names(biomass.list[[index]]) <- rgroup.names
   
-  ################### Parse the PCTLIVE table ######################
-  while(prod.data[line, 1] != "[end]"){
-    pctlive.input[line - last.end] <- as.character(prod.data[line, 1])
-    line <- line + 1
-  }
-  
-  ### R read the table matrices with 1 column, here we fix that ###
-  pctlive.input <- matrix(pctlive.input, ncol = 13, byrow = TRUE)
-  biomass.input <- matrix(biomass.input, ncol = 13, byrow = TRUE)
-  rownames(pctlive.input) <- pctlive.input[ , 1]
-  rownames(biomass.input) <- biomass.input[ , 1]
-  pctlive.input <- pctlive.input[ , 2:ncol(pctlive.input)]
-  biomass.input <- biomass.input[ , 2:ncol(biomass.input)]
-  
-  ########### Convert *.input from characters to numerics ##########
-  pctlive <- matrix(nrow = nrow(pctlive.input), ncol = ncol(pctlive.input))
-  biomass <- matrix(nrow = nrow(biomass.input), ncol = ncol(biomass.input))
-  pctlive[,] <- as.numeric(pctlive.input[,])
-  biomass[,] <- as.numeric(biomass.input[,])
-  rownames(biomass) <- rownames(biomass.input)
-  rownames(pctlive) <- rownames(pctlive.input)
-  
-  pctlive.list[[index]] <- pctlive
-  biomass.list[[index]] <- biomass
-  litter.list[[index]] <- litter
+  pctlive.list[[index]] <- prod.data[(number.rgroups * 2 + 3):(number.rgroups * 3 + 2), 2:ncol(prod.data)]
+  row.names(pctlive.list[[index]]) <- rgroup.names
 }
 
 ############### Create 2d matrix for printing ####################
-pctlive.2d <- matrix(nrow = (nrow(pctlive.list[[1]]) * length(pctlive.list)),
-                     ncol = 14)
+pctlive.2d <- matrix(nrow = (nrow(pctlive.list[[1]]) * length(pctlive.list)), ncol = 14)
 colnames(pctlive.2d) <- c("RGroup", "File", month.abb)
-biomass.2d <- matrix(nrow = (nrow(biomass.list[[1]]) * length(biomass.list)),
-                     ncol = 14)
+
+biomass.2d <- matrix(nrow = (nrow(biomass.list[[1]]) * length(biomass.list)), ncol = 14)
 colnames(biomass.2d) <- c("RGroup", "File", month.abb)
-litter.2d <- matrix(nrow = length(litter.list),
-                    ncol = 13)
-colnames(litter.2d) <- c("File", month.abb)
+
+litter.2d <- matrix(nrow = (nrow(litter.list[[1]]) * length(litter.list)), ncol = 14)
+colnames(litter.2d) <- c("RGroup", "File", month.abb)
 
 for(index in 1:length(prod.files)){
-  litter.2d[index, 1] <- prod.files[index]
-  litter.2d[index, 2:13] <- data.matrix(litter.list[[index]] - litter.original)
+  litter.rows <- (nrow(litter.original)*(index-1)+1):(index*nrow(litter.original))
+  litter.2d[litter.rows,2] <- rep(prod.files[index], times = nrow(litter.original))
+  litter.2d[litter.rows,1] <- rownames(litter.original)
+  litter.2d[litter.rows,3:14] <- data.matrix(litter.list[[index]] - litter.original)
   
   biomass.rows <- (nrow(biomass.original)*(index-1)+1):(index*nrow(biomass.original))
   biomass.2d[biomass.rows,2] <- rep(prod.files[index], times = nrow(biomass.original))
@@ -446,81 +412,84 @@ if(!file.exists("output/sxwprod_comparisons/LITTER_graphics")){
   system("mkdir output/sxwprod_comparisons/LITTER_graphics")
 }
 
-for(startFile in seq(from = 1, to = length(prod.files), 
-                     by = files.per.graphic)){
-  nextColor <- 2
-  png(paste0("output/sxwprod_comparisons/LITTER_graphics/", 
-             "LITTER_", startFile, "-", 
-             min(length(litter.list), startFile + files.per.graphic - 1),
-             "_graph.png"), 
-      width = 2048, height = 720)
-  
-  par(mfrow = c(1, 2))
-  
-  plot(x = c(1:12), y = t(litter.original), xlab = "Month", 
-       ylab = "LITTER", 
-       main = paste0("LITTER Values for Derived Files by Month, ",
-                     "Compared to Original Value in Blue"),
-       col = colors[1], type = "l", ylim = c(-0.08, 1), lwd = 2)
-  
-  if(length(prod.current.index) == 1){
-    points(x = c(1:12), 
-           y = litter.list[[prod.current.index]], 
-           col = colors[nextColor], 
-           pch = (nextColor-1), 
-           cex = 3, lwd = 4)
+for(rgroup in 1:nrow(litter.original)){
+  for(startFile in seq(from = 1, to = length(prod.files), 
+                       by = files.per.graphic)){
+    nextColor <- 2
+    png(paste0("output/sxwprod_comparisons/LITTER_graphics/", 
+               rgroup.names[rgroup], "_LITTER_", startFile, "-", 
+               min(length(prod.files), startFile + files.per.graphic - 1),
+               "_graph.png"), 
+        width = 2048, height = 720)
     
-    lines(x = c(1:12), 
-          y = litter.list[[prod.current.index]], 
-          col = colors[nextColor], 
-          lwd = 2)
+    par(mfrow = c(1, 2))
     
-    nextColor <- nextColor + 1
-  }
-  
-  for(file in startFile:min(length(prod.files), 
-                            startFile + files.per.graphic - 1)){
-    points(x = c(1:12), 
-           y = litter.list[[file + 1]], 
-           col = colors[nextColor], 
-           pch = (nextColor-1), 
-           cex = 3, lwd = 4)
+    plot(x = c(1:12), y = t(litter.original[rgroup, ]), xlab = "Month", 
+         ylab = "LITTER", 
+         main = paste0(rgroup.names[rgroup], 
+                       " Litter Values for Derived Files by Month, ",
+                       "Compared to Original Value in Blue"),
+         col = colors[1], type = "l", ylim = c(-0.08, 1), lwd = 2)
     
-    nextColor <- nextColor + 1
+    if(length(prod.current.index) == 1){
+      points(x = c(1:12), 
+             y = litter.list[[prod.current.index]][rgroup, ], 
+             col = colors[nextColor], 
+             pch = (nextColor-1), 
+             cex = 3, lwd = 4)
+      
+      lines(x = c(1:12), 
+            y = litter.list[[prod.current.index]][rgroup, ], 
+            col = colors[nextColor], 
+            lwd = 2)
+      
+      nextColor <- nextColor + 1
+    }
+    
+    for(file in startFile:min(length(prod.files), 
+                              startFile + files.per.graphic - 1)){
+      points(x = c(1:12), 
+             y = litter.list[[file + 1]][rgroup, ], 
+             col = colors[nextColor], 
+             pch = (nextColor-1), 
+             cex = 3, lwd = 4)
+      
+      nextColor <- nextColor + 1
+    }
+    
+    if(length(prod.current.index == 1)){
+      legend.values <- c(prod.current.file, 
+                         prod.files[startFile:min(length(prod.files), 
+                                                  startFile + files.per.graphic - 1)])
+    } else {
+      legend.values <- prod.files[startFile:min(length(prod.files), 
+                                                startFile + files.per.graphic - 1)]
+    }
+    legend("topright",
+           legend.values,
+           col = colors[2:(nextColor-1)],
+           pch = 1:(nextColor-2))
+    
+    #################### Add the temperature graph #################
+    plot(x = c(1:12), y = temperature.original, xlab = "Month", 
+         ylab = "Temperature", 
+         main = "Mean Monthly Temperature for each Climate Scenario with original temperature in blue",
+         col = colors[1], type = "l", ylim = c(-10, 35), lwd = 2)
+    
+    climateIndexes <- c()
+    for(row in 1:length(legend.values)){
+      climateIndexes[row] <- fileName2climateIndex(legend.values[row], temperature.derived)
+      addTemperatureLine(temperature.derived[climateIndexes[row], ], colors[row + 1])
+      addTemperaturePoint(temperature.derived[climateIndexes[row], ], colors[row + 1], row)
+    }
+    
+    legend("topleft",
+           row.names(temperature.derived)[climateIndexes],
+           col = colors[2:(nextColor-1)],
+           pch = 1:(nextColor-2))
+    
+    dev.off()
   }
-  
-  if(length(prod.current.index == 1)){
-    legend.values <- c(prod.current.file, 
-                       prod.files[startFile:min(length(prod.files), 
-                                                startFile + files.per.graphic - 1)])
-  } else {
-    legend.values <- prod.files[startFile:min(length(prod.files), 
-                                              startFile + files.per.graphic - 1)]
-  }
-  legend("topright",
-         legend.values,
-         col = colors[2:(nextColor-1)],
-         pch = 1:(nextColor-2))
-  
-  #################### Add the temperature graph #################
-  plot(x = c(1:12), y = temperature.original, xlab = "Month", 
-       ylab = "Temperature", 
-       main = "Mean Monthly Temperature for each Climate Scenario with original temperature in blue",
-       col = colors[1], type = "l", ylim = c(-10, 35), lwd = 2)
-  
-  climateIndexes <- c()
-  for(row in 1:length(legend.values)){
-    climateIndexes[row] <- fileName2climateIndex(legend.values[row], temperature.derived)
-    addTemperatureLine(temperature.derived[climateIndexes[row], ], colors[row + 1])
-    addTemperaturePoint(temperature.derived[climateIndexes[row], ], colors[row + 1], row)
-  }
-  
-  legend("topleft",
-         row.names(temperature.derived)[climateIndexes],
-         col = colors[2:(nextColor-1)],
-         pch = 1:(nextColor-2))
-  
-  dev.off()
 }
 
 #################### Create BIOMASS Graphics #######################
