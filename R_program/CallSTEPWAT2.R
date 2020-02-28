@@ -11,11 +11,19 @@ library(RSQLite)
 setwd(directory)
 
 output_database<-paste(source.dir,"Output.sqlite",sep="")
+
+# Before running parallel instances we need to make sure that the database exists.
+# This will attempt to connect to the database, and if no database exists it will
+# create one
 db <- dbConnect(SQLite(), output_database)
+# We can disconnect immediately. We need a separate connection for each instance.
+dbDisconnect(db)
+rm(db)
 
 s<-site[1]
 foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
-
+  
+  db <- dbConnect(SQLite(), output_database)
   setwd(dist.directory)
 
   #Copy in the relevant species.in file for each site, as specified in the Main.R
