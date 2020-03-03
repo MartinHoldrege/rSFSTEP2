@@ -34,6 +34,15 @@ f = open(fileout,'w')
 f.write(newdata)
 f.close()
 
+fileout='STEPWAT_DIST/sample.sh'
+f = open(fileout, 'r')
+filedata = f.read()
+f.close()
+newdata = filedata.replace("noid",str(parsed.number[0]))
+f = open(fileout,'w')
+f.write(newdata)
+f.close()
+
 f = open('OutputDatabase.R','r')
 filedata = f.read()
 f.close()
