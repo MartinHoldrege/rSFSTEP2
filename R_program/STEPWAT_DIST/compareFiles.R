@@ -253,7 +253,7 @@ for(rgroup in 1:length(phen.original[, 1])){
                        " Phenological Activity Values by Month for ",
                        "Multiple Derived Files, with Original Value ",
                        "in Blue."),
-         col = colors[1], type = "l", ylim = c(-.05, .5), lwd = 2)
+         col = colors[1], type = "l", ylim = c(-.05, 1.2), lwd = 2)
     
     # If a "Current" file is present, we want to add it to every graph.
     if(length(phen.current.index == 1)){
