@@ -7,6 +7,9 @@ library(doParallel)
 registerDoParallel(proc_count)
 library(plyr)
 library(RSQLite)
+library(synchronicity)
+
+databaseMutex <- boost.mutex()
 
 setwd(directory)
 
@@ -112,7 +115,9 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           wrapped.biomass <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, bmassavg.csv)
           colnames(wrapped.biomass) <- c("site", "GCM", "years", "RCP", "treatment", "dst", "grazing", "intensity", 
                                          "soil", "speciesFile", colnames(bmassavg.csv))
+          lock(databaseMutex)
           dbWriteTable(db, "Biomass", wrapped.biomass, append=T)
+          unlock(databaseMutex)
           system("rm bmassavg.csv")
           
           # Add mortality output to the SQLite database
@@ -120,7 +125,9 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           wrapped.mortality <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, mortavg.csv)
           colnames(wrapped.mortality) <- c("site", "GCM", "years", "RCP", "treatment", "dst", "grazing", "intensity", 
                                            "soil", "speciesFile", colnames(mortavg.csv))
+          lock(databaseMutex)
           dbWriteTable(db, "Mortality", wrapped.mortality, append=T)
+          unlock(databaseMutex)
           system("rm mortavg.csv")
           
           #Change directory to where SOILWAT2 output is stored
@@ -131,14 +138,18 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           wrapped.daily.slyrs <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_slyrs_agg.csv)
           colnames(wrapped.daily.slyrs) <- c("site", "GCM", "years", "RCP", "treatment", "dst", "grazing", "intensity", 
                                              "soil", "speciesFile", colnames(sw2_daily_slyrs_agg.csv))
+          lock(databaseMutex)
           dbWriteTable(db, "sw2_daily_slyrs", wrapped.daily.slyrs, append=T)
+          unlock(databaseMutex)
           system("rm sw2_daily_slyrs_agg.csv")
           
           sw2_daily_agg.csv <- read.csv("sw2_daily_agg.csv", header = TRUE)
           wrapped.daily <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_agg.csv)
           colnames(wrapped.daily) <- c("site", "GCM", "years", "RCP", "treatment", "dst", "grazing", "intensity", 
                                              "soil", "speciesFile", colnames(sw2_daily_agg.csv))
+          lock(databaseMutex)
           dbWriteTable(db, "sw2_daily", wrapped.daily, append=T)
+          unlock(databaseMutex)
           system("rm sw2_daily_agg.csv")
 
           #Monthly SOILWAT2 output
@@ -146,14 +157,18 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           wrapped.monthly.slyrs <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_slyrs_agg.csv)
           colnames(wrapped.monthly.slyrs) <- c("site", "GCM", "years", "RCP", "treatment", "dst", "grazing", "intensity", 
                                                "soil", "speciesFile", colnames(sw2_monthly_slyrs_agg.csv))
+          lock(databaseMutex)
           dbWriteTable(db, "sw2_monthly_slyrs", wrapped.monthly.slyrs, append=T)
+          unlock(databaseMutex)
           system("rm sw2_monthly_slyrs_agg.csv")
           
           sw2_monthly_agg.csv <- read.csv("sw2_monthly_agg.csv", header = TRUE)
           wrapped.monthly <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_agg.csv)
           colnames(wrapped.monthly) <- c("site", "GCM", "years", "RCP", "treatment", "dst", "grazing", "intensity", 
                                          "soil", "speciesFile", colnames(sw2_monthly_agg.csv))
+          lock(databaseMutex)
           dbWriteTable(db, "sw2_monthly", wrapped.monthly, append=T)
+          unlock(databaseMutex)
           system("rm sw2_monthly_agg.csv")
           
           #Yearly SOILWAT2 output
@@ -161,14 +176,18 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           wrapped.yearly.slyrs <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_slyrs_agg.csv)
           colnames(wrapped.yearly.slyrs) <- c("site", "GCM", "years", "RCP", "treatment", "dst", "grazing", "intensity", 
                                               "soil", "speciesFile", colnames(sw2_yearly_slyrs_agg.csv))
+          lock(databaseMutex)
           dbWriteTable(db, "sw2_yearly_slyrs", wrapped.yearly.slyrs, append=T)
+          unlock(databaseMutex)
           system("rm sw2_yearly_slyrs_agg.csv")
           
           sw2_yearly_agg.csv <- read.csv("sw2_yearly_agg.csv", header = TRUE)
           wrapped.yearly <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_agg.csv)
           colnames(wrapped.yearly) <- c("site", "GCM", "years", "RCP", "treatment", "dst", "grazing", "intensity", 
                                               "soil", "speciesFile", colnames(sw2_yearly_agg.csv))
+          lock(databaseMutex)
           dbWriteTable(db, "sw2_yearly", wrapped.yearly, append=T)
+          unlock(databaseMutex)
           system("rm sw2_yearly_agg.csv")
           
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
@@ -248,7 +267,9 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               wrapped.biomass <- data.frame(s, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, bmassavg.csv)
               colnames(wrapped.biomass) <- c("site", "GCM", "years", "RCP", "treatment", "dst", "grazing", "intensity", 
                                              "soil", "speciesFile", colnames(bmassavg.csv))
+              lock(databaseMutex)
               dbWriteTable(db, "Biomass", wrapped.biomass, append=T)
+              unlock(databaseMutex)
               system("rm bmassavg.csv")
               
               # Add mortality output to the SQLite database
@@ -256,7 +277,9 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               wrapped.mortality <- data.frame(s, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, mortavg.csv)
               colnames(wrapped.mortality) <- c("site", "GCM", "years", "RCP", "treatment", "dst", "grazing", "intensity", 
                                                "soil", "speciesFile", colnames(mortavg.csv))
+              lock(databaseMutex)
               dbWriteTable(db, "Mortality", wrapped.mortality, append=T)
+              unlock(databaseMutex)
               system("rm mortavg.csv")
               
               #Change directory to where SOILWAT2 output is stored
@@ -267,14 +290,18 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               wrapped.daily.slyrs <- data.frame(s, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_slyrs_agg.csv)
               colnames(wrapped.daily.slyrs) <- c("site", "GCM", "years", "RCP", "treatment", "dst", "grazing", "intensity", 
                                                  "soil", "speciesFile", colnames(sw2_daily_slyrs_agg.csv))
+              lock(databaseMutex)
               dbWriteTable(db, "sw2_daily_slyrs", wrapped.daily.slyrs, append=T)
+              unlock(databaseMutex)
               system("rm sw2_daily_slyrs_agg.csv")
               
               sw2_daily_agg.csv <- read.csv("sw2_daily_agg.csv", header = TRUE)
               wrapped.daily <- data.frame(s, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_agg.csv)
               colnames(wrapped.daily) <- c("site", "GCM", "years", "RCP", "treatment", "dst", "grazing", "intensity", 
                                            "soil", "speciesFile", colnames(sw2_daily_agg.csv))
+              lock(databaseMutex)
               dbWriteTable(db, "sw2_daily", wrapped.daily, append=T)
+              unlock(databaseMutex)
               system("rm sw2_daily_agg.csv")
               
               #Monthly SOILWAT2 output
@@ -282,14 +309,18 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               wrapped.monthly.slyrs <- data.frame(s, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_slyrs_agg.csv)
               colnames(wrapped.monthly.slyrs) <- c("site", "GCM", "years", "RCP", "treatment", "dst", "grazing", "intensity", 
                                                    "soil", "speciesFile", colnames(sw2_monthly_slyrs_agg.csv))
+              lock(databaseMutex)
               dbWriteTable(db, "sw2_monthly_slyrs", wrapped.monthly.slyrs, append=T)
+              unlock(databaseMutex)
               system("rm sw2_monthly_slyrs_agg.csv")
               
               sw2_monthly_agg.csv <- read.csv("sw2_monthly_agg.csv", header = TRUE)
               wrapped.monthly <- data.frame(s, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_agg.csv)
               colnames(wrapped.monthly) <- c("site", "GCM", "years", "RCP", "treatment", "dst", "grazing", "intensity", 
                                              "soil", "speciesFile", colnames(sw2_monthly_agg.csv))
+              lock(databaseMutex)
               dbWriteTable(db, "sw2_monthly", wrapped.monthly, append=T)
+              unlock(databaseMutex)
               system("rm sw2_monthly_agg.csv")
               
               #Yearly SOILWAT2 output
@@ -297,14 +328,18 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               wrapped.yearly.slyrs <- data.frame(s, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_slyrs_agg.csv)
               colnames(wrapped.yearly.slyrs) <- c("site", "GCM", "years", "RCP", "treatment", "dst", "grazing", "intensity", 
                                                   "soil", "speciesFile", colnames(sw2_yearly_slyrs_agg.csv))
+              lock(databaseMutex)
               dbWriteTable(db, "sw2_yearly_slyrs", wrapped.yearly.slyrs, append=T)
+              unlock(databaseMutex)
               system("rm sw2_yearly_slyrs_agg.csv")
               
               sw2_yearly_agg.csv <- read.csv("sw2_yearly_agg.csv", header = TRUE)
               wrapped.yearly <- data.frame(s, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_agg.csv)
               colnames(wrapped.yearly) <- c("site", "GCM", "years", "RCP", "treatment", "dst", "grazing", "intensity", 
                                             "soil", "speciesFile", colnames(sw2_yearly_agg.csv))
+              lock(databaseMutex)
               dbWriteTable(db, "sw2_yearly", wrapped.yearly, append=T)
+              unlock(databaseMutex)
               system("rm sw2_yearly_agg.csv")
               
               setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
@@ -322,6 +357,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
       print(paste("GCM ",GCM[g]," DONE",sep=""))
     }
   }
+  
+  dbDisconnect(db)
 }
 
 stopImplicitCluster()
