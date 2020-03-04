@@ -4,7 +4,7 @@ site=51
 path=/project/sagebrush/kpalmqu1/sitedata/
 for ((i=1;i<=$site;i++));do (
 	cd R_program_$i
-	cp Output_site_* $path
+	mv Output.sqlite $path/Site_$i.sqlite
 	cd ..)&
 done
 wait
