@@ -17,12 +17,13 @@ On a super computer:
 8. Run the generate_rSFSTEP2_structure.sh script. The parameters are <Location of R_program> <number_of_sites> <number_of_scenario>
 9. Run the call_sbatch.sh script.
 
-Once the sbatch tasks have been succesfully completed, follow the steps below to compile all output.csv files into a SQLite database:
+Once the sbatch tasks have been succesfully completed, follow the steps below to compile all Output.sqlite files into a single database:
 
-9. Reset the number of GCMs used in OutputDatabase.R if not 14.
-10. Run the call_sbatch_database.sh script.
-11. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable site) and location (variable path) where you wish to collect the data, in the copydata.sh script.
-12. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
+10. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable names `site`) and location (variable named `path`) where you wish to collect the data, in the copydata.sh script.
+11. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
+12. In `CombineOutputDatabases.R` modify the `dir_db` variable with the loaction of the databases.
+13. In `CombineOutputDatabases.R` modify the `sites` variable with the site ids you used.
+14. Run (`Rscript CombineOutputDatabases.R`) to combine all of the databases into a single database.
 
 On a local machine:
 --
@@ -34,12 +35,13 @@ On a local machine:
 6. Run the generate_rSFSTEP2_structure.sh script. The parameters are <Location of R_program> <number_of_sites> <number_of_scenario>
 7. Run the run_local.sh script.
 
-Once the sbatch tasks have been succesfully completed, follow the steps below to compile all output.csv files into a SQLite database:
+Once the sbatch tasks have been succesfully completed, follow the steps below to compile all Output.sqlite files into a single database:
 
-7. Reset the number of GCMs used in OutputDatabase.R if not 14.
-8. Run the run_local_database.sh script.
-9. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable site) and location (variable path) where you wish to collect the data, in the copydata.sh script.
-10. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
+8. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable site) and location (variable path) where you wish to collect the data, in the copydata.sh script.
+9. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
+12. In `CombineOutputDatabases.R` modify the `dir_db` variable with the loaction of the databases.
+13. In `CombineOutputDatabases.R` modify the `sites` variable with the site ids you used.
+14. Run (`Rscript CombineOutputDatabases.R`) to combine all of the databases into a single database.
 
 Note: The method to run a shell script is present as a comment in the respective script. 
 
