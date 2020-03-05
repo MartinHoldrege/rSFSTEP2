@@ -34,19 +34,4 @@ f = open(fileout,'w')
 f.write(newdata)
 f.close()
 
-f = open('OutputDatabase.R','r')
-filedata = f.read()
-f.close()
-newdata = filedata.replace("nopath",str(parsed.location[0]))
-filedata = newdata
-newdata = filedata.replace("notassigned",str(parsed.number[0]))
-
-filedata = newdata
-newdata = filedata.replace("sitefolderid",str(parsed.number[1]))
-
-fileout='OutputDatabase.R'
-f = open(fileout,'w')
-f.write(newdata)
-f.close()
-
 

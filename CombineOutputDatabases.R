@@ -2,7 +2,7 @@
 
 library(RSQLite)
 
-dir_db<-"" #Location where the databases are located, needs to be set by the user
+dir_db<-"" #Location of the databases, needs to be set by the user
 
 setwd(dir_db)
 output_database<-paste("Output_Compiled",".sqlite",sep="")
@@ -12,22 +12,22 @@ sites<-c(14,103) #Add the id of all sites to be compiled, 14 and 103 are here as
 for (i in 1:length(sites)) {
 g<-sites[i]
 
-input_database<-paste("Output_site_",g,".sqlite",sep="")
+input_database<-paste("Site_",g,".sqlite",sep="")
 con<-dbConnect(SQLite(),input_database)
 
-total_bmass_g<-data.frame(dbGetQuery(con,'select * from total_bmass'))
-total_sw2_yearly_slyrs_g<-data.frame(dbGetQuery(con,'select * from total_sw2_yearly_slyrs'))
-total_sw2_yearly_g<-data.frame(dbGetQuery(con,'select * from total_sw2_yearly'))
-total_sw2_monthly_slyrs_g<-data.frame(dbGetQuery(con,'select * from total_sw2_monthly_slyrs'))
-total_sw2_monthly_g<-data.frame(dbGetQuery(con,'select * from total_sw2_monthly'))
+total_bmass_g<-data.frame(dbGetQuery(con,'select * from Biomass'))
+total_sw2_yearly_slyrs_g<-data.frame(dbGetQuery(con,'select * from sw2_yearly_slyrs'))
+total_sw2_yearly_g<-data.frame(dbGetQuery(con,'select * from sw2_yearly'))
+total_sw2_monthly_slyrs_g<-data.frame(dbGetQuery(con,'select * from sw2_monthly_slyrs'))
+total_sw2_monthly_g<-data.frame(dbGetQuery(con,'select * from sw2_monthly'))
 
 dbDisconnect(con)
 
-dbWriteTable(db, "total_bmass", total_bmass_g, append=T)
-dbWriteTable(db, "total_sw2_yearly_slyrs",total_sw2_yearly_slyrs_g, append=T)
-dbWriteTable(db, "total_sw2_yearly",total_sw2_yearly_g, append=T)
-dbWriteTable(db, "total_sw2_monthly_slyrs",total_sw2_monthly_slyrs_g, append=T)
-dbWriteTable(db, "total_sw2_monthly",total_sw2_monthly_g, append=T)
+dbWriteTable(db, "Biomass", total_bmass_g, append=T)
+dbWriteTable(db, "sw2_yearly_slyrs",total_sw2_yearly_slyrs_g, append=T)
+dbWriteTable(db, "sw2_yearly",total_sw2_yearly_g, append=T)
+dbWriteTable(db, "sw2_monthly_slyrs",total_sw2_monthly_slyrs_g, append=T)
+dbWriteTable(db, "sw2_monthly",total_sw2_monthly_g, append=T)
 
 }
 
@@ -50,13 +50,13 @@ add_index <- function(con) {
   if (NROW(prev_indices) > 0 && "MZ_exp" %in% prev_indices[, "name"])
     return(NULL)
 
-  DBI::dbGetQuery(con, paste("CREATE INDEX MZ_exp ON total_bmass (site, GCM, YEARS,",
-    "soilType, intensity, dist_freq)"))
+  DBI::dbExecute(con, paste("CREATE INDEX MZ_exp ON Biomass (site, GCM, YEARS, RCP, ",
+    "soil, intensity, dst, grazing, intensity)"))
 }
 
 get_OutputDB_filenames <- function(fnames = NULL, dir = NULL, sites = NULL) {
   if (!is.null(dir) && !is.null(sites)) {
-    file.path(dir, paste0("Output_site_", sites, ".sqlite"))
+    file.path(dir, paste0("Site_", sites, ".sqlite"))
 
   } else if (all(sapply(fnames, file.exists))) {
     fnames
@@ -69,4 +69,4 @@ temp <- lapply(fname_dbs, function(fdb) {
   con <- dbConnect_OutputDB(fdb)
   temp <- add_index(con)
   DBI::dbDisconnect(con)
-}
+})
