@@ -206,11 +206,18 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
             #use with Vic weather database and all new weather databases
             if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
             {
-              setwd(paste("Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep=""))
-              weath.read<-paste(assembly_output,"Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
+              weather.dir <- paste("Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
+              weath.read <- paste(assembly_output,"Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
             } else {
-              setwd(paste("Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep=""))
-              weath.read<-paste(assembly_output,"Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
+              weather.dir <- paste("Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
+              weath.read <- paste(assembly_output,"Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
+            }
+            
+            # If the user didn't specify this particular GCM/RCP combination
+            if(!dir.exists(weather.dir)) {
+              next;
+            } else {
+              setwd(weather.dir)
             }
             
             #Identify the directory the weather will be pasted into   
