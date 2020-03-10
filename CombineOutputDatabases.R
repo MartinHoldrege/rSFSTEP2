@@ -51,7 +51,7 @@ add_index <- function(con) {
     return(NULL)
 
   DBI::dbExecute(con, paste("CREATE INDEX MZ_exp ON Biomass (site, GCM, YEARS, RCP, ",
-    "soil, intensity, dst, grazing, intensity)"))
+    "SoilTreatment, SpeciesTreatment, RGroupTreatment, intensity, dst, grazing)"))
 }
 
 get_OutputDB_filenames <- function(fnames = NULL, dir = NULL, sites = NULL) {
