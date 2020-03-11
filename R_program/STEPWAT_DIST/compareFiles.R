@@ -26,7 +26,7 @@ addTemperaturePoint <- function(temperature_values, color, symbol){
 fileName2climateIndex <- function(fileName, climateArray){
   return <- 0
   for(i in 1:nrow(climateArray)){
-    if(grepl(rownames(climateArray)[i], fileName)){
+    if(grepl(fileName, rownames(climateArray)[i])){
       return <- i
     }
   }
@@ -256,7 +256,7 @@ for(rgroup in 1:length(phen.original[, 1])){
          col = colors[1], type = "l", ylim = c(-.05, 1.2 * max(phen.data[rgroup, , ])), lwd = 2)
     
     # If a "Current" file is present, we want to add it to every graph.
-    if(length(phen.current.index == 1)){
+    if(length(phen.current.index) == 1){
       points(x = c(1:12), 
              y = t(phen.data[rgroup, , phen.current.index]), 
              col = colors[nextColor], 
@@ -283,15 +283,17 @@ for(rgroup in 1:length(phen.original[, 1])){
       nextColor <- nextColor + 1
     }
     
-    if(length(phen.current.index == 1)){
-      legend.values <- c(phen.current.file, 
-                         phen.files[startFile:min(length(phen.files), 
-                                                  startFile + files.per.graphic - 1)])
-    } else {
-      legend.values <- phen.files[startFile:min(length(phen.files), 
-                                                startFile + files.per.graphic - 1)]
+    legend.values <- simplify2array(
+      strsplit(phen.files[startFile:min(
+        length(phen.files), startFile + files.per.graphic - 1)], "\\."))[3:5, ]
+    
+    legend.values <- apply(legend.values, 2, paste0, collapse = ".")
+    
+    if(length(phen.current.index) == 1){
+      legend.values <- c("Current", legend.values)
     }
-    legend("topleft",
+    
+    legend("topright",
            legend.values,
            col = colors[2:(nextColor-1)],
            pch = 1:(nextColor-2))
@@ -457,14 +459,16 @@ for(rgroup in 1:nrow(litter.original)){
       nextColor <- nextColor + 1
     }
     
-    if(length(prod.current.index == 1)){
-      legend.values <- c(prod.current.file, 
-                         prod.files[startFile:min(length(prod.files), 
-                                                  startFile + files.per.graphic - 1)])
-    } else {
-      legend.values <- prod.files[startFile:min(length(prod.files), 
-                                                startFile + files.per.graphic - 1)]
+    legend.values <- simplify2array(
+      strsplit(prod.files[startFile:min(
+        length(prod.files), startFile + files.per.graphic - 1)], "\\."))[3:5, ]
+    
+    legend.values <- apply(legend.values, 2, paste0, collapse = ".")
+    
+    if(length(phen.current.index == 1)){
+      legend.values <- c("Current", legend.values)
     }
+
     legend("topright",
            legend.values,
            col = colors[2:(nextColor-1)],
@@ -542,14 +546,16 @@ for(rgroup in 1:nrow(biomass.original)){
       nextColor <- nextColor + 1
     }
     
-    if(length(prod.current.index == 1)){
-      legend.values <- c(prod.current.file, 
-                         prod.files[startFile:min(length(prod.files), 
-                                                  startFile + files.per.graphic - 1)])
-    } else {
-      legend.values <- prod.files[startFile:min(length(prod.files), 
-                                                startFile + files.per.graphic - 1)]
+    legend.values <- simplify2array(
+      strsplit(prod.files[startFile:min(
+        length(prod.files), startFile + files.per.graphic - 1)], "\\."))[3:5, ]
+    
+    legend.values <- apply(legend.values, 2, paste0, collapse = ".")
+    
+    if(length(phen.current.index == 1)){
+      legend.values <- c("Current", legend.values)
     }
+    
     legend("topleft",
            legend.values,
            col = colors[2:(nextColor-1)],
@@ -625,13 +631,14 @@ for(rgroup in 1:nrow(pctlive.original)){
       nextColor <- nextColor + 1
     }
     
-    if(length(prod.current.index == 1)){
-      legend.values <- c(prod.current.file, 
-                         prod.files[startFile:min(length(prod.files), 
-                                                  startFile + files.per.graphic - 1)])
-    } else {
-      legend.values <- prod.files[startFile:min(length(prod.files), 
-                                                startFile + files.per.graphic - 1)]
+    legend.values <- simplify2array(
+      strsplit(prod.files[startFile:min(
+        length(prod.files), startFile + files.per.graphic - 1)], "\\."))[3:5, ]
+    
+    legend.values <- apply(legend.values, 2, paste0, collapse = ".")
+    
+    if(length(phen.current.index == 1)){
+      legend.values <- c("Current", legend.values)
     }
     
     legend("topright",
