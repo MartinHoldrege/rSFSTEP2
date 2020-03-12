@@ -14,7 +14,7 @@ dailySWMutex <- boost.mutex()
 
 setwd(directory)
 
-output_database<-paste(source.dir,"Output.sqlite",sep="")
+output_database <- paste(source.dir, "Output_site_", notassigned, ".sqlite", sep="")
 
 # Before running parallel instances we need to make sure that the database exists.
 # This will attempt to connect to the database, and if no database exists it will

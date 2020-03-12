@@ -5,14 +5,14 @@ library(RSQLite)
 dir_db<-"" #Location of the databases, needs to be set by the user
 
 setwd(dir_db)
-output_database<-paste("Output_Compiled",".sqlite",sep="")
+output_database<-paste0("Output_Compiled",".sqlite")
 db<-dbConnect(SQLite(),output_database)
 sites<-c(14,103) #Add the id of all sites to be compiled, 14 and 103 are here as examples
 
 for (i in 1:length(sites)) {
 g<-sites[i]
 
-input_database<-paste("Site_",g,".sqlite",sep="")
+input_database<-paste0("Output_site_",g,".sqlite")
 con<-dbConnect(SQLite(),input_database)
 
 total_bmass_g<-data.frame(dbGetQuery(con,'select * from Biomass'))
