@@ -113,7 +113,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
 
           # Add biomass output to the SQLite database
           bmassavg.csv <- read.csv("bmassavg.csv", header = TRUE)
-          wrapped.biomass <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, bmassavg.csv)
+          wrapped.biomass <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, bmassavg.csv)
           colnames(wrapped.biomass) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                          "SoilTreatment", "SpeciesTreatment", colnames(bmassavg.csv))
           lock(databaseMutex)
@@ -123,7 +123,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           
           # Add mortality output to the SQLite database
           mortavg.csv <- read.csv("mortavg.csv", header = TRUE)
-          wrapped.mortality <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, mortavg.csv)
+          wrapped.mortality <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, mortavg.csv)
           colnames(wrapped.mortality) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                            "SoilTreatment", "SpeciesTreatment", colnames(mortavg.csv))
           lock(databaseMutex)
@@ -137,14 +137,14 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           #Daily SOILWAT2 output
           lock(dailySWMutex)
           sw2_daily_slyrs_agg.csv <- read.csv("sw2_daily_slyrs_agg.csv", header = TRUE)
-          wrapped.daily.slyrs <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_slyrs_agg.csv)
+          wrapped.daily.slyrs <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_slyrs_agg.csv)
           colnames(wrapped.daily.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                              "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_slyrs_agg.csv))
           lock(databaseMutex)
           dbWriteTable(db, "sw2_daily_slyrs", wrapped.daily.slyrs, append=T)
           unlock(databaseMutex)
           sw2_daily_agg.csv <- read.csv("sw2_daily_agg.csv", header = TRUE)
-          wrapped.daily <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_agg.csv)
+          wrapped.daily <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_agg.csv)
           colnames(wrapped.daily) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                              "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_agg.csv))
           lock(databaseMutex)
@@ -160,7 +160,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           
           #Monthly SOILWAT2 output
           sw2_monthly_slyrs_agg.csv <- read.csv("sw2_monthly_slyrs_agg.csv", header = TRUE)
-          wrapped.monthly.slyrs <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_slyrs_agg.csv)
+          wrapped.monthly.slyrs <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_slyrs_agg.csv)
           colnames(wrapped.monthly.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                                "SoilTreatment", "SpeciesTreatment", colnames(sw2_monthly_slyrs_agg.csv))
           lock(databaseMutex)
@@ -169,7 +169,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           system("rm sw2_monthly_slyrs_agg.csv")
           
           sw2_monthly_agg.csv <- read.csv("sw2_monthly_agg.csv", header = TRUE)
-          wrapped.monthly <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_agg.csv)
+          wrapped.monthly <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_agg.csv)
           colnames(wrapped.monthly) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                          "SoilTreatment", "SpeciesTreatment", colnames(sw2_monthly_agg.csv))
           lock(databaseMutex)
@@ -179,7 +179,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           
           #Yearly SOILWAT2 output
           sw2_yearly_slyrs_agg.csv <- read.csv("sw2_yearly_slyrs_agg.csv", header = TRUE)
-          wrapped.yearly.slyrs <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_slyrs_agg.csv)
+          wrapped.yearly.slyrs <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_slyrs_agg.csv)
           colnames(wrapped.yearly.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                               "SoilTreatment", "SpeciesTreatment", colnames(sw2_yearly_slyrs_agg.csv))
           lock(databaseMutex)
@@ -188,7 +188,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           system("rm sw2_yearly_slyrs_agg.csv")
           
           sw2_yearly_agg.csv <- read.csv("sw2_yearly_agg.csv", header = TRUE)
-          wrapped.yearly <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_agg.csv)
+          wrapped.yearly <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_agg.csv)
           colnames(wrapped.yearly) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                               "SoilTreatment", "SpeciesTreatment", colnames(sw2_yearly_agg.csv))
           lock(databaseMutex)
@@ -274,7 +274,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               
               # Add biomass output to the SQLite database
               bmassavg.csv <- read.csv("bmassavg.csv", header = TRUE)
-              wrapped.biomass <- data.frame(s, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, bmassavg.csv)
+              wrapped.biomass <- data.frame(notassigned, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, bmassavg.csv)
               colnames(wrapped.biomass) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                              "SoilTreatment", "SpeciesTreatment", colnames(bmassavg.csv))
               lock(databaseMutex)
@@ -284,7 +284,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               
               # Add mortality output to the SQLite database
               mortavg.csv <- read.csv("mortavg.csv", header = TRUE)
-              wrapped.mortality <- data.frame(s, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, mortavg.csv)
+              wrapped.mortality <- data.frame(notassigned, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, mortavg.csv)
               colnames(wrapped.mortality) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                                "SoilTreatment", "SpeciesTreatment", colnames(mortavg.csv))
               lock(databaseMutex)
@@ -298,14 +298,14 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               #Daily SOILWAT2 output
               lock(dailySWMutex)
               sw2_daily_slyrs_agg.csv <- read.csv("sw2_daily_slyrs_agg.csv", header = TRUE)
-              wrapped.daily.slyrs <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_slyrs_agg.csv)
+              wrapped.daily.slyrs <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_slyrs_agg.csv)
               colnames(wrapped.daily.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                                  "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_slyrs_agg.csv))
               lock(databaseMutex)
               dbWriteTable(db, "sw2_daily_slyrs", wrapped.daily.slyrs, append=T)
               unlock(databaseMutex)
               sw2_daily_agg.csv <- read.csv("sw2_daily_agg.csv", header = TRUE)
-              wrapped.daily <- data.frame(s, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_agg.csv)
+              wrapped.daily <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_agg.csv)
               colnames(wrapped.daily) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                            "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_agg.csv))
               lock(databaseMutex)
@@ -321,7 +321,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               
               #Monthly SOILWAT2 output
               sw2_monthly_slyrs_agg.csv <- read.csv("sw2_monthly_slyrs_agg.csv", header = TRUE)
-              wrapped.monthly.slyrs <- data.frame(s, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_slyrs_agg.csv)
+              wrapped.monthly.slyrs <- data.frame(notassigned, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_slyrs_agg.csv)
               colnames(wrapped.monthly.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                                    "SoilTreatment", "SpeciesTreatment", colnames(sw2_monthly_slyrs_agg.csv))
               lock(databaseMutex)
@@ -330,7 +330,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               system("rm sw2_monthly_slyrs_agg.csv")
               
               sw2_monthly_agg.csv <- read.csv("sw2_monthly_agg.csv", header = TRUE)
-              wrapped.monthly <- data.frame(s, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_agg.csv)
+              wrapped.monthly <- data.frame(notassigned, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_agg.csv)
               colnames(wrapped.monthly) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                              "SoilTreatment", "SpeciesTreatment", colnames(sw2_monthly_agg.csv))
               lock(databaseMutex)
@@ -340,7 +340,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               
               #Yearly SOILWAT2 output
               sw2_yearly_slyrs_agg.csv <- read.csv("sw2_yearly_slyrs_agg.csv", header = TRUE)
-              wrapped.yearly.slyrs <- data.frame(s, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_slyrs_agg.csv)
+              wrapped.yearly.slyrs <- data.frame(notassigned, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_slyrs_agg.csv)
               colnames(wrapped.yearly.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                                   "SoilTreatment", "SpeciesTreatment", colnames(sw2_yearly_slyrs_agg.csv))
               lock(databaseMutex)
@@ -349,7 +349,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               system("rm sw2_yearly_slyrs_agg.csv")
               
               sw2_yearly_agg.csv <- read.csv("sw2_yearly_agg.csv", header = TRUE)
-              wrapped.yearly <- data.frame(s, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_agg.csv)
+              wrapped.yearly <- data.frame(notassigned, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_agg.csv)
               colnames(wrapped.yearly) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                             "SoilTreatment", "SpeciesTreatment", colnames(sw2_yearly_agg.csv))
               lock(databaseMutex)
