@@ -607,26 +607,31 @@ if(rescale_phenology){
   source(vegetation.file)
   setwd(db_loc)
   # Read the input CSV files
-  phenology <- read.csv("InputData_Phenology.csv", header = TRUE, row.names = 1)
-  biomass <- read.csv("InputData_Biomass.csv", header = TRUE, row.names = 1)
-  biomass.sum <- rowSums(biomass)
-  pctlive <- read.csv("InputData_PctLive.csv", header = TRUE, row.names = 1)
-  pctlive.default.max <- apply(pctlive, 1, max)
-  litter <- read.csv("InputData_Litter.csv", header = TRUE, row.names = 1)
-  litter.sum <- rowSums(litter)
+  phenology.default <- read.csv("InputData_Phenology.csv", header = TRUE, row.names = 1)
+  biomass.default <- read.csv("InputData_Biomass.csv", header = TRUE, row.names = 1)
+  biomass.sum <- rowSums(biomass.default)
+  pctlive.default <- read.csv("InputData_PctLive.csv", header = TRUE, row.names = 1)
+  pctlive.default.max <- apply(pctlive.default, 1, max)
+  litter.default <- read.csv("InputData_Litter.csv", header = TRUE, row.names = 1)
+  litter.sum <- rowSums(litter.default)
   monthly.temperature <- read.csv("InputData_MonthlyTemp.csv", header = TRUE, row.names = 1)
-  
-  # condense the values we want to scale into a single list
-  values_to_scale <- list(phenology, pctlive, litter, biomass)
   
   # If you plan on comparing output files, this needs to be TRUE
   shouldOutputTemperature = TRUE
   
-  # scale the list
-  scaled_values <- scale_phenology(values_to_scale, sw_weatherList, 
-                                   monthly.temperature, site_latitude = 90, 
-                                   outputTemperature = shouldOutputTemperature)
+  # First call scales phenological activity based on current temperature
+  scaled_phenology <- scale_phenology(list(phenology.default), sw_weatherList, 
+                                   monthly.temperature, x_asif = NULL, site_latitude = 90, 
+                                   outputTemperature = shouldOutputTemperature) 
   
+  # condense the values we want to scale into a single list excluding phenology
+  values_to_scale <- list(pctlive.default, litter.default, biomass.default)
+
+  # Second call scales litter, biomass, and %live fractions based on phenological activity
+  scaled_values <- scale_phenology(values_to_scale, sw_weatherList, 
+                                   monthly.temperature, x_asif = phenology.default, site_latitude = 90, 
+                                   outputTemperature = shouldOutputTemperature)
+                                   
   # Move to the DIST directory so we can start writing the files.
   setwd(source.dir)
   setwd("STEPWAT_DIST")
@@ -639,19 +644,20 @@ if(rescale_phenology){
     colnames(temperature_values) <- month.abb
     write.csv(file = "temperature.csv", temperature_values)
     
-    # Remove temperature values from scaled_values, leaving only the phen, biomass,
+    # Remove temperature values from scaled_values and scaled_phenology, leaving only the phen, biomass,
     # litter, and pctlive values.
     scaled_values <- scaled_values[[1]]
-    
+    scaled_phenology <- scaled_phenology[[1]]
+
     remove(temperature_values)
   }
   
   for(scen in 1:length(climate.conditions)){
     # Pull the correct entry out of the scaled list.
-    phenology <- scaled_values[[scen]][[1]]		
-    pctlive <- scaled_values[[scen]][[2]]		
-    litter <- scaled_values[[scen]][[3]]		
-    biomass <- scaled_values[[scen]][[4]]
+    phenology <- scaled_phenology[[scen]][[1]]		
+    pctlive <- scaled_values[[scen]][[1]]		
+    litter <- scaled_values[[scen]][[2]]		
+    biomass <- scaled_values[[scen]][[3]]
     
     # Determine max monthly pct live for use in scaling below
     pctlive.max <- apply(pctlive, 1, max)	
@@ -705,11 +711,16 @@ if(rescale_phenology){
   
   # Garbage collection for this section
   remove(litter)
+  remove(litter.default)
   remove(phenology)
+  remove(phenology.default)
   remove(biomass)
+  remove(biomass.default)
   remove(pctlive)
+  remove(pctlive.default)
   remove(values_to_scale)
   remove(scaled_values)
+  remove(scaled_phenology)
   remove(monthly.temperature)
   remove(sxwphen_file)
   remove(sxwprod_v2_file)

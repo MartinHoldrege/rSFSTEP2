@@ -125,7 +125,9 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
 #'   object for each year as is returned by the function
 #'   \code{\link[rSOILWAT2]{dbW_getWeatherData}}.
 #' @param monthly.temperature A vector of length 12. The reference mean monthly
-#'   temperatures used to generate matrices
+#'   temperatures used to generate matrices.
+#' @param x_asif A data.frame of numeric values with ncol of 12. The default phenological
+#'	 activity values used to generate matrices or NULL.
 #' @param site_latitude A numeric value. The latitude of the site. Default is 90.
 #' @param outputTemperature A boolean value. If TRUE, this function will output a
 #'   CSV file containing the mean monthly temperature in celsius for each climate 
@@ -138,9 +140,10 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
 #'   site1 = list(Current = weatherData, Future1 = weatherData),
 #'   site2 = list(Current = weatherData, Future1 = weatherData))
 #' monthly.temperature = c(-5, -1, 1, 4, 9, 14, 18, 17, 12, 5, -1, -5)
-#' scale_phenology(matrices, sw_weatherList, monthly.temperature)
+#' x_asif <- phenology
+#' scale_phenology(matrices, sw_weatherList, monthly.temperature, x_asif)
 #' 
-scale_phenology <- function(matrices, sw_weatherList, monthly.temperature,
+scale_phenology <- function(matrices, sw_weatherList, monthly.temperature, x_asif,
                             site_latitude = 90, outputTemperature = FALSE){
   
   n_sites <- length(sw_weatherList)
@@ -174,7 +177,8 @@ scale_phenology <- function(matrices, sw_weatherList, monthly.temperature,
       for(row in 1:nrow(arr)) {
         return_list[[k_scen]][[index]][row,] <- rSOILWAT2::adj_phenology_by_temp_v2(unlist(arr[row,]),
                                                               unlist(monthly.temperature),
-                                                              unlist(temp_clim[["meanMonthlyTempC"]]))
+                                                              unlist(temp_clim[["meanMonthlyTempC"]]), 
+                                                              unlist(x_asif[row,]))
       }
       index <- index + 1
     }
