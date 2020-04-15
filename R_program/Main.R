@@ -613,7 +613,7 @@ if(rescale_phenology){
   pctlive.default <- read.csv("InputData_PctLive.csv", header = TRUE, row.names = 1)
   pctlive.default.max <- apply(pctlive.default, 1, max)
   litter.default <- read.csv("InputData_Litter.csv", header = TRUE, row.names = 1)
-  litter.sum <- rowSums(litter.default)
+  litter.default.max <- apply(litter.default, 1, max)
   monthly.temperature <- read.csv("InputData_MonthlyTemp.csv", header = TRUE, row.names = 1)
   
   # If you plan on comparing output files, this needs to be TRUE
@@ -659,8 +659,9 @@ if(rescale_phenology){
     litter <- scaled_values[[scen]][[2]]		
     biomass <- scaled_values[[scen]][[3]]
     
-    # Determine max monthly pct live for use in scaling below
-    pctlive.max <- apply(pctlive, 1, max)	
+    # Determine max monthly pct live and litter for use in scaling below
+    pctlive.max <- apply(pctlive, 1, max)
+    litter.max <- apply(litter, 1, max) 	
 
     # Normalize each row of pctlive so the max pctlive of values read from inputs is retained
     # in the derived values. 
@@ -670,10 +671,10 @@ if(rescale_phenology){
       pctlive[thisRow, ] <- pmin(pctlive[thisRow, ], 1)
     }
     
-    # Normalize each row of litter to sum to the same value as the 
-    # sum of the values read from inputs.
+    # Normalize each row of litter so the max pctlive of values read from inputs is retained
+    # in the derived values.
     for(thisRow in 1:nrow(litter)){
-      litter[thisRow, ] <- litter[thisRow, ] / sum(litter[thisRow, ]) * litter.sum[thisRow]
+      litter[thisRow, ] <- litter[thisRow, ] * (litter.default.max[thisRow] / litter.max[thisRow])
       # Make sure no values exceed 1
       litter[thisRow, ] <- pmin(litter[thisRow, ], 1)
     }
@@ -727,7 +728,8 @@ if(rescale_phenology){
   remove(thisRow)
   remove(shouldOutputTemperature)
   remove(biomass.sum)
-  remove(litter.sum)
+  remove(litter.max)
+  remove(litter.default.max)
   remove(pctlive.max)
   remove(pctlive.default.max)
 }
