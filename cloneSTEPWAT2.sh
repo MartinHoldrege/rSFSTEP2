@@ -13,13 +13,17 @@ wait
 rm -rf .git*
 rm *.c
 rm *.h
+find . -name 'stepwat_test' -delete
 rm -rf tools
 rm -rf sw_src
 rm -rf obj
+rm -rf Documentation
+rm -rf sqlite-amalgamation
+rm -rf test
 rm README.md
 rm appveyor.yml
 rm makefile
 rm stepwat_test_job.sh
-rm -rf sqlite-amalgamation
+rm doxyfile
 wait
 cd ../..
