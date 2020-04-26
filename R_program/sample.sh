@@ -21,6 +21,6 @@ module load gcc/7.3.0
 module load swset/2018.05
 module load r/3.5.0
 
-srun Rscript R_program_notassigned/Main.R
+srun Rscript Main.R
 echo "Site noid done!" >> /project/sagebrush/kpalmqu1/jobs.txt
 
