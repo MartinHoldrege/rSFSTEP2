@@ -137,21 +137,33 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           #Daily SOILWAT2 output
           lock(dailySWMutex)
           sw2_daily_slyrs_agg.csv <- read.csv("sw2_daily_slyrs_agg.csv", header = TRUE)
-          wrapped.daily.slyrs <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_slyrs_agg.csv)
+          
+          #Calculate aggregated daily output for soil layer variables - average values for each day across all years
+          sw2_daily_slyrs_aggregated=aggregate(sw2_daily_slyrs_agg.csv[,c(3:length(sw2_daily_slyrs_agg.csv[1,]))],by=list(sw2_daily_slyrs_agg.csv$Day),mean)
+ 		  names(sw2_daily_slyrs_aggregated)[1]=c("Day")
+    
+          wrapped.daily.slyrs <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_slyrs_aggregated)
           colnames(wrapped.daily.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
-                                             "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_slyrs_agg.csv))
+                                             "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_slyrs_aggregated))
           lock(databaseMutex)
           dbWriteTable(db, "sw2_daily_slyrs", wrapped.daily.slyrs, append=T)
           unlock(databaseMutex)
           sw2_daily_agg.csv <- read.csv("sw2_daily_agg.csv", header = TRUE)
-          wrapped.daily <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_agg.csv)
+          
+          #Calculate aggregated daily output - average values for each day across all years
+          sw2_daily_aggregated=aggregate(sw2_daily_agg.csv[,c(3:length(sw2_daily_agg.csv[1,]))],by=list(sw2_daily_agg.csv$Day),mean)
+ 		  names(sw2_daily_aggregated)[1]=c("Day")
+ 		  
+          wrapped.daily <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_aggregated)
           colnames(wrapped.daily) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
-                                             "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_agg.csv))
+                                             "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_aggregated))
           lock(databaseMutex)
           dbWriteTable(db, "sw2_daily", wrapped.daily, append=T)
           unlock(databaseMutex)
           remove(sw2_daily_agg.csv)
           remove(sw2_daily_slyrs_agg.csv)
+          remove(sw2_daily_aggregated)
+          remove(sw2_daily_slyrs_aggregated)
           remove(wrapped.daily)
           remove(wrapped.daily.slyrs)
           unlock(dailySWMutex)
@@ -298,21 +310,33 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               #Daily SOILWAT2 output
               lock(dailySWMutex)
               sw2_daily_slyrs_agg.csv <- read.csv("sw2_daily_slyrs_agg.csv", header = TRUE)
-              wrapped.daily.slyrs <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_slyrs_agg.csv)
+              
+              #Calculate aggregated daily output for soil layer variables - average values for each day across all years
+              sw2_daily_slyrs_aggregated=aggregate(sw2_daily_slyrs_agg.csv[,c(3:length(sw2_daily_slyrs_agg.csv[1,]))],by=list(sw2_daily_slyrs_agg.csv$Day),mean)
+ 		      names(sw2_daily_slyrs_aggregated)[1]=c("Day")
+ 		      
+              wrapped.daily.slyrs <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_slyrs_aggregated)
               colnames(wrapped.daily.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
-                                                 "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_slyrs_agg.csv))
+                                                 "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_slyrs_aggregated))
               lock(databaseMutex)
               dbWriteTable(db, "sw2_daily_slyrs", wrapped.daily.slyrs, append=T)
               unlock(databaseMutex)
               sw2_daily_agg.csv <- read.csv("sw2_daily_agg.csv", header = TRUE)
-              wrapped.daily <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_agg.csv)
+              
+			  #Calculate aggregated daily output - average values for each day across all years
+              sw2_daily_aggregated=aggregate(sw2_daily_agg.csv[,c(3:length(sw2_daily_agg.csv[1,]))],by=list(sw2_daily_agg.csv$Day),mean)
+ 		  	  names(sw2_daily_aggregated)[1]=c("Day")
+    
+              wrapped.daily <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_aggregated)
               colnames(wrapped.daily) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
-                                           "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_agg.csv))
+                                           "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_aggregated))
               lock(databaseMutex)
               dbWriteTable(db, "sw2_daily", wrapped.daily, append=T)
               unlock(databaseMutex)
               remove(sw2_daily_agg.csv)
               remove(sw2_daily_slyrs_agg.csv)
+              remove(sw2_daily_aggregated)
+              remove(sw2_daily_slyrs_aggregated)
               remove(wrapped.daily)
               remove(wrapped.daily.slyrs)
               unlock(dailySWMutex)
