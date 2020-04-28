@@ -609,7 +609,7 @@ if(rescale_phenology){
   # Read the input CSV files
   phenology.default <- read.csv("InputData_Phenology.csv", header = TRUE, row.names = 1)
   biomass.default <- read.csv("InputData_Biomass.csv", header = TRUE, row.names = 1)
-  biomass.sum <- rowSums(biomass.default)
+  biomass.default.max <- apply(biomass.default, 1, max)
   pctlive.default <- read.csv("InputData_PctLive.csv", header = TRUE, row.names = 1)
   pctlive.default.max <- apply(pctlive.default, 1, max)
   litter.default <- read.csv("InputData_Litter.csv", header = TRUE, row.names = 1)
@@ -679,13 +679,19 @@ if(rescale_phenology){
       litter[thisRow, ] <- pmin(litter[thisRow, ], 1)
     }
     
-    # Normalize each row of biomass to sum to the same value as the 
-    # sum of the values read from inputs.
+    # Normalize each row of biomass so that the frequency of months with biomass < max(default biomass) is the     
+   	# same as months with default biomass < max(default biomass)
     for(thisRow in 1:nrow(biomass)){
-      biomass[thisRow, ] <- biomass[thisRow, ] / sum(biomass[thisRow, ]) * biomass.sum[thisRow]
+      # Number of peak default biomass months
+      nmax <- max(1, 12 - sum(biomass.default[thisRow, ] < biomass.default.max[thisRow]))
       
-      # Force the largest value to be 1.
-      biomass[thisRow, which.max(biomass[thisRow, ])] <- 1
+      # Un-scaled minimum value of peak number months
+  	  ids <- order(biomass[thisRow,], decreasing = TRUE)[seq_len(nmax)]
+ 	  pmin <- min(biomass[thisRow, ids])
+ 	
+      # Scale values to maintain the number of peak biomass months
+  	  biomass[thisRow,] <- biomass[thisRow,] *  biomass.default.max[thisRow] / pmin
+      
       # Make sure no values exceed 1
       biomass[thisRow, ] <- pmin(biomass[thisRow, ], 1)
     }
@@ -717,6 +723,10 @@ if(rescale_phenology){
   remove(phenology.default)
   remove(biomass)
   remove(biomass.default)
+  remove(biomass.default.max)
+  remove(nmax)
+  remove(ids)
+  remove(pmin)
   remove(pctlive)
   remove(pctlive.default)
   remove(values_to_scale)
@@ -727,7 +737,6 @@ if(rescale_phenology){
   remove(sxwprod_v2_file)
   remove(thisRow)
   remove(shouldOutputTemperature)
-  remove(biomass.sum)
   remove(litter.max)
   remove(litter.default.max)
   remove(pctlive.max)
