@@ -315,7 +315,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               sw2_daily_slyrs_aggregated=aggregate(sw2_daily_slyrs_agg.csv[,c(3:length(sw2_daily_slyrs_agg.csv[1,]))],by=list(sw2_daily_slyrs_agg.csv$Day),mean)
  		      names(sw2_daily_slyrs_aggregated)[1]=c("Day")
  		      
-              wrapped.daily.slyrs <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_slyrs_aggregated)
+              wrapped.daily.slyrs <- data.frame(notassigned, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_slyrs_aggregated)
               colnames(wrapped.daily.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                                  "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_slyrs_aggregated))
               lock(databaseMutex)
@@ -327,7 +327,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               sw2_daily_aggregated=aggregate(sw2_daily_agg.csv[,c(3:length(sw2_daily_agg.csv[1,]))],by=list(sw2_daily_agg.csv$Day),mean)
  		  	  names(sw2_daily_aggregated)[1]=c("Day")
     
-              wrapped.daily <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_aggregated)
+              wrapped.daily <- data.frame(notassigned, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_aggregated)
               colnames(wrapped.daily) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                            "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_aggregated))
               lock(databaseMutex)
