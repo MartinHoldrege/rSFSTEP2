@@ -392,7 +392,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               colnames(wrapped.yearly) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                             "SoilTreatment", "SpeciesTreatment", colnames(sw2_yearly_agg.csv))
                                             
-              wrapped.yearly$Year <- 1:length(wrapped.yearly$Year                              
+              wrapped.yearly$Year <- 1:length(wrapped.yearly$Year)                             
               lock(databaseMutex)
               dbWriteTable(db, "sw2_yearly", wrapped.yearly, append=T)
               unlock(databaseMutex)
