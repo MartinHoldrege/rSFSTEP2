@@ -175,6 +175,9 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           wrapped.monthly.slyrs <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_slyrs_agg.csv)
           colnames(wrapped.monthly.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                                "SoilTreatment", "SpeciesTreatment", colnames(sw2_monthly_slyrs_agg.csv))
+                                               
+          months=12
+          wrapped.monthly.slyrs$Year <- rep(1:300,each=months)                                     
           lock(databaseMutex)
           dbWriteTable(db, "sw2_monthly_slyrs", wrapped.monthly.slyrs, append=T)
           unlock(databaseMutex)
@@ -184,6 +187,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           wrapped.monthly <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_agg.csv)
           colnames(wrapped.monthly) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                          "SoilTreatment", "SpeciesTreatment", colnames(sw2_monthly_agg.csv))
+          
+          wrapped.monthly$Year <- rep(1:300,each=months)                               
           lock(databaseMutex)
           dbWriteTable(db, "sw2_monthly", wrapped.monthly, append=T)
           unlock(databaseMutex)
@@ -194,6 +199,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           wrapped.yearly.slyrs <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_slyrs_agg.csv)
           colnames(wrapped.yearly.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                               "SoilTreatment", "SpeciesTreatment", colnames(sw2_yearly_slyrs_agg.csv))
+                                              
+          wrapped.yearly.slyrs$Year <- 1:length(wrapped.yearly.slyrs$Year)                                    
           lock(databaseMutex)
           dbWriteTable(db, "sw2_yearly_slyrs", wrapped.yearly.slyrs, append=T)
           unlock(databaseMutex)
@@ -202,7 +209,9 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           sw2_yearly_agg.csv <- read.csv("sw2_yearly_agg.csv", header = TRUE)
           wrapped.yearly <- data.frame(notassigned, GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_agg.csv)
           colnames(wrapped.yearly) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
-                                              "SoilTreatment", "SpeciesTreatment", colnames(sw2_yearly_agg.csv))
+                                    		   "SoilTreatment", "SpeciesTreatment", colnames(sw2_yearly_agg.csv))
+                                             
+          wrapped.yearly$Year <- 1:length(wrapped.yearly$Year)                                   
           lock(databaseMutex)
           dbWriteTable(db, "sw2_yearly", wrapped.yearly, append=T)
           unlock(databaseMutex)
@@ -348,6 +357,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               wrapped.monthly.slyrs <- data.frame(notassigned, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_slyrs_agg.csv)
               colnames(wrapped.monthly.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                                    "SoilTreatment", "SpeciesTreatment", colnames(sw2_monthly_slyrs_agg.csv))
+              months=12
+              wrapped.monthly.slyrs$Year <- rep(1:300,each=months)                                     
               lock(databaseMutex)
               dbWriteTable(db, "sw2_monthly_slyrs", wrapped.monthly.slyrs, append=T)
               unlock(databaseMutex)
@@ -357,6 +368,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               wrapped.monthly <- data.frame(notassigned, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_agg.csv)
               colnames(wrapped.monthly) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                              "SoilTreatment", "SpeciesTreatment", colnames(sw2_monthly_agg.csv))
+                                             
+              wrapped.monthly$Year <- rep(1:300,each=months)                                
               lock(databaseMutex)
               dbWriteTable(db, "sw2_monthly", wrapped.monthly, append=T)
               unlock(databaseMutex)
@@ -367,6 +380,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               wrapped.yearly.slyrs <- data.frame(notassigned, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_slyrs_agg.csv)
               colnames(wrapped.yearly.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                                   "SoilTreatment", "SpeciesTreatment", colnames(sw2_yearly_slyrs_agg.csv))
+                                                  
+              wrapped.yearly.slyrs$Year <- 1:length(wrapped.yearly.slyrs$Year)                                    
               lock(databaseMutex)
               dbWriteTable(db, "sw2_yearly_slyrs", wrapped.yearly.slyrs, append=T)
               unlock(databaseMutex)
@@ -376,6 +391,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               wrapped.yearly <- data.frame(notassigned, GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_agg.csv)
               colnames(wrapped.yearly) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
                                             "SoilTreatment", "SpeciesTreatment", colnames(sw2_yearly_agg.csv))
+                                            
+              wrapped.yearly$Year <- 1:length(wrapped.yearly$Year                              
               lock(databaseMutex)
               dbWriteTable(db, "sw2_yearly", wrapped.yearly, append=T)
               unlock(databaseMutex)
