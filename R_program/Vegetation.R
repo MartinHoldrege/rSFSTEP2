@@ -175,7 +175,7 @@ scale_phenology <- function(matrices, sw_weatherList, monthly.temperature, x_asi
     for(arr in matrices) {
       return_list[[k_scen]][[index]] <- arr
       for(row in 1:nrow(arr)) {
-        return_list[[k_scen]][[index]][row,] <- rSOILWAT2::adj_phenology_by_temp_v2(unlist(arr[row,]),
+        return_list[[k_scen]][[index]][row,] <- rSOILWAT2::adj_phenology_by_temp(unlist(arr[row,]),
                                                               unlist(monthly.temperature),
                                                               unlist(temp_clim[["meanMonthlyTempC"]]), 
                                                               unlist(x_asif[row,]))
