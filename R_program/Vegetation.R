@@ -112,7 +112,8 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
   res
 }
 
-#' Function to scale phenology values based on climate and a reference growing season.
+#' Function to scale phenology (phenological activity, biomass, litter, %live fractions) based on 
+#' reference monthly temperatures and actual monthly temperatures.
 #' 
 #' @param matrices A list of matrices that will all be scaled.
 #' @param sw_weatherList A list. An object as created by the function
@@ -158,7 +159,7 @@ scale_phenology <- function(matrices, sw_weatherList, monthly.temperature, x_asi
   return_list <- list()
   temperature_list <- list()
   
-  # Adjust the phenology for each climate scenario
+  # Adjust phenology for each climate scenario
   for (k_scen in seq_len(n_climate.conditions)) {
     temp_clim <- rSOILWAT2::calc_SiteClimate(
       weatherList = sw_weatherList[[n_sites]][[k_scen]], 

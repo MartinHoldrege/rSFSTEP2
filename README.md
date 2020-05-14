@@ -49,7 +49,7 @@ Once the sbatch tasks have been succesfully completed, follow the steps below to
 Note: The method to run a shell script is present as a comment in the respective script. 
 
 ## Comparing generated files
-rSFSTEP2 has the options to scale phenology and/or space based on site and climate. After running the simulation you can generate statistics and graphics demonstrating how the input files were modified. 
+rSFSTEP2 has the options to scale phenological activity, biomass, litter, and % live fractions along with space based on site-specific current or future climate. After running the simulation you can generate statistics and graphics demonstrating how the input files were modified. 
 ### On a local computer:
 ```
 ./compare_files.sh <number of sites>

@@ -1,4 +1,4 @@
-#Bash script to compare derived files for all sites. 
+#Bash script to compare dynamically derived values (phenology, space) for all sites. 
 #Results output to 'output' directory in the respective STEPWAT_DIST directories.
 #Syntax: ./compare_files.sh <number of sites>
 

@@ -32,10 +32,9 @@ rescale_space <- TRUE
 # in the input CSV set this boolean to TRUE.
 output_original_space <- TRUE
 
-# If you would like to rescale monthly phenological activity, monthly biomass, 
-# monthly % live, and monthly litter based on climate for each climate scenario 
-# set this boolean to TRUE. If you would like to run with the default values 
-# already in STEPWAT2 set this boolean to FALSE.
+# If you would like to rescale phenological activity, biomass, litter, and % live
+# fractions based on climate for each climate scenario set this boolean to TRUE.
+# If you would like to run with the default values, set this boolean to FALSE.
 rescale_phenology <- TRUE
 
 #Database location, edit the name of the weather database accordingly
@@ -395,7 +394,7 @@ for(i in treatments)
   # Now add the file name to the list of file names
   rgroups <- c(rgroups, paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i))
   
-  # Remember the space values in case we need to print them
+  # Save the space values for outputting later
   space_values[[length(space_values) + 1]] <- df[ , 2]
   
   # Write the rgoup.in file to the STEPWAT_DIST directory
@@ -685,7 +684,7 @@ if(rescale_phenology){
       # Number of peak default biomass months
       nmax <- max(1, 12 - sum(biomass.default[thisRow, ] < biomass.default.max[thisRow]))
       
-      # Un-scaled minimum value of peak number months
+      # Un-scaled minimum value of peak biomass months
   	  ids <- order(biomass[thisRow,], decreasing = TRUE)[seq_len(nmax)]
  	  pmin <- min(biomass[thisRow, ids])
  	
@@ -716,31 +715,11 @@ if(rescale_phenology){
     write.table("\n[end]\n", sxwprod_v2_file, append = TRUE, col.names = FALSE, row.names = FALSE, quote = FALSE, sep = "")
   }
   
-  # Garbage collection for this section
-  remove(litter)
-  remove(litter.default)
-  remove(phenology)
-  remove(phenology.default)
-  remove(biomass)
-  remove(biomass.default)
-  remove(biomass.default.max)
-  remove(nmax)
-  remove(ids)
-  remove(pmin)
-  remove(pctlive)
-  remove(pctlive.default)
-  remove(values_to_scale)
-  remove(scaled_values)
-  remove(scaled_phenology)
-  remove(monthly.temperature)
-  remove(sxwphen_file)
-  remove(sxwprod_v2_file)
-  remove(thisRow)
-  remove(shouldOutputTemperature)
-  remove(litter.max)
-  remove(litter.default.max)
-  remove(pctlive.max)
-  remove(pctlive.default.max)
+  # Remove objects that are no longer needed
+  remove(litter, litter.default, phenology, phenology.default, biomass, biomass.default, biomass.default.max,
+  nmax, ids, pmin, pctlive, pctlive.default, values_to_scale, scaled_values, scaled_phenology, monthly.temperature, 
+  sxwphen_file, sxwprod_v2_file, thisRow, shouldOutputTemperature, litter.max, litter.default.max, pctlive.max, pctlive.default.max)
+  
 }
 
 ############################# Vegetation Code ##############################

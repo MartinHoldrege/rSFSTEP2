@@ -22,7 +22,7 @@ addTemperaturePoint <- function(temperature_values, color, symbol){
          cex = 3, lwd = 4)
 }
 
-# Convert a file name to an index in an array who's row names are climate conditions
+# Convert a file name to an index in an array in which the row names are climate conditions
 fileName2climateIndex <- function(fileName, climateArray){
   return <- 0
   for(i in 1:nrow(climateArray)){
@@ -33,7 +33,7 @@ fileName2climateIndex <- function(fileName, climateArray){
   return
 }
 
-# number of files written to each PNG image. Remember that if "Current" 
+# number of files written to each PNG image. If "Current" 
 # exists it will be written to every file as well (regardless of this 
 # value), making the total (files.per.graphic + 1) files.
 files.per.graphic <- 9
@@ -70,7 +70,7 @@ for(index in 1:length(rgroup.files)){
   rgroup_data <- read.table(rgroup.files[index], fill = TRUE)
   
   # Line will keep track of our location in the file. This is necessary because R
-  # cannot handle the "[end]" delimiter we use in STEPWAT files.
+  # cannot handle the "[end]" delimiter we use in STEPWAT2 files.
   line <- 1
   
   ##### Read the first table (all group parameters like space) #####
@@ -216,7 +216,7 @@ for(i in 1:length(phen.data)){
 phen.data <- simplify2array(phen.data)
 
 ##################### Locate the "Current" file ####################
-# We want to project "Current" onto every graphic, so we separate it
+# We want to plot "Current" onto every graphic, so we separate it
 # from phen.files
 phen.current.index <- grep(phen.files, pattern = "urrent")
 if(length(phen.current.index) == 1){
@@ -400,7 +400,7 @@ write.csv(litter.2d,
           row.names = FALSE)
 
 ##################### Locate the "Current" file ####################
-# We want to project "Current" onto every graphic, so we separate it
+# We want to plot "Current" onto every graphic, so we separate it
 # from prod.files
 prod.current.index <- grep(prod.files, pattern = "urrent")
 if(length(prod.current.index) == 1){
