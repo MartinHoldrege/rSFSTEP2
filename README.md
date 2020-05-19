@@ -15,36 +15,42 @@ On a super computer:
 1. Make sure all the scripts are executable (i.e. given executable permissions) prior to following the steps below: chmod +x nameoffile
 2. Copy the weather database to the inputs folder within rSFSTEP2.
 3. Set the location of the weather database in the Main.R script of the R_program folder (where it says set database location), along with the name of the weather database (where it says Provide the name of the database in quotes).
-4. Add site ids, you wish to run the wrapper on, to the siteid variable (third line from top) in the generate_rSFSTEP2_structure.sh script. Site 1 and 2 are present as examples.
-5. Edit jobname, accountname and the location of results.txt (last line) in the sample.sh script, located in the R_program folder. Adjust wall time and nodes/cpus required if necessary.
-6. Edit jobname and accountname in the outputdatabase.sh script, located in R_program folder.
-7. Run the cloneSTEPWAT2.sh script.
-8. Run the generate_rSFSTEP2_structure.sh script. The parameters are <R_program_> <number_of_sites> <number_of_scenario>
-9. Run the call_sbatch.sh script.
+4. Edit the default climate scenarios you wish to run, specified in climate.conditions. The number of GCMs listed here must match <number_of_scenarios> below in the call to generate_rSFSTEP2_structure.sh (RCPs and time periods are not counted).
+	For example - if you have 10 GCMs for 2 RCPs and "Current" in climate.conditions, the correct <number_of_scenarios> = 11 in the generate_rSFSTEP2_structure.sh call.
+5. Ensure that the weather database variables listed in Main.R match those in the weather database you are using. This includes: climate.conditions, simstartyr, endyr, climate.ambient, deltaFutureToSimStart_yr, downscaling.method, and YEARS.
+6. Add site ids, you wish to run the wrapper on, to the siteid variable (third line from top) in the generate_rSFSTEP2_structure.sh script. Site 1 and 2 are present as examples.
+7. Edit jobname, accountname and the location of results.txt (last line) in the sample.sh script, located in the R_program folder. Adjust wall time and nodes/cpus required if necessary.
+8. Edit jobname and accountname in the outputdatabase.sh script, located in R_program folder. 
+9. Run the cloneSTEPWAT2.sh script.
+10. Run the generate_rSFSTEP2_structure.sh script. The parameters are <R_program> <number_of_sites> <number_of_scenarios>
+11. Run the call_sbatch.sh script. The parameter is <number_of_sites>. 
 
 Once the sbatch tasks have been succesfully completed, follow the steps below to compile all output.csv files into a SQLite database:
 
-9. Reset the number of GCMs used in OutputDatabase.R if not 14.
-10. Run the call_sbatch_database.sh script.
-11. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable site) and location (variable path) where you wish to collect the data, in the copydata.sh script.
-12. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
+12. Reset the number of GCMs used in OutputDatabase.R if not 14.
+13. Run the call_sbatch_database.sh script.
+14. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable site) and location (variable path) where you wish to collect the data, in the copydata.sh script.
+15. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
 
 On a local machine:
 --
 1. Make sure all the scripts are executable (i.e. given executable permissions) prior to following the steps below: chmod +x nameoffile
 2. Copy the weather database to the inputs folder within rSFSTEP2.
 3. Set the location of the weather database in the Main.R script of the R_program folder (where it says set database location), along with the name of the weather database (where it says Provide the name of the database in quotes).
-4. Add site ids, you wish to run the wrapper on, to the siteid variable (third line from top) in the generate_rSFSTEP2_structure.sh script. Site 1 and 2 are present as examples.
-5. Run the cloneSTEPWAT2.sh script.
-6. Run the generate_rSFSTEP2_structure.sh script. The parameters are <R_program> <number_of_sites> <number_of_scenario>
-7. Run the run_local.sh script.
+4. Edit the default climate scenarios you wish to run, specified in climate.conditions. The number of GCMs listed here must match <number_of_scenarios> below in the call to generate_rSFSTEP2_structure.sh (RCPs and time periods are not counted).
+	For example - if you have 10 GCMs for 2 RCPs and "Current" in climate.conditions, the correct <number_of_scenarios> = 11 in the generate_rSFSTEP2_structure.sh call.
+5. Ensure that the weather database variables listed in Main.R match those in the weather database you are using. This includes: climate.conditions, simstartyr, endyr, climate.ambient, deltaFutureToSimStart_yr, downscaling.method, and YEARS.
+6. Add site ids, you wish to run the wrapper on, to the siteid variable (third line from top) in the generate_rSFSTEP2_structure.sh script. Site 1 and 2 are present as examples.
+7. Run the cloneSTEPWAT2.sh script.
+8. Run the generate_rSFSTEP2_structure.sh script. The parameters are <R_program> <number_of_sites> <number_of_scenarios>
+9. Run the run_local.sh script. The parameter is <number_of_sites>. 
 
 Once the sbatch tasks have been succesfully completed, follow the steps below to compile all output.csv files into a SQLite database:
 
-7. Reset the number of GCMs used in OutputDatabase.R if not 14.
-8. Run the run_local_database.sh script.
-9. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable site) and location (variable path) where you wish to collect the data, in the copydata.sh script.
-10. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
+10. Reset the number of GCMs used in OutputDatabase.R if not 14.
+11. Run the run_local_database.sh script.
+12. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable site) and location (variable path) where you wish to collect the data, in the copydata.sh script.
+13. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
 
 Note: The method to run a shell script is present as a comment in the respective script. 
 
@@ -70,5 +76,6 @@ Contributors are encouraged, however, to update local clones to [point to the ne
 git remote set-url origin https://github.com/Burke-Lauenroth-Lab/rSFSTEP2.git
 ```
 
+All instructions and necessary parameters for running shell scripts are at the top of each file
 
 See syntax_inputs.txt in the inputs folder for a description of the input options and how to specify site-specific and fixed inputs
