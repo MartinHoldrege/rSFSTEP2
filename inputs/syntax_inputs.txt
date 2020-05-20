@@ -1,14 +1,24 @@
 #This file describes the functionality of inputs within rSFSTEP2 and the options that exist for specifying inputs
 
-Three input files are held in the inputs folder:
+Eight input files are held in the inputs folder:
 1) InputData_Rgroup.csv --> contains rgroup parameters, along with parameters for fire and grazing (top table of rgroup.in only)
 
 2) InputData_SoilLayers.csv --> contains soil depth and soil properties 
 
 3) InputData_Species.csv --> contains species parameters (top table of species.in only)
 
+4) InputData_MonthlyTemp.csv --> contains default monthly temperature values for a typical big sagebrush site.
+
+5) InputData_Phenology.csv --> contains default phenological activity values for a typical big sagebrush site. This phenological activity was conceptualized based on the monthly temperature values in 4).
+
+6) InputData_Biomass.csv --> contains monthly default biomass fractions for each STEPPE functional type. Identical to the values in sxwprod_v2.in.
+
+7) InputData_Litter.csv --> contains monthly default litter fractions for each STEPPE functional type. Identical to the values in sxwprod_v2.in.
+
+8) InputData_PctLive.csv --> contains monthly default % live fractions for each STEPPE functional type. Identical to the values in sxwprod_v2.in.
+
 Input Options:
-For all of the above input files, the user can specify a variety of options that will utilize fixed (i.e. the same) values across all sites, fixed values across some sites, or site-specific (i.e. different) values for each site. The use of different inputs is requested by setting unique combinations of "Site" and "treatment".
+For InputData_Rgroup.csv, InputData_SoilLayers.csv and InputData_Species.csv, the user can specify a variety of options that will utilize fixed (i.e. the same) values across all sites, fixed values across some sites, or site-specific (i.e. different) values for each site. The use of different inputs is requested by setting unique combinations of "Site" and "treatment".
 
 The three options:
 1) For fixed inputs for all sites: set "all" in the Site column and a unique identifier to label that set of parameters in the treatment column. The default is fixedn, where n is a number that uniquely identifies that set of fixed inputs (in this cased n=1, so fixed1). However, any unique identifier can be specified. That unique identifier will be used to label output files and added as a column in the output SQLite tables.

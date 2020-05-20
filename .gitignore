@@ -1,9 +1,11 @@
 
 .DS_Store
-StepWat_R_Wrapper_Parallel/.DS_Store
-StepWat_R_Wrapper_Parallel/STEPWAT_DIST/.DS_Store
-StepWat_R_Wrapper_Parallel/STEPWAT_DIST/.RData
-StepWat_R_Wrapper_Parallel/STEPWAT_DIST/.Rhistory
+R_program/.DS_Store
+R_program/STEPWAT_DIST/.DS_Store
+R_program/STEPWAT_DIST/.RData
+R_program/STEPWAT_DIST/.Rhistory
 jobs.txt
-StepWat_R_Wrapper_Parallel/StepWat.Weather.Markov.Test
-StepWat_R_Wrapper_Parallel/WeatherData_2016.RData
+R_program/StepWat.Weather.Markov.Test
+R_program/WeatherData_2016.RData
+R_program/STEPWAT_DIST/output
+R_program/STEPWAT_DIST/sxw*

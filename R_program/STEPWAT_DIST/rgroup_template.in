@@ -47,22 +47,11 @@ succulents		-0.0025 6.736 -0.0217 6.736
 [end]  # section end
 
 #=============================================================
-#                 Cheatgrass-Wildfire Inputs
-# These inputs allow for the implementation of wildfire based on cheatgrass biomass (g/m2)
-# This option cannot be used if prescribed fire is on. The prescribed fire and wildfire options are mutually exclusive
-# ignition = cheatgrass biomass (g/m2) required to ignite a fire.
-# cheatgrass_coefficient = intercept of the cheatgrass biomass-fire probability equation
-# wild_fire_slope = slope of the cheatgrass biomass-fire probability equation
-# all three parameters were derived from Fig. 2 of Whisenant et al. 1990 Changing fire 
-# frequencies on Idaho's Snake River Plains: ecological and management implications
-# when ignition = 12.05, the cheatgrass-wildfire positive feedback loop is utilized, such that
-# greater cheatgrass biomass results into a higher fire probability.
+#                 Cheatgrass-Wildfire Flag
+# Implement wildfire based on cheatgrass biomass (g/m2). Setting this flag to 1 will
+# override any prescribed fire treatment(s) specified above.
 
-# Cheatgrass-wildfire loop is OFF by default. To turn it ON, set ignition > 0.
-# (We recomend ignition = 12.05 derived from Fig. 2 of Whisenant et al. 1990 Changing fire 
-# frequencies on Idaho's Snake River Plains: ecological and management implications)  
-# ignition cheatgrass_coefficient wild_fire_slope  
-  0        -0.117                 0.0093  
+0 # Use cheatgrass-driven wildfire? 1 for yes, 0 for no.  
 
 [end]  # section end
 

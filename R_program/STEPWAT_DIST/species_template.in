@@ -10,13 +10,13 @@
 # pseed = the average number of seeds produced by annual species per 1g of biomass, per 1m^2 and per year.
 # var = the variance parameter of the beta distribution for annual establishment. This parameter, 
 #       along with the mean (pestab), is used to calculate the two shape parameters: alpha and beta. 
-#       Default value: 0.0001. NOTE: var must be < pestab * (1-pestab) or alpha and/or beta will be negative,
+#       NOTE: var must be < pestab * (1-pestab) or alpha and/or beta will be negative,
 #       we will no longer be meeting the assumptions of a beta distribution, and the code will fail.
 #
 # name  viable xdecay  pseed   var
- brte     10    1.00    1000  0.0001               
- cryp     10    1.00     100  0.0001      
- chen     10    1.00     100  0.0001        
+ brte     3    1.00    50  0.01               
+ cryp     10    1.00     30  0.008      
+ chen     10    1.00     30  0.008        
  
 [end]  # end of additional annuals-only parameters.
 

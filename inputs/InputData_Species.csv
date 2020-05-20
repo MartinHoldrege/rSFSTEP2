@@ -1,5 +1,5 @@
 Site,treatment,name,rg,onoff,age,slow,disturb,eind,vegindv,tclass,clonal,irate,ratep,pestab,minbio,maxbio,cosurv
-all,fixed1,artr,1,1,150,15,4,1,0,2,n,0.02,0.9,0.1,2,1200,0.01
+all,fixed1,artr,1,1,150,15,4,1,0,2,n,0.225,0.9,0.1,2,1200,0.01
 all,fixed1,cryp,2,1,1,2,3,3,0,2,n,0.947,0.9,0.25,1.175,4.7,0
 all,fixed1,chen,3,1,1,2,2,3,0,1,n,0.947,0.9,0.25,1.10725,4.429,0
 all,fixed1,phho,4,1,15,2,3,8,0,2,n,0.426,0.9,0.2,1.4,14,0.01
