@@ -4,7 +4,7 @@
 cd R_program
 #module load git/2.17.1
 wait
-git clone --branch feature_phenology_biomass_scaling --recursive https://github.com/DrylandEcology/STEPWAT2.git
+git clone --branch master --recursive https://github.com/DrylandEcology/STEPWAT2.git
 wait
 cd STEPWAT2
 make
