@@ -51,7 +51,7 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
   tmin2 <- as.numeric(temp_clim$Cheatgrass_ClimVars["MinTemp_of2ndMonth_C"])
   
   # set annuals fraction. Equation derived from raw data in Brummer et al. 2016
-  if(prec7 > 35 && tmin2 < -13.5){
+  if(prec7 > 30 && tmin2 < -13){
     annuals_fraction <- 0.0
   } else {
     annuals_fraction <- 1 / (1 + 2.718282 ^ - (0.8047441 - 0.100166 * prec7 + 0.1818125 * tmin2))  
@@ -86,7 +86,7 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
       tmin2 <- as.numeric(temp_clim$Cheatgrass_ClimVars["MinTemp_of2ndMonth_C"])
       
       # set annuals fraction. Equation derived from raw data in Brummer et al. 2016
-      if(prec7 > 35 && tmin2 < -13.5){
+      if(prec7 > 30 && tmin2 < -13){
         annuals_fraction <- 0.0
       } else {
         annuals_fraction <- 1 / (1 + 2.718282 ^ - (0.8047441 - 0.100166 * prec7 + 0.1818125 * tmin2))
