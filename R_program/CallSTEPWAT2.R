@@ -259,6 +259,13 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               weath.read <- paste(assembly_output,"Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
             }
             
+            # If the user didn't specify this particular GCM/RCP combination
+            if(!dir.exists(weather.read.dir)) {
+              next
+            } else {
+              setwd(weather.read.dir)
+            }
+            
             if(rescale_phenology){
               ########## Move phen and prod files generated for this specific GCM x RCP x YEARS combination #########
               setwd(dist.directory)
@@ -276,13 +283,6 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               system(paste0("mv ", "sxwphen.", downscaling.method, ".", y, ".", r, ".", GCM[g], ".in", " sxwphen.in"))
               # Rename the new prod file to the name recognized by STEPWAT2
               system(paste0("mv ", "sxwprod_v2.", downscaling.method, ".", y, ".", r, ".", GCM[g], ".in", " sxwprod_v2.in"))
-            }
-            
-            # If the user didn't specify this particular GCM/RCP combination
-            if(!dir.exists(weather.read.dir)) {
-              next
-            } else {
-              setwd(weather.read.dir)
             }
             
             #Identify the directory the weather will be pasted into   
