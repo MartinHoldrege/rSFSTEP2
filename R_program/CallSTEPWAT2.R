@@ -25,6 +25,8 @@ dbDisconnect(db)
 rm(db)
 
 s<-site[1]
+w<-sites[1]
+
 foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
   
   db <- dbConnect(SQLite(), output_database)
@@ -59,8 +61,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
       
       #If climate conditions = "Current", copy the current weather data files into the randomdata folder
       if (GCM[g]=="Current") {
-        setwd(paste("Site_",s,"_",GCM[g],sep=""))
-        weath.read<-paste(assembly_output,"Site_",s,"_",GCM[g],sep="")
+        setwd(paste("Site_",w,"_",GCM[g],sep=""))
+        weath.read<-paste(assembly_output,"Site_",w,"_",GCM[g],sep="")
         
         #Identify the directory the weather will be pasted into    
         weather.dir<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/",sep="")
@@ -252,11 +254,11 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
             #use with Vic weather database and all new weather databases
             if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
             {
-              weather.read.dir <- paste("Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
-              weath.read <- paste(assembly_output,"Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
+              weather.read.dir <- paste("Site_",w,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
+              weath.read <- paste(assembly_output,"Site_",w,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
             } else {
-              weather.read.dir <- paste("Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
-              weath.read <- paste(assembly_output,"Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
+              weather.read.dir <- paste("Site_",w,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
+              weath.read <- paste(assembly_output,"Site_",w,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
             }
             
             # If the user didn't specify this particular GCM/RCP combination

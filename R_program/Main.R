@@ -63,7 +63,7 @@ output.file<-paste(source.dir,"AppendTreatments.R", sep="")
 tick_on<-proc.time()
 
 #rSFSTEP2 will automatically populate the site string with the sites specified in generate_stepwat_sites.sh
-site<-c(sitefolderid)
+site<-c(notassigned)
 
 #######################################################################################
 #Set working directory to location with inputs
