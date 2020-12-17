@@ -5,7 +5,7 @@ siteid=(1 ) #add site ids here
 for ((i=1;i<=$2;i++));do (
 	cp -r $1 R_program_$i
 	cd R_program_$i
-	python assignsiteid.py $(pwd) ${siteid[$(($i-1))]} $i
+	python3 assignsiteid.py $(pwd) ${siteid[$(($i-1))]} $i
 	for((j=1;j<=$3;j++));do
 		cp -r STEPWAT2 Stepwat.Site.$i.$j
 	done
