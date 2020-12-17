@@ -13,7 +13,7 @@ stopifnot(utils::packageVersion("rSOILWAT2") >= "3.4.0")
 #Note: Change number of processors and output database location according to your system
 
 #Number of cores
-proc_count<-6
+proc_count<-4
 
 #Source directory, the source.directory will be filled in automatically when rSFSTEP2 runs
 source.dir<-"nopath"
@@ -21,7 +21,7 @@ source.dir<-paste(source.dir,"/", sep="")
 setwd(source.dir)
 
 #Set database and inputs location, an example is provided
-db_loc<-"/Users/Guest/Desktop/rSFSTEP2/inputs"
+db_loc<-"~/Documents/stepwat/rSFSTEP2/inputs"
 
 # If you would like to rescale space parameters based on climate for each climate 
 # scenario, set this boolean to TRUE. If you would like to run with only the space 
@@ -38,7 +38,7 @@ output_original_space <- TRUE
 rescale_phenology <- TRUE
 
 #Database location, edit the name of the weather database accordingly
-database_name<-"dbWeatherData.VicSites.v3.2.0.sqlite3"
+database_name<-"dbWeatherData_STEPWAT2_200sites.sqlite3"
 database<-file.path(db_loc,database_name)
  
 #Weather query script (Loads weather data from the weather database for all climate scenarios into a list for each site)
@@ -466,12 +466,12 @@ endyr <- 2010
 climate.ambient <- "Current"
 
 #Specify the RCP/GCM combinations
-climate.conditions <- c(climate.ambient,  "RCP45.CanESM2", "RCP45.CESM1-CAM5", "RCP45.CSIRO-Mk3-6-0", "RCP45.FGOALS-g2",
-                        "RCP45.FGOALS-s2", "RCP45.GISS-E2-R", "RCP45.HadGEM2-CC", "RCP45.HadGEM2-ES", "RCP45.inmcm4", 
-                        "RCP45.IPSL-CM5A-MR", "RCP45.MIROC5", "RCP45.MIROC-ESM","RCP45.MRI-CGCM3", "RCP85.CanESM2", 
-                        "RCP85.CESM1-CAM5", "RCP85.CSIRO-Mk3-6-0", "RCP85.FGOALS-g2","RCP85.FGOALS-s2","RCP85.GISS-E2-R",
-                        "RCP85.HadGEM2-CC","RCP85.HadGEM2-ES","RCP85.inmcm4","RCP85.IPSL-CM5A-MR","RCP85.MIROC5",
-                        "RCP85.MIROC-ESM","RCP85.MRI-CGCM3")
+climate.conditions <- c(climate.ambient,  "RCP45.CanESM2") #, "RCP45.CESM1-CAM5", "RCP45.CSIRO-Mk3-6-0", "RCP45.FGOALS-g2",
+#                        "RCP45.FGOALS-s2", "RCP45.GISS-E2-R", "RCP45.HadGEM2-CC", "RCP45.HadGEM2-ES", "RCP45.inmcm4", 
+#                        "RCP45.IPSL-CM5A-MR", "RCP45.MIROC5", "RCP45.MIROC-ESM","RCP45.MRI-CGCM3", "RCP85.CanESM2", 
+#                        "RCP85.CESM1-CAM5", "RCP85.CSIRO-Mk3-6-0", "RCP85.FGOALS-g2","RCP85.FGOALS-s2","RCP85.GISS-E2-R",
+#                        "RCP85.HadGEM2-CC","RCP85.HadGEM2-ES","RCP85.inmcm4","RCP85.IPSL-CM5A-MR","RCP85.MIROC5",
+#                        "RCP85.MIROC-ESM","RCP85.MRI-CGCM3")
 
 ###################### Derive GCM and RCP information from climate.conditions #######################
 split <- strsplit(climate.conditions, "\\.")   # Split entries in climate.conditions on the period
