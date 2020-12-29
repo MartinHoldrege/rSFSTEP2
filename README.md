@@ -32,7 +32,7 @@ Once the sbatch tasks have been succesfully completed, follow the steps below to
 11. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
 12. In `CombineOutputDatabases.R` modify the `dir_db` variable with the loaction of the databases.
 13. In `CombineOutputDatabases.R` modify the `sites` variable with the site ids you used.
-14. Run (`Rscript CombineOutputDatabases.R`) to combine all of the databases into a single database.
+14. Run `module load R` run (`Rscript CombineOutputDatabases.R`) to combine all of the databases into a single database.
 
 On a local machine:
 --
