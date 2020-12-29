@@ -13,7 +13,8 @@
 #Specify Resources Needed
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=16
+# switch to 13 later, now just 4 for test
+#SBATCH --cpus-per-task=4
 #SBATCH --mem=128000
 
 #Load Required Modules
@@ -22,5 +23,5 @@
 module load R
 
 srun Rscript Main.R
-echo "Site noid done!" >> /project/sagebrush/kpalmqu1/jobs.txt
+echo "Site noid done!" >> ~/stepwat/sitedata/jobs.txt
 
