@@ -21,7 +21,7 @@ source.dir<-paste(source.dir,"/", sep="")
 setwd(source.dir)
 
 #Set database and inputs location, an example is provided
-db_loc<-"~/Documents/stepwat/rSFSTEP2/inputs"
+db_loc<-"~/stepwat/rSFSTEP2/inputs"
 
 # If you would like to rescale space parameters based on climate for each climate 
 # scenario, set this boolean to TRUE. If you would like to run with only the space 
