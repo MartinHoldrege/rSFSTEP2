@@ -13,8 +13,8 @@
 #Specify Resources Needed
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-# switch to 13 later, now just 4 for test
-#SBATCH --cpus-per-task=4
+# switch to 14 later, now just 4 for test
+#SBATCH --cpus-per-task=14
 #SBATCH --mem=128000
 
 #Load Required Modules
