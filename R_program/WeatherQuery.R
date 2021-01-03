@@ -24,5 +24,60 @@ extract_data<-function(site_to_extract=NULL)
   return (sw_weatherList)
 }
 	
-sw_weatherList<-extract_data(site_to_extract = sites)
+sw_weatherList_old <-extract_data(site_to_extract = sites)
 rSOILWAT2::dbW_disconnectConnection()
+
+
+# update weather list -----------------------------------------------------
+
+
+# update weather list with increased precipitation intensity
+
+# * functions -------------------------------------------------------------
+
+
+#' increase precipitation intensity of swWeatherData object
+#' 
+#' Updates the PPT_cm column in the data matrix, using a function
+#' that increases precipitation intensity of that vector. Currently only
+#' using incr_event_intensity function but could update to any function
+#' that can work on a numeric vector
+#'
+#' @param x object of class swWeatherData
+#' @param ... arguments passed to precipr::incr_event_intensity
+#'
+#' @return object of class swWeatherData
+#' @export
+update_swWeatherData <- function(x, ...) {
+  stopifnot(class(x) == "swWeatherData",
+            "PPT_cm" %in% attributes(x@data)$dimnames[[2]]
+  )
+  
+  # increase precip intensity for that year
+  x@data[, "PPT_cm"] <- precipr::incr_event_intensity(x@data[, "PPT_cm"], ...)
+  x
+}
+
+
+
+# * modify ----------------------------------------------------------------
+
+# doubling event intensity (specified by from and to args)
+sw_weatherList <- modify_depth(sw_weatherList_old, .depth = 3, 
+                               .f = update_swWeatherData, from = 1, to = 1)
+
+# testing weather operation worked
+if (FALSE){
+  ppt_mean <- function(x) {
+    ppt <- x@data[, "PPT_cm"]
+    precipr::mean_event_size(ppt)
+  }
+  # get mean event size for original and modified lists
+  old <- map_depth(sw_weatherList_old, .depth = 3, .f = ppt_mean) %>% unlist
+  new <- map_depth(sw_weatherList, .depth = 3, .f = ppt_mean) %>% unlist
+  
+  # confirm event size roughly doubled
+  hist(new/old) # can be < 2 when odd number of events in a year
+}
+
+remove(sw_weatherList_old)
