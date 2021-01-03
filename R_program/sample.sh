@@ -8,14 +8,14 @@
 
 #Set Max Wall Time
 #days-hours:minutes:seconds
-#SBATCH --time=48:00:00
+#SBATCH --time=00:05:00
 
 #Specify Resources Needed
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 # switch to 14 later, now just 4 for test
-#SBATCH --cpus-per-task=14
-#SBATCH --mem=128000
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=64000
 
 #Load Required Modules
 #module load gcc/7.3.0
