@@ -8,14 +8,14 @@
 
 #Set Max Wall Time
 #days-hours:minutes:seconds
-#SBATCH --time=00:05:00
+#SBATCH --time=10:00:00
 
 #Specify Resources Needed
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 # switch to 14 later, now just 4 for test
 #SBATCH --cpus-per-task=14
-#SBATCH --mem=32000
+#SBATCH --mem=64000
 
 #Load Required Modules
 #module load gcc/7.3.0
@@ -23,5 +23,6 @@
 module load R
 
 srun Rscript Main.R
-echo "Site noid done!" >> ~/stepwat/sitedata/jobs.txt
+now=$(date)
+echo "Site noid done! $now" >> /uufs/chpc.utah.edu/common/home/kulmatiski-group1/stepwat/sitedata/jobs.txt
 
