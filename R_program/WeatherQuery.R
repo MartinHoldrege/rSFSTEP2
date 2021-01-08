@@ -63,7 +63,7 @@ update_swWeatherData <- function(x, ...) {
 # * modify ----------------------------------------------------------------
 
 # doubling event intensity (specified by from and to args)
-sw_weatherList <- modify_depth(sw_weatherList_old, .depth = 3, 
+sw_weatherList <- purrr::modify_depth(sw_weatherList_old, .depth = 3, 
                                .f = update_swWeatherData, from = 1, to = 1)
 
 # testing weather operation worked
