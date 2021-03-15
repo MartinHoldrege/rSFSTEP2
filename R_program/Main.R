@@ -23,6 +23,9 @@ setwd(source.dir)
 #Set database and inputs location, an example is provided
 db_loc<-"/Users/Guest/Desktop/rSFSTEP2/inputs"
 
+#Set number of simulation years used in STEPWAT2 simulations
+simyears <- 300
+
 # If you would like to rescale space parameters based on climate for each climate 
 # scenario, set this boolean to TRUE. If you would like to run with only the space 
 # parameters that you have specified in the input.csv, set this boolean to FALSE.
