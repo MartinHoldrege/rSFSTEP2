@@ -103,7 +103,9 @@ if(any(grepl(",",species_data_all_sites))==TRUE)
   #Iterate through each site that matches this criteria
   for(j in species_data_all_sites_vectors)
   {
-    if(grepl(site,j))
+  	site2=paste("\\<",site,"\\>",sep='')
+  
+    if(grepl(site2,j))
     {
       contains_vector <- TRUE
       species_data_site<-species_data[species_data$Site==j,]
@@ -194,11 +196,14 @@ if(any(grepl(",",soil_data_all_sites))==TRUE)
 {
   for(j in soil_data_all_sites_vectors)
   {
-    if(grepl(site,j))
+    site2=paste("\\<",site,"\\>",sep='')
+    
+    if(grepl(site2,j))
     {
       contains_vector <- TRUE
       #Subset the soils data for the site in question
       soil_data_site<-soil_data[soil_data$Site==j,]
+     
       #Get all soil treatments for the site in question
       treatments_vector<-unique(soil_data_site$soil_treatment)
       
@@ -276,11 +281,14 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
 {
   for(j in rgroup_data_all_sites_vectors)
   {
-    if(grepl(site,j))
+    site2=paste("\\<",site,"\\>",sep='')
+    
+    if(grepl(site2,j))
     {
       contains_vector <- TRUE
       #Subset the rgroup data for the site in question
       rgroup_data_site<-rgroup_data[rgroup_data$Site==j,]
+      
       #Get all rgroup treatments for the site in question
       treatments_vector<-unique(rgroup_data_site$treatment)
       
