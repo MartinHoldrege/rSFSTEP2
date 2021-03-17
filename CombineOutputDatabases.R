@@ -2,7 +2,7 @@
 
 library(RSQLite)
 
-dir_db<-"~/stepwat/sitedata" #Location of the databases, needs to be set by the user
+dir_db<-"/uufs/chpc.utah.edu/common/home/kulmatiski-group1/stepwat/sitedata/" #Location of the databases, needs to be set by the user
 
 setwd(dir_db)
 
