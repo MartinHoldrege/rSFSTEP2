@@ -192,7 +192,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           remove(wrapped.daily.slyrs)
           unlock(dailySWMutex)
           system("rm sw2_daily_slyrs_agg.csv")
-#          system("rm sw2_daily_agg.csv")
+          system("rm sw2_daily_agg.csv")
           
           #Monthly SOILWAT2 output
           sw2_monthly_slyrs_agg.csv <- read.csv("sw2_monthly_slyrs_agg.csv", header = TRUE)
@@ -393,7 +393,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               remove(wrapped.daily.slyrs)
               unlock(dailySWMutex)
               system("rm sw2_daily_slyrs_agg.csv")
-#              system("rm sw2_daily_agg.csv")
+              system("rm sw2_daily_agg.csv")
               
               #Monthly SOILWAT2 output
               sw2_monthly_slyrs_agg.csv <- read.csv("sw2_monthly_slyrs_agg.csv", header = TRUE)
