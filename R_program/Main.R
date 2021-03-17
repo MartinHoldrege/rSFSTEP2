@@ -21,7 +21,7 @@ source.dir<-paste(source.dir,"/", sep="")
 setwd(source.dir)
 
 #Set database and inputs location, an example is provided
-db_loc<-"~/stepwat/rSFSTEP2/inputs"
+db_loc<- "/uufs/chpc.utah.edu/common/home/kulmatiski-group1/stepwat/rSFSTEP2/inputs"
 
 #Set number of simulation years used in STEPWAT2 simulations
 simyears <- 300
