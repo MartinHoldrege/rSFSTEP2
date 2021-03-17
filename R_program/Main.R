@@ -7,7 +7,7 @@ library(DBI)
 library(RSQLite)
 library(rSOILWAT2)
 
-stopifnot(utils::packageVersion("rSOILWAT2") >= "3.4.0")
+stopifnot(utils::packageVersion("rSOILWAT2") >= "4.0.4")
 
 #Load source files and directories in the environment
 #Note: Change number of processors and output database location according to your system
@@ -22,6 +22,9 @@ setwd(source.dir)
 
 #Set database and inputs location, an example is provided
 db_loc<-"/Users/Guest/Desktop/rSFSTEP2/inputs"
+
+#Set number of simulation years used in STEPWAT2 simulations
+simyears <- 300
 
 # If you would like to rescale space parameters based on climate for each climate 
 # scenario, set this boolean to TRUE. If you would like to run with only the space 
@@ -63,7 +66,7 @@ output.file<-paste(source.dir,"AppendTreatments.R", sep="")
 tick_on<-proc.time()
 
 #rSFSTEP2 will automatically populate the site string with the sites specified in generate_stepwat_sites.sh
-site<-c(sitefolderid)
+site<-c(notassigned)
 
 #######################################################################################
 #Set working directory to location with inputs
@@ -100,7 +103,9 @@ if(any(grepl(",",species_data_all_sites))==TRUE)
   #Iterate through each site that matches this criteria
   for(j in species_data_all_sites_vectors)
   {
-    if(grepl(site,j))
+  	site2=paste("\\<",site,"\\>",sep='')
+  
+    if(grepl(site2,j))
     {
       contains_vector <- TRUE
       species_data_site<-species_data[species_data$Site==j,]
@@ -191,11 +196,14 @@ if(any(grepl(",",soil_data_all_sites))==TRUE)
 {
   for(j in soil_data_all_sites_vectors)
   {
-    if(grepl(site,j))
+    site2=paste("\\<",site,"\\>",sep='')
+    
+    if(grepl(site2,j))
     {
       contains_vector <- TRUE
       #Subset the soils data for the site in question
       soil_data_site<-soil_data[soil_data$Site==j,]
+     
       #Get all soil treatments for the site in question
       treatments_vector<-unique(soil_data_site$soil_treatment)
       
@@ -273,11 +281,14 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
 {
   for(j in rgroup_data_all_sites_vectors)
   {
-    if(grepl(site,j))
+    site2=paste("\\<",site,"\\>",sep='')
+    
+    if(grepl(site2,j))
     {
       contains_vector <- TRUE
       #Subset the rgroup data for the site in question
       rgroup_data_site<-rgroup_data[rgroup_data$Site==j,]
+      
       #Get all rgroup treatments for the site in question
       treatments_vector<-unique(rgroup_data_site$treatment)
       

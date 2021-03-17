@@ -1,61 +1,29 @@
 import sys
 import argparse
 
-f = open('Main.R','r')
-filedata = f.read()
-f.close()
+class MyParser:
+    def __init__(self):
+        self.parser = argparse.ArgumentParser()
+        self.parser.add_argument('location', type=str, nargs=1)
+        self.parser.add_argument('number', type=int, nargs=2)
+        self.parsed = self.parser.parse_args()
 
-parser = argparse.ArgumentParser()
-parser.add_argument('location', type=str, nargs=1)
-parser.add_argument('number', type=int, nargs=2)
-parsed = parser.parse_args()
+    def Parse(self, fileName):
+        f = open(fileName, 'r')
+        filedata = f.read()
+        f.close()
 
-newdata = filedata.replace("nopath",str(parsed.location[0]))
-filedata = newdata
-newdata = filedata.replace("notassigned",str(parsed.number[0]))
+        filedata = filedata.replace("nopath", str(self.parsed.location[0]))
+        filedata = filedata.replace("notassigned", str(self.parsed.number[0]))
+        filedata = filedata.replace("sitefolderid", str(self.parsed.number[1]))
+        filedata = filedata.replace("noid", str(self.parsed.number[0]))
 
-filedata = newdata
-newdata = filedata.replace("sitefolderid",str(parsed.number[1]))
+        f = open(fileName, 'w')
+        f.write(filedata)
+        f.close()
 
-fileout='Main.R'
-f = open(fileout,'w')
-f.write(newdata)
-f.close()
-
-f = open('sample.sh','r')
-filedata = f.read()
-f.close()
-tempstring=str(parsed.location[0])+"/"+"Main.R"
-newdata = filedata.replace("notassigned",tempstring)
-filedata = newdata
-newdata = filedata.replace("noid",str(parsed.number[0]))
-fileout='sample.sh'
-f = open(fileout,'w')
-f.write(newdata)
-f.close()
-
-fileout='STEPWAT_DIST/sample.sh'
-f = open(fileout, 'r')
-filedata = f.read()
-f.close()
-newdata = filedata.replace("noid",str(parsed.number[0]))
-f = open(fileout,'w')
-f.write(newdata)
-f.close()
-
-f = open('OutputDatabase.R','r')
-filedata = f.read()
-f.close()
-newdata = filedata.replace("nopath",str(parsed.location[0]))
-filedata = newdata
-newdata = filedata.replace("notassigned",str(parsed.number[0]))
-
-filedata = newdata
-newdata = filedata.replace("sitefolderid",str(parsed.number[1]))
-
-fileout='OutputDatabase.R'
-f = open(fileout,'w')
-f.write(newdata)
-f.close()
-
-
+myParser = MyParser()
+myParser.Parse('sample.sh')
+myParser.Parse('Main.R')
+myParser.Parse('CallSTEPWAT2.R')
+myParser.Parse('STEPWAT_DIST/sample.sh')

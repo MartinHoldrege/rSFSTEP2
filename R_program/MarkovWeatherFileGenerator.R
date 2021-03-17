@@ -13,8 +13,8 @@ registerDoParallel(proc_count)
     scen<-temp[h] #load a particular scenario
     
     #Generate the necessary precipitation and temperature parameters for mkv_covar.in and mkv_prob.in based on historical weather data
-    res <- rSOILWAT2::dbW_estimate_WGen_coefs(sw_weatherList[[s]][[h]], imputation_type = "mean",
-      propagate_NAs = FALSE)
+    res <- rSOILWAT2::dbW_estimate_WGen_coefs(sw_weatherList[[s]][[h]], imputation_type = "mean", 
+    propagate_NAs = FALSE)
     
     #Write the mkv_covar.in and mkv_prob.in files
     print_mkv_files(mkv_doy = res[["mkv_doy"]], mkv_woy = res[["mkv_woy"]],

@@ -7,11 +7,31 @@ library(doParallel)
 registerDoParallel(proc_count)
 library(plyr)
 library(RSQLite)
+library(synchronicity)
+
+databaseMutex <- boost.mutex()
+dailySWMutex <- boost.mutex()
 
 setwd(directory)
 
+output_database <- paste(source.dir, "Output_site_", notassigned, ".sqlite", sep="")
+
+# Before running parallel instances we need to make sure that the database exists.
+# This will attempt to connect to the database, and if no database exists it will
+# create one
+db <- dbConnect(SQLite(), output_database)
+# We can disconnect immediately. We need a separate connection for each instance.
+dbDisconnect(db)
+rm(db)
+
 s<-site[1]
+w<-sites[1]
+
 foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
+  
+  db <- dbConnect(SQLite(), output_database)
+  setwd(dist.directory)
+
   #Copy in the relevant species.in file for each site, as specified in the Main.R
   for(sp in species)
   {
@@ -41,8 +61,8 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
       
       #If climate conditions = "Current", copy the current weather data files into the randomdata folder
       if (GCM[g]=="Current") {
-        setwd(paste("Site_",s,"_",GCM[g],sep=""))
-        weath.read<-paste(assembly_output,"Site_",s,"_",GCM[g],sep="")
+        setwd(paste("Site_",w,"_",GCM[g],sep=""))
+        weath.read<-paste(assembly_output,"Site_",w,"_",GCM[g],sep="")
         
         #Identify the directory the weather will be pasted into    
         weather.dir<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/",sep="")
@@ -114,50 +134,114 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           
           #Change directory to "Output" folder
           setwd("Output")
+
+          # Add biomass output to the SQLite database
+          bmassavg.csv <- read.csv("bmassavg.csv", header = TRUE)
+          wrapped.biomass <- data.frame(as.integer(notassigned), GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, bmassavg.csv)
+          colnames(wrapped.biomass) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
+                                         "SoilTreatment", "SpeciesTreatment", colnames(bmassavg.csv))
+          lock(databaseMutex)
+          dbWriteTable(db, "Biomass", wrapped.biomass, append=T)
+          unlock(databaseMutex)
+          system("rm bmassavg.csv")
           
-          #Identify the name of the biomass output file
-          name.bmass.csv<-paste("bmassavg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-          name.mort.csv<-paste("mortavg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-          
-          #Rename the bmassavg.csv
-          system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
-          system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
+          # Add mortality output to the SQLite database
+          mortavg.csv <- read.csv("mortavg.csv", header = TRUE)
+          wrapped.mortality <- data.frame(as.integer(notassigned), GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, mortavg.csv)
+          colnames(wrapped.mortality) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
+                                           "SoilTreatment", "SpeciesTreatment", colnames(mortavg.csv))
+          lock(databaseMutex)
+          dbWriteTable(db, "Mortality", wrapped.mortality, append=T)
+          unlock(databaseMutex)
+          system("rm mortavg.csv")
           
           #Change directory to where SOILWAT2 output is stored
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output/sw_output",sep=""))
           
           #Daily SOILWAT2 output
-          #Identify the name of the sw daily output files
-          name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-          name.sw2.daily.csv<-paste("sw2_daily_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+          lock(dailySWMutex)
+          sw2_daily_slyrs_agg.csv <- read.csv("sw2_daily_slyrs_agg.csv", header = TRUE)
           
-          #Rename the daily SOILWAT2 output files
-          system(paste("mv sw2_daily_slyrs_agg.csv ",name.sw2.daily.slyrs.csv,sep=""))
-          system(paste("mv sw2_daily_agg.csv ",name.sw2.daily.csv,sep=""))
+          #Calculate aggregated daily output for soil layer variables - average values for each day across all years
+          sw2_daily_slyrs_aggregated=aggregate(sw2_daily_slyrs_agg.csv[,c(3:length(sw2_daily_slyrs_agg.csv[1,]))],by=list(sw2_daily_slyrs_agg.csv$Day),mean)
+ 		  names(sw2_daily_slyrs_aggregated)[1]=c("Day")
+    
+          wrapped.daily.slyrs <- data.frame(as.integer(notassigned), GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_slyrs_aggregated)
+          colnames(wrapped.daily.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
+                                             "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_slyrs_aggregated))
+          lock(databaseMutex)
+          dbWriteTable(db, "sw2_daily_slyrs", wrapped.daily.slyrs, append=T)
+          unlock(databaseMutex)
+          sw2_daily_agg.csv <- read.csv("sw2_daily_agg.csv", header = TRUE)
+          
+          #Calculate aggregated daily output - average values for each day across all years
+          sw2_daily_aggregated=aggregate(sw2_daily_agg.csv[,c(3:length(sw2_daily_agg.csv[1,]))],by=list(sw2_daily_agg.csv$Day),mean)
+ 		  names(sw2_daily_aggregated)[1]=c("Day")
+ 		  
+          wrapped.daily <- data.frame(as.integer(notassigned), GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_aggregated)
+          colnames(wrapped.daily) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
+                                             "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_aggregated))
+          lock(databaseMutex)
+          dbWriteTable(db, "sw2_daily", wrapped.daily, append=T)
+          unlock(databaseMutex)
+          remove(sw2_daily_agg.csv)
+          remove(sw2_daily_slyrs_agg.csv)
+          remove(sw2_daily_aggregated)
+          remove(sw2_daily_slyrs_aggregated)
+          remove(wrapped.daily)
+          remove(wrapped.daily.slyrs)
+          unlock(dailySWMutex)
+          system("rm sw2_daily_slyrs_agg.csv")
+          system("rm sw2_daily_agg.csv")
           
           #Monthly SOILWAT2 output
-          #Identify the name of the sw monthly output files
-          name.sw2.monthly.slyrs.csv<-paste("sw2_monthly_slyrs_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-          name.sw2.monthly.csv<-paste("sw2_monthly_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+          sw2_monthly_slyrs_agg.csv <- read.csv("sw2_monthly_slyrs_agg.csv", header = TRUE)
+          wrapped.monthly.slyrs <- data.frame(as.integer(notassigned), GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_slyrs_agg.csv)
+          colnames(wrapped.monthly.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
+                                               "SoilTreatment", "SpeciesTreatment", colnames(sw2_monthly_slyrs_agg.csv))
+                                               
+          months=12
+          wrapped.monthly.slyrs$Year <- rep(1:simyears,each=months)                                     
+          lock(databaseMutex)
+          dbWriteTable(db, "sw2_monthly_slyrs", wrapped.monthly.slyrs, append=T)
+          unlock(databaseMutex)
+          system("rm sw2_monthly_slyrs_agg.csv")
           
-          #Rename the monthly SOILWAT2 output files
-          system(paste("mv sw2_monthly_slyrs_agg.csv ",name.sw2.monthly.slyrs.csv,sep=""))
-          system(paste("mv sw2_monthly_agg.csv ",name.sw2.monthly.csv,sep=""))
+          sw2_monthly_agg.csv <- read.csv("sw2_monthly_agg.csv", header = TRUE)
+          wrapped.monthly <- data.frame(as.integer(notassigned), GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_agg.csv)
+          colnames(wrapped.monthly) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
+                                         "SoilTreatment", "SpeciesTreatment", colnames(sw2_monthly_agg.csv))
+          
+          wrapped.monthly$Year <- rep(1:simyears,each=months)                               
+          lock(databaseMutex)
+          dbWriteTable(db, "sw2_monthly", wrapped.monthly, append=T)
+          unlock(databaseMutex)
+          system("rm sw2_monthly_agg.csv")
           
           #Yearly SOILWAT2 output
-          #Identify the name of the sw yearly output files
-          name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-          name.sw2.yearly.csv<-paste("sw2_yearly_agg.Site",s,GCM[g],"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+          sw2_yearly_slyrs_agg.csv <- read.csv("sw2_yearly_slyrs_agg.csv", header = TRUE)
+          wrapped.yearly.slyrs <- data.frame(as.integer(notassigned), GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_slyrs_agg.csv)
+          colnames(wrapped.yearly.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
+                                              "SoilTreatment", "SpeciesTreatment", colnames(sw2_yearly_slyrs_agg.csv))
+                                              
+          wrapped.yearly.slyrs$Year <- 1:length(wrapped.yearly.slyrs$Year)                                    
+          lock(databaseMutex)
+          dbWriteTable(db, "sw2_yearly_slyrs", wrapped.yearly.slyrs, append=T)
+          unlock(databaseMutex)
+          system("rm sw2_yearly_slyrs_agg.csv")
           
-          #Rename the yearly SOILWAT2 output files
-          system(paste("mv sw2_yearly_slyrs_agg.csv ",name.sw2.yearly.slyrs.csv,sep=""))
-          system(paste("mv sw2_yearly_agg.csv ",name.sw2.yearly.csv,sep=""))
+          sw2_yearly_agg.csv <- read.csv("sw2_yearly_agg.csv", header = TRUE)
+          wrapped.yearly <- data.frame(as.integer(notassigned), GCM[g], NA, NA, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_agg.csv)
+          colnames(wrapped.yearly) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
+                                    		   "SoilTreatment", "SpeciesTreatment", colnames(sw2_yearly_agg.csv))
+                                             
+          wrapped.yearly$Year <- 1:length(wrapped.yearly$Year)                                   
+          lock(databaseMutex)
+          dbWriteTable(db, "sw2_yearly", wrapped.yearly, append=T)
+          unlock(databaseMutex)
+          system("rm sw2_yearly_agg.csv")
           
-          source(output.file,local = TRUE)
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
-          
-          #this will print out which treatment was just completed
-          print(paste0("rgroup treatment ", treatmentName, " done."))
         }
         #If GCM is not current, then repeat the above steps for all GCMs, RCPs and time periods as specified in Main.R 
       } else if (GCM[g]!="Current"){
@@ -170,22 +254,27 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
             #use with Vic weather database and all new weather databases
             if(database_name!="dbWeatherData_Sagebrush_KP.v3.2.0.sqlite")
             {
-              downscaling_method <- "hybrid-delta-3mod"
-              setwd(paste("Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep=""))
-              weath.read<-paste(assembly_output,"Site_",s,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
+              weather.read.dir <- paste("Site_",w,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
+              weath.read <- paste(assembly_output,"Site_",w,"_hybrid-delta-3mod.",y,".",r,".",GCM[g], sep="")
             } else {
-              downscaling_method <- "hybrid-delta"
-              setwd(paste("Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep=""))
-              weath.read<-paste(assembly_output,"Site_",s,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
+              weather.read.dir <- paste("Site_",w,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
+              weath.read <- paste(assembly_output,"Site_",w,"_hybrid-delta.",y,".",r,".",GCM[g], sep="")
+            }
+            
+            # If the user didn't specify this particular GCM/RCP combination
+            if(!dir.exists(weather.read.dir)) {
+              next
+            } else {
+              setwd(weather.read.dir)
             }
             
             if(rescale_phenology){
               ########## Move phen and prod files generated for this specific GCM x RCP x YEARS combination #########
               setwd(dist.directory)
               # Copy the phenology file generated for this climate into STEPWAT2
-              system(paste0("cp ", "sxwphen.", downscaling_method, ".", y, ".", r, ".", GCM[g], ".in", " ", STEPWAT.sxw.directory))
+              system(paste0("cp ", "sxwphen.", downscaling.method, ".", y, ".", r, ".", GCM[g], ".in", " ", STEPWAT.sxw.directory))
               # Copy the prod file generated for this climate into STEPWAT2
-              system(paste0("cp ", "sxwprod_v2.", downscaling_method, ".", y, ".", r, ".", GCM[g], ".in", " ", STEPWAT.sxw.directory))
+              system(paste0("cp ", "sxwprod_v2.", downscaling.method, ".", y, ".", r, ".", GCM[g], ".in", " ", STEPWAT.sxw.directory))
               # Move into the sxw inputs folder for STEPWAT2
               setwd(STEPWAT.sxw.directory)
               # Remove the old phenology file
@@ -193,9 +282,9 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               # Remove the old prod file
               system("rm sxwprod_v2.in")
               # Rename the new phenology file to the name recognized by STEPWAT2
-              system(paste0("mv ", "sxwphen.", downscaling_method, ".", y, ".", r, ".", GCM[g], ".in", " sxwphen.in"))
+              system(paste0("mv ", "sxwphen.", downscaling.method, ".", y, ".", r, ".", GCM[g], ".in", " sxwphen.in"))
               # Rename the new prod file to the name recognized by STEPWAT2
-              system(paste0("mv ", "sxwprod_v2.", downscaling_method, ".", y, ".", r, ".", GCM[g], ".in", " sxwprod_v2.in"))
+              system(paste0("mv ", "sxwprod_v2.", downscaling.method, ".", y, ".", r, ".", GCM[g], ".in", " sxwprod_v2.in"))
             }
             
             #Identify the directory the weather will be pasted into   
@@ -247,49 +336,112 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               #Change directory to "Output" folder
               setwd("Output")
               
-              #Identify the name of the biomass output file
-              name.bmass.csv<-paste("bmassavg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-              name.mort.csv<-paste("mortavg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+              # Add biomass output to the SQLite database
+              bmassavg.csv <- read.csv("bmassavg.csv", header = TRUE)
+              wrapped.biomass <- data.frame(as.integer(notassigned), GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, bmassavg.csv)
+              colnames(wrapped.biomass) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
+                                             "SoilTreatment", "SpeciesTreatment", colnames(bmassavg.csv))
+              lock(databaseMutex)
+              dbWriteTable(db, "Biomass", wrapped.biomass, append=T)
+              unlock(databaseMutex)
+              system("rm bmassavg.csv")
               
-              #Rename the bmassavg.csv
-              system(paste("mv bmassavg.csv ",name.bmass.csv,sep=""))
-              system(paste("mv mortavg.csv ",name.mort.csv,sep=""))
+              # Add mortality output to the SQLite database
+              mortavg.csv <- read.csv("mortavg.csv", header = TRUE)
+              wrapped.mortality <- data.frame(as.integer(notassigned), GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, mortavg.csv)
+              colnames(wrapped.mortality) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
+                                               "SoilTreatment", "SpeciesTreatment", colnames(mortavg.csv))
+              lock(databaseMutex)
+              dbWriteTable(db, "Mortality", wrapped.mortality, append=T)
+              unlock(databaseMutex)
+              system("rm mortavg.csv")
               
               #Change directory to where SOILWAT2 output is stored
               setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output/sw_output",sep=""))
               
               #Daily SOILWAT2 output
-              #Identify the name of the sw daily output files
-              name.sw2.daily.slyrs.csv<-paste("sw2_daily_slyrs_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-              name.sw2.daily.csv<-paste("sw2_daily_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+              lock(dailySWMutex)
+              sw2_daily_slyrs_agg.csv <- read.csv("sw2_daily_slyrs_agg.csv", header = TRUE)
               
-              #Rename the daily SOILWAT2 output files
-              system(paste("mv sw2_daily_slyrs_agg.csv ",name.sw2.daily.slyrs.csv,sep=""))
-              system(paste("mv sw2_daily_agg.csv ",name.sw2.daily.csv,sep=""))
+              #Calculate aggregated daily output for soil layer variables - average values for each day across all years
+              sw2_daily_slyrs_aggregated=aggregate(sw2_daily_slyrs_agg.csv[,c(3:length(sw2_daily_slyrs_agg.csv[1,]))],by=list(sw2_daily_slyrs_agg.csv$Day),mean)
+ 		      names(sw2_daily_slyrs_aggregated)[1]=c("Day")
+ 		      
+              wrapped.daily.slyrs <- data.frame(as.integer(notassigned), GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_slyrs_aggregated)
+              colnames(wrapped.daily.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
+                                                 "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_slyrs_aggregated))
+              lock(databaseMutex)
+              dbWriteTable(db, "sw2_daily_slyrs", wrapped.daily.slyrs, append=T)
+              unlock(databaseMutex)
+              sw2_daily_agg.csv <- read.csv("sw2_daily_agg.csv", header = TRUE)
+              
+			  #Calculate aggregated daily output - average values for each day across all years
+              sw2_daily_aggregated=aggregate(sw2_daily_agg.csv[,c(3:length(sw2_daily_agg.csv[1,]))],by=list(sw2_daily_agg.csv$Day),mean)
+ 		  	  names(sw2_daily_aggregated)[1]=c("Day")
+    
+              wrapped.daily <- data.frame(as.integer(notassigned), GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_daily_aggregated)
+              colnames(wrapped.daily) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
+                                           "SoilTreatment", "SpeciesTreatment", colnames(sw2_daily_aggregated))
+              lock(databaseMutex)
+              dbWriteTable(db, "sw2_daily", wrapped.daily, append=T)
+              unlock(databaseMutex)
+              remove(sw2_daily_agg.csv)
+              remove(sw2_daily_slyrs_agg.csv)
+              remove(sw2_daily_aggregated)
+              remove(sw2_daily_slyrs_aggregated)
+              remove(wrapped.daily)
+              remove(wrapped.daily.slyrs)
+              unlock(dailySWMutex)
+              system("rm sw2_daily_slyrs_agg.csv")
+              system("rm sw2_daily_agg.csv")
               
               #Monthly SOILWAT2 output
-              #Identify the name of the sw monthly output files
-              name.sw2.monthly.slyrs.csv<-paste("sw2_monthly_slyrs_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-              name.sw2.monthly.csv<-paste("sw2_monthly_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+              sw2_monthly_slyrs_agg.csv <- read.csv("sw2_monthly_slyrs_agg.csv", header = TRUE)
+              wrapped.monthly.slyrs <- data.frame(as.integer(notassigned), GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_slyrs_agg.csv)
+              colnames(wrapped.monthly.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
+                                                   "SoilTreatment", "SpeciesTreatment", colnames(sw2_monthly_slyrs_agg.csv))
+              months=12
+              wrapped.monthly.slyrs$Year <- rep(1:simyears,each=months)                                     
+              lock(databaseMutex)
+              dbWriteTable(db, "sw2_monthly_slyrs", wrapped.monthly.slyrs, append=T)
+              unlock(databaseMutex)
+              system("rm sw2_monthly_slyrs_agg.csv")
               
-              #Rename the monthly SOILWAT2 output files
-              system(paste("mv sw2_monthly_slyrs_agg.csv ",name.sw2.monthly.slyrs.csv,sep=""))
-              system(paste("mv sw2_monthly_agg.csv ",name.sw2.monthly.csv,sep=""))
+              sw2_monthly_agg.csv <- read.csv("sw2_monthly_agg.csv", header = TRUE)
+              wrapped.monthly <- data.frame(as.integer(notassigned), GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_monthly_agg.csv)
+              colnames(wrapped.monthly) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
+                                             "SoilTreatment", "SpeciesTreatment", colnames(sw2_monthly_agg.csv))
+                                             
+              wrapped.monthly$Year <- rep(1:simyears,each=months)                                
+              lock(databaseMutex)
+              dbWriteTable(db, "sw2_monthly", wrapped.monthly, append=T)
+              unlock(databaseMutex)
+              system("rm sw2_monthly_agg.csv")
               
               #Yearly SOILWAT2 output
-              #Identify the name of the sw yearly output files
-              name.sw2.yearly.slyrs.csv<-paste("sw2_yearly_slyrs_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
-              name.sw2.yearly.csv<-paste("sw2_yearly_agg.Site",s,GCM[g], y, r,"Rgrp",treatmentName,dst,grz,intensity,soil,sp,"csv",sep=".")
+              sw2_yearly_slyrs_agg.csv <- read.csv("sw2_yearly_slyrs_agg.csv", header = TRUE)
+              wrapped.yearly.slyrs <- data.frame(as.integer(notassigned), GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_slyrs_agg.csv)
+              colnames(wrapped.yearly.slyrs) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
+                                                  "SoilTreatment", "SpeciesTreatment", colnames(sw2_yearly_slyrs_agg.csv))
+                                                  
+              wrapped.yearly.slyrs$Year <- 1:length(wrapped.yearly.slyrs$Year)                                    
+              lock(databaseMutex)
+              dbWriteTable(db, "sw2_yearly_slyrs", wrapped.yearly.slyrs, append=T)
+              unlock(databaseMutex)
+              system("rm sw2_yearly_slyrs_agg.csv")
               
-              #Rename the yearly SOILWAT2 output files
-              system(paste("mv sw2_yearly_slyrs_agg.csv ",name.sw2.yearly.slyrs.csv,sep=""))
-              system(paste("mv sw2_yearly_agg.csv ",name.sw2.yearly.csv,sep=""))
+              sw2_yearly_agg.csv <- read.csv("sw2_yearly_agg.csv", header = TRUE)
+              wrapped.yearly <- data.frame(as.integer(notassigned), GCM[g], y, r, treatmentName, dst, grz, intensity, soil, sp, sw2_yearly_agg.csv)
+              colnames(wrapped.yearly) <- c("site", "GCM", "years", "RCP", "RGroupTreatment", "dst", "grazing", "intensity", 
+                                            "SoilTreatment", "SpeciesTreatment", colnames(sw2_yearly_agg.csv))
+                                            
+              wrapped.yearly$Year <- 1:length(wrapped.yearly$Year)                             
+              lock(databaseMutex)
+              dbWriteTable(db, "sw2_yearly", wrapped.yearly, append=T)
+              unlock(databaseMutex)
+              system("rm sw2_yearly_agg.csv")
               
-              source(output.file,local = TRUE)
               setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
-              
-              #this will print out which treatment was just completed
-              print(paste0("rgroup treatment ", treatmentName, " done."))
             }
             print(paste("RCP ",r," DONE",sep=""))
           }
@@ -298,9 +450,13 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
         }
         
       }
-      print(paste("GCM ",GCM[g]," DONE",sep=""))
+      print(paste("Soil treatment ", soil, " DONE"))
     }
+    print(paste("Species treatment ", sp, " DONE"))
   }
+  
+  print(paste("GCM ",GCM[g]," DONE",sep=""))
+  dbDisconnect(db)
 }
 
 stopImplicitCluster()

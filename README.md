@@ -15,7 +15,7 @@ On a super computer:
 1. Make sure all the scripts are executable (i.e. given executable permissions) prior to following the steps below: chmod +x nameoffile
 2. Copy the weather database to the inputs folder within rSFSTEP2.
 3. Set the location of the weather database in the Main.R script of the R_program folder (where it says set database location), along with the name of the weather database (where it says Provide the name of the database in quotes).
-4. In Main.R, set the proc_count based on the number of CPUs on each node of the super computer. 
+4. In Main.R, set the proc_count based on the number of CPUs on each node of the super computer. Also set simyears, which the number of STEPWAT2 simulation years provided in model.in. The default is 300.
 5. Edit the default climate scenarios you wish to run, specified in climate.conditions. The number of GCMs listed here must match <number_of_scenarios> below in the call to generate_rSFSTEP2_structure.sh (RCPs and time periods are not counted).
 	For example - if you have 10 GCMs for 2 RCPs and "Current" in climate.conditions, the correct <number_of_scenarios> = 11 in the generate_rSFSTEP2_structure.sh call.
 6. Ensure that the weather database variables listed in Main.R match those in the weather database you are using. This includes: climate.conditions, simstartyr, endyr, climate.ambient, deltaFutureToSimStart_yr, downscaling.method, and YEARS.
@@ -26,19 +26,20 @@ On a super computer:
 11. Run the generate_rSFSTEP2_structure.sh script. The parameters are <R_program> <number_of_sites> <number_of_scenarios>
 12. Run the call_sbatch.sh script. The parameter is <number_of_sites>. 
 
-Once the sbatch tasks have been succesfully completed, follow the steps below to compile all output.csv files into a SQLite database:
+Once the sbatch tasks have been succesfully completed, follow the steps below to compile all Output.sqlite files into a single database:
 
-13. Reset the number of GCMs used in OutputDatabase.R if not 14.
-14. Run the call_sbatch_database.sh script.
-15. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable site) and location (variable path) where you wish to collect the data, in the copydata.sh script.
-16. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
+10. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable names `site`) and location (variable named `path`) where you wish to collect the data, in the copydata.sh script.
+11. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
+12. In `CombineOutputDatabases.R` modify the `dir_db` variable with the loaction of the databases.
+13. In `CombineOutputDatabases.R` modify the `sites` variable with the site ids you used.
+14. Run (`Rscript CombineOutputDatabases.R`) to combine all of the databases into a single database.
 
 On a local machine:
 --
 1. Make sure all the scripts are executable (i.e. given executable permissions) prior to following the steps below: chmod +x nameoffile
 2. Copy the weather database to the inputs folder within rSFSTEP2.
 3. Set the location of the weather database in the Main.R script of the R_program folder (where it says set database location), along with the name of the weather database (where it says Provide the name of the database in quotes).
-4. In Main.R, set the proc_count based on the number of cores on the computer.
+4. In Main.R, set the proc_count based on the number of cores on the computer. Also set simyears, which the number of STEPWAT2 simulation years provided in model.in. The default is 300.
 5. Edit the default climate scenarios you wish to run, specified in climate.conditions. The number of GCMs listed here must match <number_of_scenarios> below in the call to generate_rSFSTEP2_structure.sh (RCPs and time periods are not counted).
 	For example - if you have 10 GCMs for 2 RCPs and "Current" in climate.conditions, the correct <number_of_scenarios> = 11 in the generate_rSFSTEP2_structure.sh call.
 6. Ensure that the weather database variables listed in Main.R match those in the weather database you are using. This includes: climate.conditions, simstartyr, endyr, climate.ambient, deltaFutureToSimStart_yr, downscaling.method, and YEARS.
@@ -47,12 +48,13 @@ On a local machine:
 9. Run the generate_rSFSTEP2_structure.sh script. The parameters are <R_program> <number_of_sites> <number_of_scenarios>
 10. Run the run_local.sh script. The parameter is <number_of_sites>. 
 
-Once the sbatch tasks have been succesfully completed, follow the steps below to compile all output.csv files into a SQLite database:
+Once the sbatch tasks have been succesfully completed, follow the steps below to compile all Output.sqlite files into a single database:
 
-11. Reset the number of GCMs used in OutputDatabase.R if not 14.
-12. Run the run_local_database.sh script.
-13. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable site) and location (variable path) where you wish to collect the data, in the copydata.sh script.
-14. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
+8. Once the data is compiled into a SQLite database (for individual sites), edit the number of sites (variable site) and location (variable path) where you wish to collect the data, in the copydata.sh script.
+9. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
+12. In `CombineOutputDatabases.R` modify the `dir_db` variable with the loaction of the databases.
+13. In `CombineOutputDatabases.R` modify the `sites` variable with the site ids you used.
+14. Run (`Rscript CombineOutputDatabases.R`) to combine all of the databases into a single database.
 
 Note: The method to run a shell script is present as a comment in the respective script. 
 
