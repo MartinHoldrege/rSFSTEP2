@@ -8,7 +8,7 @@
 
 #Set Max Wall Time
 #days-hours:minutes:seconds
-#SBATCH --time=01:00:00
+#SBATCH --time=05:00:00
 
 # using shared nodes
 #SBATCH --partition=kingspeak-shared
@@ -28,6 +28,7 @@
 #module load swset/2018.05
 module load R
 
+start_time=$(date '+%d/%m/%Y %H:%M:%S') # I'm adding this so can see long it takes to run
 srun Rscript Main.R
-echo "Site noid done!" >> ~/stepwat/sitedata/jobs.txt
-
+now=$(date '+%d/%m/%Y %H:%M:%S')
+echo "Site noid done! run started: $start_time ended: $now" >> /uufs/chpc.utah.edu/common/home/kulmatiski-group1/stepwat/sitedata/jobs.txt
