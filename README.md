@@ -32,12 +32,12 @@ Once the sbatch tasks have been succesfully completed, follow the steps below to
 11. Run the copydata.sh script to copy the SQLite databases from each folder into a master folder.
 12. In `CombineOutputDatabases.R` modify the `dir_db` variable with the loaction of the databases.
 13. In `CombineOutputDatabases.R` modify the `sites` variable with the site ids you used.
-14. Run (`Rscript CombineOutputDatabases.R`) to combine all of the databases into a single database.
+14. Run `module load R` run (`Rscript CombineOutputDatabases.R`) to combine all of the databases into a single database.
 
 On a local machine:
 --
 1. Make sure all the scripts are executable (i.e. given executable permissions) prior to following the steps below: chmod +x nameoffile
-2. Copy the weather database to the inputs folder within rSFSTEP2.
+2. Copy the weather database to the inputs folder within rSFSTEP2, or create symbolic link--eg.: ln -s ~/Documents/stepwat/dbWeather/dbWeatherData_STEPWAT2_200sites.sqlite3 ~/Documents/stepwat/rSFSTEP2/inputs/dbWeatherData_STEPWAT2_200sites.sqlite3.
 3. Set the location of the weather database in the Main.R script of the R_program folder (where it says set database location), along with the name of the weather database (where it says Provide the name of the database in quotes).
 4. In Main.R, set the proc_count based on the number of cores on the computer. Also set simyears, which the number of STEPWAT2 simulation years provided in model.in. The default is 300.
 5. Edit the default climate scenarios you wish to run, specified in climate.conditions. The number of GCMs listed here must match <number_of_scenarios> below in the call to generate_rSFSTEP2_structure.sh (RCPs and time periods are not counted).

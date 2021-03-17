@@ -2,7 +2,7 @@
 
 library(RSQLite)
 
-dir_db<-"" #Location of the databases, needs to be set by the user
+dir_db<-"~/stepwat/sitedata" #Location of the databases, needs to be set by the user
 
 setwd(dir_db)
 
@@ -10,8 +10,12 @@ setwd(dir_db)
 output_database<-paste0("Output_Compiled",".sqlite")
 db<-dbConnect(SQLite(),output_database)
 
+
 #Add the id of all sites to be compiled, 14 and 103 are here as examples
 sites<-c(14,103) 
+
+
+
 
 for (i in 1:length(sites)) {
 g<-sites[i]
