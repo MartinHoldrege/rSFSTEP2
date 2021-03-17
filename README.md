@@ -22,9 +22,9 @@ On a super computer:
 7. Add site ids, you wish to run the wrapper on, to the siteid variable (third line from top) in the generate_rSFSTEP2_structure.sh script. Site 1 and 2 are present as examples.
 8. Edit jobname, accountname and the location of results.txt (last line) in the sample.sh script, located in the R_program folder. Adjust wall time and nodes/cpus required if necessary.
 9. Edit jobname and accountname in the outputdatabase.sh script, located in R_program folder. 
-10. Run the cloneSTEPWAT2.sh script.
-11. Run the generate_rSFSTEP2_structure.sh script. The parameters are <R_program> <number_of_sites> <number_of_scenarios>
-12. Run the call_sbatch.sh script. The parameter is <number_of_sites>. 
+10. Run the cloneSTEPWAT2.sh script. Change niter to 200, set seed to 0. Remove weather files (not necessary but a good check that simulated weather is really being used). 
+12. Run the generate_rSFSTEP2_structure.sh script. The parameters are <R_program> <number_of_sites> <number_of_scenarios>
+13. Run the call_sbatch.sh script. The parameter is <number_of_sites>. 
 
 Once the sbatch tasks have been succesfully completed, follow the steps below to compile all Output.sqlite files into a single database:
 
