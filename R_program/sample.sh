@@ -21,7 +21,7 @@
 
 # number of cores requested--I have changeed this because am using shared
 #SBATCH --ntasks=1
-#SBATCH --mem=32000
+#SBATCH --mem=16000
 
 #Load Required Modules
 #module load gcc/7.3.0
