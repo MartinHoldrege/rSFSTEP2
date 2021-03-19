@@ -14,9 +14,9 @@
 #       we will no longer be meeting the assumptions of a beta distribution, and the code will fail.
 #
 # name  viable xdecay  pseed   var
- brte     3    1.00    50  0.01               
- cryp     10    1.00     30  0.008      
- chen     10    1.00     30  0.008        
+ brte     3    2.00    15  0.0042                
+ cryp     10    1.00     15  0.0042       
+ chen     10    1.00     15  0.0042         
  
 [end]  # end of additional annuals-only parameters.
 
