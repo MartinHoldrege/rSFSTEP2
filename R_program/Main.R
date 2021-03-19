@@ -24,7 +24,7 @@ setwd(source.dir)
 db_loc<- "/uufs/chpc.utah.edu/common/home/kulmatiski-group1/stepwat/rSFSTEP2/inputs"
 
 #Set number of simulation years used in STEPWAT2 simulations
-simyears <- 300
+simyears <- 150
 
 # If you would like to rescale space parameters based on climate for each climate 
 # scenario, set this boolean to TRUE. If you would like to run with only the space 
