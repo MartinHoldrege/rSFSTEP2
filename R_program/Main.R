@@ -40,6 +40,14 @@ output_original_space <- TRUE
 # If you would like to run with the default values, set this boolean to FALSE.
 rescale_phenology <- TRUE
 
+# if you would like to adjust mean event size, adjust the multiplier.
+# default is 1 (i.e. mean event size is not adjusted). If for example the
+# mean_mult value were set to 2 that would mean that mean event size would be
+# doubled, and the number of rain days would be cut in half, but total annual
+# precipitation would remain unchanged. This is done by adjusting
+# the files of coefficients for the markov weather generator. 
+mean_mult <- 1
+
 #Database location, edit the name of the weather database accordingly
 database_name<-"dbWeatherData_STEPWAT2_200sites.sqlite3"
 database<-file.path(db_loc,database_name)

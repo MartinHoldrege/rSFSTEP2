@@ -16,6 +16,24 @@ registerDoParallel(proc_count)
     res <- rSOILWAT2::dbW_estimate_WGen_coefs(sw_weatherList[[s]][[h]], imputation_type = "mean", 
     propagate_NAs = FALSE)
     
+    # adjust markov coefficients, so that precipitation intensity is increased
+    # mean_mult is what mean event size will be multiplied by.
+    # total precipitation remains unchanged
+    if(mean_mult != 1) {
+      # to install precipr package run: 
+      # devtools::install_github("MartinHoldrege/precipr@HEAD")
+      
+      stopifnot(utils::packageVersion("precipr") >= "0.0.1")
+      df <- data.frame(rSOILWAT2::dbW_weatherData_to_dataframe(sw_weatherList[[s]][[h]]))
+      res <- precipr::adjust_coeffs(
+        coeffs = res,
+        data = df,
+        mean_mult = mean_mult,
+        adjust_sd = TRUE)
+        
+    }
+    
+    
     #Write the mkv_covar.in and mkv_prob.in files
     print_mkv_files(mkv_doy = res[["mkv_doy"]], mkv_woy = res[["mkv_woy"]],
       path = file.path(assembly_output, paste0("Site", "_", site, "_", scen)))
