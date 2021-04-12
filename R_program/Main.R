@@ -46,7 +46,7 @@ rescale_phenology <- TRUE
 # doubled, and the number of rain days would be cut in half, but total annual
 # precipitation would remain unchanged. This is done by adjusting
 # the files of coefficients for the markov weather generator. 
-mean_mult <- 1
+mean_mult <- 2
 
 #Database location, edit the name of the weather database accordingly
 database_name<-"dbWeatherData_STEPWAT2_200sites.sqlite3"
