@@ -15,7 +15,6 @@ registerDoParallel(proc_count)
     #Generate the necessary precipitation and temperature parameters for mkv_covar.in and mkv_prob.in based on historical weather data
     res <- rSOILWAT2::dbW_estimate_WGen_coefs(sw_weatherList[[s]][[h]], imputation_type = "mean", 
     propagate_NAs = FALSE)
-    
     # adjust markov coefficients, so that precipitation intensity is increased
     # mean_mult is what mean event size will be multiplied by.
     # total precipitation remains unchanged
@@ -25,6 +24,9 @@ registerDoParallel(proc_count)
       
       stopifnot(utils::packageVersion("precipr") >= "0.0.1")
       df <- data.frame(rSOILWAT2::dbW_weatherData_to_dataframe(sw_weatherList[[s]][[h]]))
+      
+      message("using mean_mult = ", mean_mult, " to adjust ppt intensity")
+      
       res <- precipr::adjust_coeffs(
         coeffs = res,
         data = df,
