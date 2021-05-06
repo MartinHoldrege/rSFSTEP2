@@ -12,7 +12,7 @@ db<-dbConnect(SQLite(),output_database)
 
 
 #Add the id of all sites to be compiled, 14 and 103 are here as examples
-sites<-1:200 
+sites<-1:4 
 
 
 
