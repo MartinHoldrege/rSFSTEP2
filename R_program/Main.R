@@ -48,6 +48,10 @@ rescale_phenology <- TRUE
 # the files of coefficients for the markov weather generator. 
 mean_mult <- 1.25 
 
+# fixed amount to add to each daily Tmax and Tmin. This adjustment
+# is made in WeatherQuery.R
+delta_temp <- 0
+
 #Database location, edit the name of the weather database accordingly
 database_name<-"dbWeatherData_STEPWAT2_200sites.sqlite3"
 database<-file.path(db_loc,database_name)

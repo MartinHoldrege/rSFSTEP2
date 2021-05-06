@@ -23,6 +23,47 @@ extract_data<-function(site_to_extract=NULL)
   }
   return (sw_weatherList)
 }
-	
+
 sw_weatherList<-extract_data(site_to_extract = sites)
 rSOILWAT2::dbW_disconnectConnection()
+
+
+# adjust temp -------------------------------------------------------------
+
+# adding a fixed value (delta_temp) to daily min/max temp
+
+# * function -------------------------------------------------------------
+
+
+#' increase precipitation intensity of swWeatherData object
+#' 
+#' @description  Updates the temp columns in the data matrix, by adding a 
+#' fixed value
+#'
+#' @param x object of class swWeatherData
+#' @param delta_temp fixed amount to add to daily min and max temp
+#'
+#' @return object of class swWeatherData
+#' @export
+update_swWeather_temp <- function(x, delta_temp) {
+  stopifnot(class(x) == "swWeatherData",
+            c("Tmax_C", "Tmin_C") %in% attributes(x@data)$dimnames[[2]]
+  )
+  
+  # increase precip intensity for that year
+  x@data[, "Tmax_C"] <- x@data[, "Tmax_C"] + delta_temp
+  x@data[, "Tmin_C"] <- x@data[, "Tmin_C"] + delta_temp
+  x
+}
+
+
+# * apply function to list ------------------------------------------------
+
+if (delta_temp != 0) {
+  message("using delta_temp = ", delta_temp, ",  to adjust daily temp")
+  sw_weatherList <- purrr::modify_depth(sw_weatherList, .depth = 3, 
+                                        .f = update_swWeather_temp,
+                                        delta_temp = delta_temp)
+}
+
+
