@@ -1,5 +1,7 @@
 # rSFSTEP2
 
+[![DOI](https://zenodo.org/badge/322352991.svg)](https://zenodo.org/badge/latestdoi/322352991)
+
 # Cloning the repository:
 ```
 git clone --branch master https://github.com/DrylandEcology/rSFSTEP2.git
