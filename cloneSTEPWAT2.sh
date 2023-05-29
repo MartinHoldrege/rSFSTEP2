@@ -25,6 +25,5 @@ rm appveyor.yml
 rm makefile
 rm stepwat_test_job.sh
 rm doxyfile
-rm stepwat_test
 wait
 cd ../..

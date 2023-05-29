@@ -8,18 +8,18 @@
 
 #Set Max Wall Time
 #days-hours:minutes:seconds
-#SBATCH --time=168:00:00
+#SBATCH --time=24:00:00
 
 #Specify Resources Needed
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=16
+#SBATCH --cpus-per-task=14
 #SBATCH --mem=128000
 
 #Load Required Modules
-module load gcc/7.3.0
-module load swset/2018.05
-module load r/3.5.0
+module load arcc/1.0
+module load gcc/12.2.0
+module load r/4.2.2
 
 srun Rscript Main.R
 echo "Site noid done!" >> /project/sagebrush/kpalmqu1/jobs.txt

@@ -8,7 +8,9 @@ git clone --branch master https://github.com/DrylandEcology/rSFSTEP2.git
 # Instructions for running rSFSTEP2
 
 Required R packages for rSFSTEP2: 
-DBI, RSQLite, [rSOILWAT2](https://github.com/DrylandEcology/rSOILWAT2#installation), [rSW2utils](https://github.com/DrylandEcology/rSW2utils#installation), doParallel, synchronicity
+DBI, doParallel, plyr, RSQLite, synchronicity, [rSOILWAT2](https://github.com/DrylandEcology/rSOILWAT2#installation), [rSW2utils](https://github.com/DrylandEcology/rSW2utils#installation), [rSW2data](https://github.com/DrylandEcology/rSW2data#installation) and associated R dependencies
+
+An installation of python is also required. Ensure the installed version of python is reflected on line 8 of generate_rSFSTEP2_structure.sh before proceeding.
 
 On a super computer:
 --
@@ -16,7 +18,7 @@ On a super computer:
 2. Copy the weather database to the inputs folder within rSFSTEP2.
 3. Set the location of the weather database in the Main.R script of the R_program folder (where it says set database location), along with the name of the weather database (where it says Provide the name of the database in quotes).
 4. In Main.R, set the proc_count based on the number of CPUs on each node of the super computer. Also set simyears, which the number of STEPWAT2 simulation years provided in model.in. The default is 300.
-5. Edit the default climate scenarios you wish to run, specified in climate.conditions. The number of GCMs listed here must match <number_of_scenarios> below in the call to generate_rSFSTEP2_structure.sh (RCPs and time periods are not counted).
+5. Edit the default climate scenarios (i.e. GCMs) you wish to run, specified in climate.conditions. The number of GCMs listed here must match <number_of_scenarios> below in the call to generate_rSFSTEP2_structure.sh (RCPs and time periods are not counted).
 	For example - if you have 10 GCMs for 2 RCPs and "Current" in climate.conditions, the correct <number_of_scenarios> = 11 in the generate_rSFSTEP2_structure.sh call.
 6. Ensure that the weather database variables listed in Main.R match those in the weather database you are using. This includes: climate.conditions, simstartyr, endyr, climate.ambient, deltaFutureToSimStart_yr, downscaling.method, and YEARS.
 7. Add site ids, you wish to run the wrapper on, to the siteid variable (third line from top) in the generate_rSFSTEP2_structure.sh script. Site 1 and 2 are present as examples.

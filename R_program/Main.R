@@ -7,7 +7,7 @@ library(DBI)
 library(RSQLite)
 library(rSOILWAT2)
 
-stopifnot(utils::packageVersion("rSOILWAT2") >= "4.0.4")
+stopifnot(utils::packageVersion("rSOILWAT2") >= "5.4.1")
 
 #Load source files and directories in the environment
 #Note: Change number of processors and output database location according to your system
