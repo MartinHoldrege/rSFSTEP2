@@ -14,6 +14,13 @@ dailySWMutex <- boost.mutex()
 
 setwd(directory)
 
+#Delete existing output database if it already exists
+output_database_name <- paste(source.dir, "Output_site_", notassigned, ".sqlite", sep="")
+
+if(file.exists(output_database_name)) {
+unlink(output_database_name)
+}
+
 output_database <- paste(source.dir, "Output_site_", notassigned, ".sqlite", sep="")
 
 # Before running parallel instances we need to make sure that the database exists.
