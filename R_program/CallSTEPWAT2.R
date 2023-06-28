@@ -1,6 +1,6 @@
-#The Burke-Lauenroth Laboratory 
-#STEPWAT R Wrapper
-#Wrapper script to to loop through and run STEPWAT2 for all of the sites and GCM/PERIOD/RCP combinations
+#STEPWAT2 R Wrapper
+#Wrapper script to to loop through and run STEPWAT2 for all of the sites, specified inputs,
+# and GCM/PERIOD/RCP combinations
 
 #Load libraries
 library(doParallel)
@@ -38,19 +38,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
   
   db <- dbConnect(SQLite(), output_database)
   setwd(dist.directory)
-
-  #Copy in the relevant species.in file for each site, as specified in the Main.R
-  for(sp in species)
-  {
-    setwd(dist.directory)
-    sp.filename <- paste(sp,".in",sep = "")
-    system(paste0("cp ",sp.filename," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input"))
-    setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input"))
-    system("rm species.in")
-    system(paste0("mv ",sp.filename," species.in"))
-    
-    setwd(directory)      
-    
+       
     #Copy in the soils.in file that is specified by the user in TreatmentFiles
     for(soil in soil.types){
       setwd(dist.directory)
@@ -134,6 +122,27 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           system("rm rgroup.in")
           system(paste0("mv ",dist.graz.name," rgroup.in"))
           
+          # Loop through all species files. Note that species contains the file name without ".in"
+          for (sp_index in 1:length(species)) {
+            sp <- species[sp_index]
+            setwd(paste0(dist.directory))
+            
+            # names(sp) specifies if this species.in file should be used for this climate scenario. 
+            # "Inputs" specifies inputs directly from the csv files.
+            # "Current" specifies files that have readjusted eind parameters for current conditions.
+            if(names(sp) != "Inputs" & names(sp) != "Current"){
+              next
+            }
+            
+            # sp + ".in" = the file name
+            sp.file.name<-paste0(sp,".in")
+            
+            system(paste0("cp ",sp.file.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))
+            
+            setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))
+            system("rm species.in")
+            system(paste0("mv ",sp.file.name," species.in"))
+            
           #Change directory to the executable directory
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
           #Run stepwat2
@@ -250,6 +259,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
           
           setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
         }
+       }
         #If GCM is not current, then repeat the above steps for all GCMs, RCPs and time periods as specified in Main.R 
       } else if (GCM[g]!="Current"){
         
@@ -335,6 +345,27 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               system("rm rgroup.in")
               system(paste0("mv ",dist.graz.name," rgroup.in"))
               
+              # Loop through all species files. Note that species contains the file name without ".in"
+              for (sp_index in 1:length(species)) {
+                sp <- species[sp_index]
+                setwd(paste0(dist.directory))
+                
+                # names(sp) specifies if this species.in file should be used for this climate scenario. 
+                # "Inputs" specifies inputs directly from the csv files.
+                # Otherwise, names(sp) must match the current year-rcp-scenario in order to proceed.
+                if(names(sp) != "Inputs" & names(sp) != paste("hybrid-delta-3mod", y, r, GCM[g], sep = ".") & names(sp) != paste("hybrid-delta", y, r, GCM[g], sep = ".")){
+                  next
+                }
+                
+                # sp + ".in" = the file name
+            	sp.file.name<-paste0(sp,".in")
+            	
+                system(paste0("cp ",sp.file.name," ",directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))
+                
+                setwd(paste0(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/"))
+                system("rm species.in")
+                system(paste0("mv ",sp.file.name," species.in"))
+                
               #Change directory to the executable directory
               setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs",sep=""))
               #Run stepwat2
@@ -451,6 +482,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               setwd(paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Output",sep=""))
             }
             print(paste("RCP ",r," DONE",sep=""))
+           }
           }
           #Print statement for when model done with that GCM
           print(paste("YEAR ",y," DONE",sep=""))

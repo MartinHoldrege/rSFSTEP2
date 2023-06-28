@@ -14,6 +14,4 @@ for ((i=1;i<=$2;i++));do (
 done
 wait
 touch jobs.txt
-
-rm -rf R_program
 wait

@@ -26,6 +26,29 @@ db_loc<-"/Users/Guest/Desktop/rSFSTEP2/inputs"
 #Set number of simulation years used in STEPWAT2 simulations
 simyears <- 300
 
+# If you would like to rescale eind based on climate-derived relative abundance, set this boolean to TRUE. 
+# If TRUE, also set the max_eind for each species to the maximum number of individuals that can establish in a given year in any site. 
+# If you would like to run with the default eind values in InputData_Species.csv, set this boolean to FALSE.
+rescale_eind <- TRUE 
+
+#set maximum eind for each species
+max_eind_artr <- 3
+max_eind_chvi <- 3
+max_eind_cryp <- 10
+max_eind_chen <- 10
+max_eind_phho <- 20
+max_eind_arfr <- 15
+max_eind_oppo <- 2
+max_eind_pssp <- 20
+max_eind_bogr <- 15
+max_eind_brte <- 40
+max_eind_trees <- 0
+
+#set minimum eind for each annual species, which will ensure species with relative abundance > 0 are simulated
+min_eind_cryp <- 3
+min_eind_chen <- 3
+min_eind_brte <- 3
+
 # If you would like to rescale space parameters based on climate for each climate 
 # scenario, set this boolean to TRUE. If you would like to run with only the space 
 # parameters that you have specified in the input.csv, set this boolean to FALSE.
@@ -41,7 +64,7 @@ output_original_space <- TRUE
 rescale_phenology <- TRUE
 
 #Database location, edit the name of the weather database accordingly
-database_name<-"dbWeatherData.VicSites.v3.2.0.sqlite3"
+database_name<-"dbWeatherData_STEPWAT2_200sites.sqlite3"
 database<-file.path(db_loc,database_name)
  
 #Weather query script (Loads weather data from the weather database for all climate scenarios into a list for each site)
@@ -86,18 +109,26 @@ rgroup_data <- read.csv("InputData_Rgroup.csv", header=TRUE, sep=",")
 setwd(source.dir)
 
 #SPECIES INPUTS
-#Get all sites listed in the CSV
+# The number of species specified for each treatment in InputData_Species.csv will be stored in this variable.
+n_species <- c()
+
+#Get all sites specified in the csv file
 species_data_all_sites<-unique(species_data$Site)
-#Get all sites for which fixed parameters for a subest of sites are specified
+
+#Get all sites for which fixed parameters for a subset of sites are specified
 species_data_all_sites_vectors<-species_data_all_sites[grepl(",",species_data_all_sites)]
 
 # Move to the dist directory, where we will write our .in files
 setwd("STEPWAT_DIST")
+
 treatments_vector_species <- c()
+
 # This boolean will become TRUE if this site is includes in a list of comma separated sites in input. 
 # Used to determine if any input was generated from the .csv files.
 contains_vector <- FALSE
+species <- c()
 
+#Generate a species.in file for the site for the x,y option first
 if(any(grepl(",",species_data_all_sites))==TRUE)
 {
   #Iterate through each site that matches this criteria
@@ -108,12 +139,13 @@ if(any(grepl(",",species_data_all_sites))==TRUE)
     if(grepl(site2,j))
     {
       contains_vector <- TRUE
+      #Subset the species data for the site in question
       species_data_site<-species_data[species_data$Site==j,]
       
-      #List all treatments associated with the multiple sites
+      #Get all species treatments for the site in question
       treatments_vector_species<-unique(species_data_site$treatment)
       
-      #Iterate through each treatment
+      #For each treatment generate a species.in file
       for(i in treatments_vector_species)
       {
         #Get data for the specific treatment
@@ -121,6 +153,9 @@ if(any(grepl(",",species_data_all_sites))==TRUE)
         
         #Get rid of site and treatment columns
         df <- subset(df, select = -c(1,2))
+        
+        # Record the number of entries (i.e. the number of species) for later use
+        n_species <- c(n_species, nrow(df))
         
         #Write the species.in file to the STEPWAT_DIST folder
         write.table(df, file = paste0("species_",i,".in"),quote = FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
@@ -149,6 +184,9 @@ for(i in treatments_species)
   #Remove Site and treatment columns
   df <- subset(df, select = -c(1,2) )
   
+  # Record the number of entries (i.e. the number of species) for later use
+  n_species <- c(n_species, nrow(df))
+  
   #Write the species.in file to the STEPWAT_DIST folder
   write.table(df, file = paste0("species_",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
 }
@@ -160,6 +198,7 @@ treatments_species<-as.character(treatments_species)
 if(length(treatments_species) > 0){
   treatments_species<-paste("species_",treatments_species,sep="")
 }
+
 treatments_vector_species<-as.character(treatments_vector_species)
 #Only paste in 'species_' if there is already a name present. Otherwise, if there are no treatments,
 #we would generate a file called 'species__.in' which would crash the program.
@@ -169,10 +208,16 @@ if(length(treatments_vector_species) > 0){
 
 #Store the files names in the species.filenames variable and all of the treatments-site combinations in species
 species<-c(treatments_species,treatments_vector_species)
-species.filenames<-paste(species,".in",sep="")
+
+# adding names to the vector will help us determine what climate scenario applies to what species.in file
+names(species) <- rep_len("Inputs", length(species))
+
+#Store the files names in the species_files variable
+species_files<-list.files(path=".",pattern = "species")
+species_files<-species_files[species_files!="species_template.in"]
 
 #Append species_template.in within STEPWAT_DIST to all the created files and save with a unique filename
-for (i in species.filenames)
+for (i in species_files)
 {
   system(paste("cat ","species_template.in>>",i,sep=""))
 }
@@ -259,19 +304,20 @@ if(length(treatments_vector) > 0){
 #Store all of the treatment-site combinations in soil.types
 soil.types<-c(treatments,treatments_vector)
 
-
 #######################################################################################
 #RGROUP INPUTS (including fire and grazing)
 
 # The number of rgroups specified for each treatment in InputData_Rgroup.csv will be stored in this variable.
 n_rgroups <- c()
 
-#Get all sites specified in the csv
+#Get all sites specified in the csv file
 rgroup_data_all_sites<-unique(rgroup_data$Site)
 
 #Get the subset of sites that will be run with a fixed set of inputs, denoted with x,y
 rgroup_data_all_sites_vectors<-rgroup_data_all_sites[grepl(",",rgroup_data_all_sites)]
 
+# This boolean will become TRUE if this site is includes in a list of comma separated sites in input. 
+# Used to determine if any input was generated from the .csv files.
 contains_vector <- FALSE
 rgroups <- c()
 space_values <- list()
@@ -279,6 +325,7 @@ space_values <- list()
 #Generate a rgroup.in file for the site for the x,y option first
 if(any(grepl(",",rgroup_data_all_sites))==TRUE)
 {
+  #Iterate through each site that matches this criteria
   for(j in rgroup_data_all_sites_vectors)
   {
     site2=paste("\\<",site,"\\>",sep='')
@@ -295,7 +342,9 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
       #For each treatment for the site in question generate a rgroup.in file
       for(i in treatments_vector)
       {
+        #Get data for the specific treatment
         df=rgroup_data_site[rgroup_data_site$treatment==i,]
+       
         #Get rid of Site and treatment columns
         df <- subset(df, select = -c(1,2))
         
@@ -361,7 +410,9 @@ treatments<-unique(rgroup_data_site$treatment)
 #For each treatment for the site in question generate a rgroup.in file
 for(i in treatments)
 {
+  #Get data for the specific treatment
   df=rgroup_data_site[rgroup_data_site$treatment==i,]
+  
   #Get rid of Site and treatment columns
   df <- subset(df, select = -c(1,2) )
   
@@ -467,7 +518,6 @@ remove(species_data_all_sites_vectors)
 remove(species_data)
 remove(treatments_vector_species)
 remove(treatments_species)
-remove(species.filenames)
 
 ################################ Weather Query Code ###################################
 
@@ -734,10 +784,160 @@ if(rescale_phenology){
 }
 
 ############################# Vegetation Code ##############################
+# This code determines plant functional type relative abundance
+# and then scales STEPWAT2 parameters (space, eind) accordingly
+
+# only rescale eind if requested.
+if(rescale_eind){
+  
+  source(vegetation.file)
+
+# Move to the DIST directory so we can read the files.
+  setwd(source.dir)
+  setwd("STEPWAT_DIST")
+
+  # Array of plant functional type relative abundance
+  relVegAbund <- estimate_STEPWAT_relativeVegAbundance(sw_weatherList)
+
+  # vectors that map species names to the columns names of relVegAbund
+  Shrubs <- c("artr", "chvi")
+  Forbs_Perennials <- c("phho", "arfr")
+  Forbs_Annuals <- c("cryp","chen")
+  Succulents <- c("oppo")
+  Grasses_C3 <- c("pssp")
+  Grasses_C4 <- c("bogr")
+  Grasses_Annuals <- c("brte")
+  Trees <- c()
+
+  # will store the new species files temporarily
+  new_species_files <- c()
+  
+file_number <- 0
+  # Loop through all of the species files defined in inputs
+  for(sp in species){
+    file_number <- file_number + 1
+    
+    #read the start of the file. n_species[file_number] is the number of species that were read in when creating
+    #this specific species file (the file denoted by "sp").
+    spec <- readLines(con <- paste0(sp,".in"), n_species[file_number])
+    
+    # split the file along tabs. This produces a 2d array of entries where rows are lines of the original file
+    # and columns are the entries of each line
+    spec <- strsplit(spec, "\t")
+  
+    # loop through each site
+    for(i in 1:length(relVegAbund[,1,1])){
+      # make a data frame, which is easier to work with
+      total_eind <- data.frame(relVegAbund[i,,])
+      
+      # If there is only one entry in climate.conditions data.frame(relVegAbund)
+      # will behave differently than if climate.conditions contains more than 1.
+      # The following block accounts for this.
+      if(length(climate.conditions) == 1){
+        total_eind <- data.frame(t(total_eind))
+      }
+    
+      #for every set of eind parameters generated by climate:
+      for(j in 1:nrow(total_eind)){
+        # If there is one entry in species.in for the given functional type, this will do nothing.
+        # if there are two or more entries for one functional type this equation will use the 
+        # space defined in inputs to partition the new space values proportionally to each rgroup.
+        temp_shrubs <- c(ceiling(total_eind$Shrubs[j] * max_eind_artr), ceiling(total_eind$Shrubs[j] * max_eind_chvi))
+        temp_forb_perennial <- c(ceiling(total_eind$Forbs[j] *  max_eind_phho), ceiling(total_eind$Forbs[j] *  max_eind_arfr))
+        temp_forb_annual <- c(ceiling(total_eind$Forbs[j] *  (max_eind_cryp - min_eind_cryp) + min_eind_cryp), 
+                                      ceiling(total_eind$Forbs[j] *  (max_eind_chen - min_eind_chen) + min_eind_chen))
+        temp_succulent <- ceiling(total_eind$Succulents[j] *  max_eind_oppo)
+        temp_grass_c3 <- ceiling(total_eind$Grasses_C3[j] *  max_eind_pssp)
+        temp_grass_c4 <- ceiling(total_eind$Grasses_C4[j] *  max_eind_bogr)
+        temp_grass_annual <- ceiling(total_eind$Grasses_Annuals[j] *  (max_eind_brte - min_eind_brte) + min_eind_brte)
+        temp_trees <- ceiling(total_eind$Trees[j] * max_eind_trees)
+      
+        #for each line of the species.in file
+        for(l in 1:length(spec)){
+          # replace the old eind parameters with the new values. NOTE: the order of the vectors matters. If there are two shrubs defined
+          # temp_shrubs[1] is the first entry and temp_shrubs[2] is the second entry.
+          if(is.element(spec[[l]][1], Shrubs)){ # if this species is a shrub
+            spec[[l]][7] <- temp_shrubs[1] # Replace with new eind parameter.
+            temp_shrubs <- temp_shrubs[2:length(temp_shrubs)] #remove the used entry from the temp vector.
+          } else if(is.element(spec[[l]][1], Forbs_Perennials)){ # if this species is a forb
+            spec[[l]][7] <- temp_forb_perennial[1] # Replace with new eind parameter.
+            temp_forb_perennial <- temp_forb_perennial[2:length(temp_forb_perennial)] #remove the used entry from the temp vector.
+          } else if(is.element(spec[[l]][1], Forbs_Annuals)){ # if this species is a forb
+            spec[[l]][7] <- temp_forb_annual[1] # Replace with new eind parameter.
+            temp_forb_annual <- temp_forb_annual[2:length(temp_forb_annual)] #remove the used entry from the temp vector.
+          } else if(is.element(spec[[l]][1], Succulents)){ # if this species is a succulent
+            spec[[l]][7] <- temp_succulent[1] # Replace with new eind parameter.
+            temp_succulent <- temp_succulent[2:length(temp_succulent)] 
+          } else if(is.element(spec[[l]][1], Grasses_C3)){ # if this species is a c3 grass
+            spec[[l]][7] <- temp_grass_c3[1] # Replace with new eind parameter.
+            temp_grass_c3 <- temp_grass_c3[2:length(temp_grass_c3)] #remove the used entry from the temp vector.
+          } else if(is.element(spec[[l]][1], Grasses_C4)){ # if this species is a c4 grass
+            spec[[l]][7] <- temp_grass_c4[1] # Replace with new eind parameter.
+            temp_grass_c4 <- temp_grass_c4[2:length(temp_grass_c4)] #remove the used entry from the temp vector.
+          } else if(is.element(spec[[l]][1], Grasses_Annuals)){ # if this species is an annual grass
+            spec[[l]][7] <- temp_grass_annual[1] # Replace with new eind parameter.
+            temp_grass_annual <- temp_grass_annual[2:length(temp_grass_annual)] #remove the used entry from the temp vector.
+          } else if(is.element(spec[[l]][1], Trees)){ # if this species is a tree
+            spec[[l]][7] <- temp_trees[1] # Replace with new eind parameter.
+            temp_trees <- temp_trees[2:length(temp_trees)] #remove the used entry from the temp vector.
+          }
+        }
+      
+        # the new species file is now stored in a 2d array. We need to stitch back together the entries, 
+        # with tabs between columns and newline characters between rows
+        readjusted_eind <- ""
+        for(y in 1:length(spec)){
+          readjusted_eind <- paste0(readjusted_eind, spec[[y]][1])
+          for(x in 2:length(spec[[1]])){
+            readjusted_eind <- paste0(readjusted_eind, "\t", spec[[y]][x])
+          }
+          readjusted_eind <- paste0(readjusted_eind, "\n")
+        }
+      
+        # create the new file, using the old file's name with ".readjustedj" appended on the end.
+        newFileName <- paste0(sp,".",climate.conditions[j])
+        # give this file an identifier that will be used to determine under what climate scenario it should be run.
+        names(newFileName) <- climate.conditions[j]
+        writeLines(readjusted_eind, paste0(newFileName, ".in"), sep = "")
+        # concatinate the template to the new file.
+        system(paste("cat ","species_template.in >>", paste0(newFileName, ".in"),sep=""))
+      
+        new_species_files <- c(new_species_files, newFileName)
+      }
+    }
+    
+    #now that we have readjusted eind, we can remove the original file.
+    system(paste0("rm ", sp, ".in"))
+  }
+  
+  #replace species files with the new readjusted files
+  species <- new_species_files
+  
+  # Remove all of the variables created in this section.
+  remove(Shrubs)
+  remove(Forbs_Perennials)
+  remove(Forbs_Annuals)
+  remove(Succulents)
+  remove(Grasses_C3)
+  remove(Grasses_C4)
+  remove(Grasses_Annuals)
+  remove(Trees)
+  remove(new_species_files)
+  remove(spec)
+  remove(temp_shrubs)
+  remove(temp_forb_perennial)
+  remove(temp_forb_annual)
+  remove(temp_succulent)
+  remove(temp_grass_c3)
+  remove(temp_grass_c4)
+  remove(temp_grass_annual)
+  remove(temp_trees)
+  remove(readjusted_eind)
+} # end if(rescale_eind)
+
 # only rescale space if requested.
 if(rescale_space){
-  # This code determines plant functional type relative abundance
-  # and then scales STEPWAT2 parameters accordingly
+
   source(vegetation.file)
   
   # Move to the DIST directory so we can read the files.
