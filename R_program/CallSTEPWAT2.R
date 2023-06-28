@@ -491,9 +491,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
       }
       print(paste("Soil treatment ", soil, " DONE"))
     }
-    print(paste("Species treatment ", sp, " DONE"))
-  }
-  
+ 
   print(paste("GCM ",GCM[g]," DONE",sep=""))
   dbDisconnect(db)
 }
