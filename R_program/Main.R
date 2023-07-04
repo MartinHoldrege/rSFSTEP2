@@ -33,15 +33,15 @@ rescale_eind <- TRUE
 
 #set maximum eind for each species
 max_eind_artr <- 3
-max_eind_chvi <- 3
+max_eind_chvi <- 4
 max_eind_cryp <- 10
 max_eind_chen <- 10
-max_eind_phho <- 20
-max_eind_arfr <- 15
+max_eind_phho <- 50
+max_eind_arfr <- 30
 max_eind_oppo <- 2
-max_eind_pssp <- 20
+max_eind_pssp <- 30
 max_eind_bogr <- 15
-max_eind_brte <- 40
+max_eind_brte <- 83
 max_eind_trees <- 0
 
 #set minimum eind for each annual species, which will ensure species with relative abundance > 0 are simulated
