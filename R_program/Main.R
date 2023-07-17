@@ -26,6 +26,11 @@ db_loc<-"/Users/Guest/Desktop/rSFSTEP2/inputs"
 #Set number of simulation years used in STEPWAT2 simulations
 simyears <- 300
 
+# If you would like to implement the effects of CO2 for each climate 
+# scenario, set this boolean to TRUE. If you would like to run without CO2 effects, 
+# set this boolean to FALSE.
+co2 <- TRUE
+
 # If you would like to rescale eind based on climate-derived relative abundance, set this boolean to TRUE. 
 # If TRUE, also set the max_eind for each species to the maximum number of individuals that can establish in a given year in any site. 
 # If you would like to run with the default eind values in InputData_Species.csv, set this boolean to FALSE.

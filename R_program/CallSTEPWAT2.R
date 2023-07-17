@@ -63,7 +63,20 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
         weather.dir<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/",sep="")
         weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
         
-        if(rescale_phenology){
+          if(co2){
+          # Copy the siteparam.in which contains CO2 under current conditions
+          setwd(dist.directory)
+          # Copy the siteparam.in file.
+          system(paste0("cp ", "siteparam.default.in", " ", weather.dir))  
+          # Move to the correct folder within STEPWAT2
+          setwd(weather.dir)
+          # Remove the old siteparam file
+          system("rm siteparam.in")
+          # Rename the siteparam file to the name recognized by STEPWAT2
+          system(paste0("mv ", "siteparam.default.in", " siteparam.in"))
+          }
+           
+          if(rescale_phenology){
           ################ Copy phen and prod files generated for current conditions #################
           setwd(dist.directory)
           # Copy the phenology file generated for this specific GCM, RCP and YEAR.
@@ -283,6 +296,19 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               next
             } else {
               setwd(weather.read.dir)
+            }
+            
+            if(co2){
+              # Copy the siteparam.in which contains CO2 for this RCP x YEARS combination
+              setwd(dist.directory)
+              # Copy the siteparam.in file.
+              system(paste0("cp ", "siteparam.", r, ".", y,".in", " ", weather.dir))  
+              # Move to the correct folder within STEPWAT2
+              setwd(weather.dir)
+              # Remove the old siteparam file
+              system("rm siteparam.in")
+              # Rename the siteparam file to the name recognized by STEPWAT2
+              system(paste0("mv ", "siteparam.", r, ".", y,".in", " siteparam.in"))
             }
             
             if(rescale_phenology){
