@@ -31,9 +31,6 @@ simyears <- 300
 # set this boolean to FALSE.
 co2_effects <- TRUE
 
-#assign each plant functional type represented in inputs to either C3 or C4
-C3_list=c("sagebrush")
-
 # If you would like to rescale eind based on climate-derived relative abundance, set this boolean to TRUE. 
 # If TRUE, also set the max_eind for each species to the maximum number of individuals that can establish in a given year in any site. 
 # If you would like to run with the default eind values in InputData_Species.csv, set this boolean to FALSE.
