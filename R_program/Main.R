@@ -29,7 +29,10 @@ simyears <- 300
 # If you would like to implement the effects of CO2 for each climate 
 # scenario, set this boolean to TRUE. If you would like to run without CO2 effects, 
 # set this boolean to FALSE.
-co2 <- TRUE
+co2_effects <- TRUE
+
+#assign each plant functional type represented in inputs to either C3 or C4
+C3_list=c("sagebrush")
 
 # If you would like to rescale eind based on climate-derived relative abundance, set this boolean to TRUE. 
 # If TRUE, also set the max_eind for each species to the maximum number of individuals that can establish in a given year in any site. 
@@ -81,8 +84,11 @@ assemble.file<-paste(source.dir,"WeatherAssembly.R", sep="")
 #Markov script (Generates site-specific markov files used for weather generation in SOILWAT2)
 markov.file<-paste(source.dir,"MarkovWeatherFileGenerator.R",sep="")
 
-#Vegetation script (to estimate relative abundance of functional groups based on climate relationships)
+#Vegetation script (to estimate relative abundance of functional types based on climate relationships)
 vegetation.file <- file.path(source.dir, "Vegetation.R")
+
+#CO2 script (to derive bvt of functional types based on CO2-biomass relationships)
+co2.file <- file.path(source.dir, "CO2.effects.R")
 
 #Wrapper script (Executes STEPWAT2 for all climate-disturbance-input parameter combinations)
 wrapper.file<-paste(source.dir,"CallSTEPWAT2.R", sep="")
@@ -109,6 +115,9 @@ soil_data <- read.csv("InputData_SoilLayers.csv", header=TRUE, sep=",")
 
 #functional type (rgroup) specific parameters
 rgroup_data <- read.csv("InputData_Rgroup.csv", header=TRUE, sep=",")
+
+#CO2 ppm for each RCP-time period combination
+co2_data <- read.csv("InputData_CO2.csv", header=TRUE, sep=",")
 
 #Set working directory to source directory
 setwd(source.dir)
@@ -394,6 +403,7 @@ if(any(grepl(",",rgroup_data_all_sites))==TRUE)
         rgroups <- c(rgroups, paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i))
         
         space_values[[length(space_values) + 1]] <- df[ , 2]
+        
         # Write the rgroup.in file to the STEPWAT_DIST folder
         write.table(df, file = paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
       }
@@ -464,7 +474,7 @@ for(i in treatments)
   # Save the space values for outputting later
   space_values[[length(space_values) + 1]] <- df[ , 2]
   
-  # Write the rgoup.in file to the STEPWAT_DIST directory
+  # Write the rgroup.in file to the STEPWAT_DIST directory
   write.table(df, file = paste0("rgroup.","freq.",dist.freq.current,".graz.",graz.freq.current,".",graz_intensity.current,".",i,".in"),quote=FALSE,row.names=FALSE,col.names = FALSE,sep="\t")
 }
 
@@ -508,7 +518,6 @@ remove(rgroup_data_site)
 remove(treatments)
 remove(df)
 remove(treatments_vector)
-remove(rgroup_data)
 remove(rgroup_data_all_sites)
 remove(rgroup_data_all_sites_vectors)
 remove(rgroup_files)
@@ -1114,6 +1123,54 @@ if(rescale_space){
   remove(temp_trees)
   remove(readjusted_space)
 } # end if(rescale_space)
+
+##CO2 effects
+if(co2_effects){
+  
+  # return bvt.denom.cc, newly derived denominators for the calculation of bvt
+  source(co2.file)
+  
+  # Move to the DIST directory so we can read the rgroup files and update bvt.
+  setwd(source.dir)
+  setwd("STEPWAT_DIST")
+  
+  file_number <- 0
+  
+  # Loop through all of the rgroup files
+  for(rg in rgroups){
+    file_number <- file_number + 1
+          
+    # read the start of the file n_rgroups[file_number] is the number of rgroups that were read in when creating
+    # this specific rgroup file (the file denoted by "rg").
+    rgrp <- readLines(con <- paste0(rg,".in"), n_rgroups)
+    
+    # split the file along tabs. This produces a 2d array of entries where rows are lines of the original file
+    # and columns are the entries of each line
+    rgrp <- strsplit(rgrp, "\t")
+    
+    # here replace the bvt values with those in bvt.denom.cc for each functional type and climate scenario 
+      for(y in 1:length(rgrp)){
+          rgrp[[y]][24] <- bvt.denom.cc[y,file_number]
+      }
+        # the new rgroup file is now stored in a 2d array. We need to stitch back together the entries, 
+        # with tabs between columns and newline characters between rows
+        readjusted_bvt <- ""
+        
+        for(y in 1:length(rgrp)){
+          readjusted_bvt <- paste0(readjusted_bvt, rgrp[[y]][1])
+          for(x in 2:length(rgrp[[1]])){
+            readjusted_bvt <- paste0(readjusted_bvt, "\t", rgrp[[y]][x])
+          }
+          readjusted_bvt <- paste0(readjusted_bvt, "\n")
+        }
+        
+        writeLines(readjusted_bvt, paste0(rg, ".in"), sep = "")
+       
+        # concatinate the template to the new file.
+        system(paste("cat ","rgroup_template.in >>", paste0(rg, ".in"),sep=""))
+        
+      } 
+  }
 
 ############### Run Wrapper Code ############################################################
 
