@@ -63,7 +63,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
         weather.dir<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/",sep="")
         weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
         
-          if(co2){
+          if(co2_effects){
           # Copy the siteparam.in which contains CO2 under current conditions
           setwd(dist.directory)
           # Copy the siteparam.in file.
@@ -298,7 +298,7 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               setwd(weather.read.dir)
             }
             
-            if(co2){
+            if(co2_effects){
               # Copy the siteparam.in which contains CO2 for this RCP x YEARS combination
               setwd(dist.directory)
               # Copy the siteparam.in file.
