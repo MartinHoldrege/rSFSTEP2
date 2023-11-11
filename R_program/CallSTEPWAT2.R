@@ -298,6 +298,10 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               setwd(weather.read.dir)
             }
             
+            #Identify the directory the weather will be pasted into   
+            weather.dir<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/",sep="")
+            weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
+            
             if(co2_effects){
               # Copy the siteparam.in which contains CO2 for this RCP x YEARS combination
               setwd(dist.directory)
@@ -329,10 +333,6 @@ foreach (g = 1:length(GCM)) %dopar% { # loop through all the GCMs
               # Rename the new prod file to the name recognized by STEPWAT2
               system(paste0("mv ", "sxwprod_v2.", downscaling.method, ".", y, ".", r, ".", GCM[g], ".in", " sxwprod_v2.in"))
             }
-            
-            #Identify the directory the weather will be pasted into   
-            weather.dir<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/",sep="")
-            weather.dir2<-paste(directory,"Stepwat.Site.",s,".",g,"/testing.sagebrush.master/Stepwat_Inputs/Input/sxw/Input/randomdata/",sep="")
             
             #Copy the weather data into the randomdata folder,commenting out creation of weather.in files as default
             if (TYPE=="basic") {
