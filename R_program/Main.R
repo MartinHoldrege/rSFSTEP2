@@ -31,6 +31,12 @@ simyears <- 300
 # set this boolean to FALSE.
 co2_effects <- TRUE
 
+# If you would like to allow C4 grasses to be represented in climatically suitable sites
+# under future conditions where they are currently absent, set this boolean to TRUE. 
+# If you would like to prevent C4 grasses from establishing in climatically suitable sites 
+# under future conditions where they are currently absent, set this boolean to FALSE.
+c4grass_expansion <- TRUE 
+
 # If you would like to rescale eind based on climate-derived relative abundance, set this boolean to TRUE. 
 # If TRUE, also set the max_eind for each species to the maximum number of individuals that can establish in a given year in any site. 
 # If you would like to run with the default eind values in InputData_Species.csv, set this boolean to FALSE.

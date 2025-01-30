@@ -99,6 +99,12 @@ estimate_STEPWAT_relativeVegAbundance <- function(sw_weatherList,
         dailyC4vars = temp_clim[["dailyC4vars"]], Annuals_Fraction = annuals_fraction)
 
       res[n_sites, k_scen, ] <- temp_veg[["Rel_Abundance_L0"]]
+      
+      if(!c4grass_expansion){ 
+        
+        if(res[1,1,4]==0)
+          res[1,,4]=0
+      }
     }
 
   res
