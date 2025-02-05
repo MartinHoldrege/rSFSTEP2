@@ -1,7 +1,7 @@
 #!/bin/bash
 #./generate_rSFSTEP2_structure.sh <R_program> <number_of_sites> <number_of_scenario>
 siteid=(1 2) #add site ids here
-
+module load cray-python
 for ((i=1;i<=$2;i++));do (
 	cp -r $1 R_program_$i
 	cd R_program_$i

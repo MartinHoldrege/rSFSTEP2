@@ -3,7 +3,7 @@
 # Define the target file and destination folder
 TARGET_FOLDER="../weather/" # where weather db lives
 DESTINATION_FOLDER="inputs/" # inputs location, defined in Main.R
-FILE="/dbWeatherData_STEPWAT2_200sites.sqlite3" # weather datebase
+FILE="dbWeatherData_STEPWAT2_200sites.sqlite3" # weather datebase
 
 SYMLINK="$DESTINATION_FOLDER""$FILE"
 TARGET_FILE="$TARGET_FOLDER""$FILE"
