@@ -17,9 +17,9 @@
 #SBATCH --mem=128000
 
 #Load Required Modules
-module load arcc/1.0
-module load gcc/12.2.0
-module load r/4.2.2
+#module load arcc/1.0
+module load gcc-native
+module load cray-R
 
 srun Rscript Main.R
 echo "Site noid done! $(date '+%Y-%m-%d %H:%M:%S')" >> ../../jobs.txt

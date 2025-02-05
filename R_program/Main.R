@@ -13,7 +13,7 @@ stopifnot(utils::packageVersion("rSOILWAT2") >= "5.4.1")
 #Note: Change number of processors and output database location according to your system
 
 #Number of cores
-proc_count<-6
+proc_count<-14
 
 #Source directory, the source.directory will be filled in automatically when rSFSTEP2 runs
 source.dir<-"nopath"

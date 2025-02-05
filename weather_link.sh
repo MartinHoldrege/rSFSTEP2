@@ -1,7 +1,7 @@
 #!/bin/bash
 # create symbolic link of weather database
 # Define the target file and destination folder
-TARGET_FOLDER="../weather/" # where weather db lives
+TARGET_FOLDER="../../weather/" # where weather db lives relative to the location of the symlink
 DESTINATION_FOLDER="inputs/" # inputs location, defined in Main.R
 FILE="dbWeatherData_STEPWAT2_200sites.sqlite3" # weather datebase
 
