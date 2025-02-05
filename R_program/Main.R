@@ -21,10 +21,10 @@ source.dir<-paste(source.dir,"/", sep="")
 setwd(source.dir)
 
 #Set database and inputs location, an example is provided
-db_loc<-"/Users/Guest/Desktop/rSFSTEP2/inputs"
+db_loc<-"../inputs" # this is assuming the Main.R is run from the R_program folder
 
 #Set number of simulation years used in STEPWAT2 simulations
-simyears <- 300
+simyears <- 150
 
 # If you would like to implement the effects of CO2 for each climate 
 # scenario, set this boolean to TRUE. If you would like to run without CO2 effects, 
@@ -77,7 +77,8 @@ rescale_phenology <- TRUE
 #Database location, edit the name of the weather database accordingly
 database_name<-"dbWeatherData_STEPWAT2_200sites.sqlite3"
 database<-file.path(db_loc,database_name)
- 
+stopifnot(file.exists(database)) 
+
 #Weather query script (Loads weather data from the weather database for all climate scenarios into a list for each site)
 query.file<-paste(source.dir,"WeatherQuery.R", sep="")
 

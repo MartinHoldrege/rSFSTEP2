@@ -22,5 +22,5 @@ module load gcc/12.2.0
 module load r/4.2.2
 
 srun Rscript Main.R
-echo "Site noid done!" >> /project/sagebrush/kpalmqu1/jobs.txt
+echo "Site noid done! $(date '+%Y-%m-%d %H:%M:%S')" >> ../../jobs.txt
 
