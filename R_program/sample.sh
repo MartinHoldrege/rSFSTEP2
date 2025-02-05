@@ -4,11 +4,11 @@
 #SBATCH --job-name=stepwat2
 
 #Assign Account Name
-#SBATCH --account=sagebrush
+#SBATCH --account=swbsc
 
 #Set Max Wall Time
 #days-hours:minutes:seconds
-#SBATCH --time=24:00:00
+#SBATCH --time=18:00:00
 
 #Specify Resources Needed
 #SBATCH --nodes=1
