@@ -2,7 +2,7 @@
 
 library(RSQLite)
 
-dir_db<-"" #Location of the databases, needs to be set by the user
+dir_db<-"../results/sitedata" #Location of the databases, needs to be set by the user
 
 setwd(dir_db)
 
