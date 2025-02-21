@@ -11,7 +11,7 @@ output_database<-paste0("Output_Compiled",".sqlite")
 db<-dbConnect(SQLite(),output_database)
 
 #Add the id of all sites to be compiled, 14 and 103 are here as examples
-sites<-c(14,103) 
+sites<-c(5 15 74 76 102 103 119 124 141 156 162 172 177 184) 
 
 for (i in 1:length(sites)) {
 g<-sites[i]
