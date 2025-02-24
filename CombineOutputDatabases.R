@@ -2,7 +2,7 @@
 
 library(RSQLite)
 
-dir_db<-"../results/sitedata" #Location of the databases, needs to be set by the user
+dir_db<-"../results/sitedata/temp2rename" #Location of the databases, needs to be set by the user
 
 setwd(dir_db)
 
@@ -21,23 +21,23 @@ con<-dbConnect(SQLite(),input_database)
 
 #Here, comment out any data tables you do not want to compile into the master database
 total_bmass_g<-data.frame(dbGetQuery(con,'select * from Biomass'))
-total_sw2_yearly_slyrs_g<-data.frame(dbGetQuery(con,'select * from sw2_yearly_slyrs'))
-total_sw2_yearly_g<-data.frame(dbGetQuery(con,'select * from sw2_yearly'))
-total_sw2_monthly_slyrs_g<-data.frame(dbGetQuery(con,'select * from sw2_monthly_slyrs'))
-total_sw2_monthly_g<-data.frame(dbGetQuery(con,'select * from sw2_monthly'))
-total_sw2_daily_slyrs_g<-data.frame(dbGetQuery(con,'select * from sw2_daily_slyrs'))
-total_sw2_daily_g<-data.frame(dbGetQuery(con,'select * from sw2_daily'))
+# total_sw2_yearly_slyrs_g<-data.frame(dbGetQuery(con,'select * from sw2_yearly_slyrs'))
+# total_sw2_yearly_g<-data.frame(dbGetQuery(con,'select * from sw2_yearly'))
+# total_sw2_monthly_slyrs_g<-data.frame(dbGetQuery(con,'select * from sw2_monthly_slyrs'))
+# total_sw2_monthly_g<-data.frame(dbGetQuery(con,'select * from sw2_monthly'))
+# total_sw2_daily_slyrs_g<-data.frame(dbGetQuery(con,'select * from sw2_daily_slyrs'))
+# total_sw2_daily_g<-data.frame(dbGetQuery(con,'select * from sw2_daily'))
 
 dbDisconnect(con)
 
 #Here, comment out any data tables you do not want to compile into the master database
 dbWriteTable(db, "Biomass", total_bmass_g, append=T)
-dbWriteTable(db, "sw2_yearly_slyrs",total_sw2_yearly_slyrs_g, append=T)
-dbWriteTable(db, "sw2_yearly",total_sw2_yearly_g, append=T)
-dbWriteTable(db, "sw2_monthly_slyrs",total_sw2_monthly_slyrs_g, append=T)
-dbWriteTable(db, "sw2_monthly",total_sw2_monthly_g, append=T)
-dbWriteTable(db, "sw2_daily_slyrs",total_sw2_daily_slyrs_g, append=T)
-dbWriteTable(db, "sw2_daily",total_sw2_daily_g, append=T)
+# dbWriteTable(db, "sw2_yearly_slyrs",total_sw2_yearly_slyrs_g, append=T)
+# dbWriteTable(db, "sw2_yearly",total_sw2_yearly_g, append=T)
+# dbWriteTable(db, "sw2_monthly_slyrs",total_sw2_monthly_slyrs_g, append=T)
+# dbWriteTable(db, "sw2_monthly",total_sw2_monthly_g, append=T)
+# dbWriteTable(db, "sw2_daily_slyrs",total_sw2_daily_slyrs_g, append=T)
+# dbWriteTable(db, "sw2_daily",total_sw2_daily_g, append=T)
 
 }
 
