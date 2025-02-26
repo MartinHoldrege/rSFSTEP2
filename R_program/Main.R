@@ -13,7 +13,7 @@ stopifnot(utils::packageVersion("rSOILWAT2") >= "5.4.1")
 #Note: Change number of processors and output database location according to your system
 
 #Number of cores
-proc_count<-6
+proc_count<-14
 
 #Source directory, the source.directory will be filled in automatically when rSFSTEP2 runs
 source.dir<-"nopath"
@@ -35,7 +35,7 @@ co2_effects <- FALSE
 # under future conditions where they are currently absent, set this boolean to TRUE. 
 # If you would like to prevent C4 grasses from establishing in climatically suitable sites 
 # under future conditions where they are currently absent, set this boolean to FALSE.
-c4grass_expansion <- TRUE 
+c4grass_expansion <- FALSE 
 
 # If you would like to rescale eind based on climate-derived relative abundance, set this boolean to TRUE. 
 # If TRUE, also set the max_eind for each species to the maximum number of individuals that can establish in a given year in any site. 
