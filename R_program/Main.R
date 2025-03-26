@@ -29,7 +29,7 @@ simyears <- 150
 # If you would like to implement the effects of CO2 for each climate 
 # scenario, set this boolean to TRUE. If you would like to run without CO2 effects, 
 # set this boolean to FALSE.
-co2_effects <- TRUE
+co2_effects <- FALSE
 
 # If you would like to allow C4 grasses to be represented in climatically suitable sites
 # under future conditions where they are currently absent, set this boolean to TRUE. 
